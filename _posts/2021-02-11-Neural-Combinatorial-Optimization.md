@@ -1,12 +1,12 @@
 ---
 layout: post
-title: Neural Combinatorial Optimization
+title: Neural Combinatorial Optimization with Reinforcement Learning
 author: jinwoo park
 categories: [combinatorial_optimization, reinforcement_learning]
 image: assets/images/2021-02-11-Neural-Combinatorial-Optimization/cover.png
 ---
 
-Neural Combinatorial Optimization은 딥러닝을 사용하여 조합최적화문제(Combinatorial Optimization Problem)를 풀고자 하는 연구분야입니다. 이번 포스팅에서는 그 중에서도 조합최적화문제의 풀이 강화학습의 사용을 제안한 대표적인 연구[[1]](#ref-1)를 소개하려고 합니다.
+Neural Combinatorial Optimization은 딥러닝을 사용하여 조합최적화문제(Combinatorial Optimization Problem)를 풀고자 하는 연구분야입니다. 이번 포스팅에서는 그 중에서도 조합최적화문제의 풀이에 강화학습을 사용한 방법론을 제안한 대표적인 연구[[1]](#ref-1)를 소개하려고 합니다.
 
 ## Combinatorial Optimization Problem
 
