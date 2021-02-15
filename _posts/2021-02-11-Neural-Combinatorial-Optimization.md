@@ -6,7 +6,7 @@ categories: [combinatorial_optimization, reinforcement_learning]
 image: assets/images/2021-02-11-Neural-Combinatorial-Optimization/cover.png
 ---
 
-Neural Combinatorial Optimization은 딥러닝을 사용하여 조합최적화문제(Combinatorial Optimization Problem)를 풀고자 하는 연구분야입니다. 이번 포스팅에서는 그 중에서도 조합최적화문제의 풀이에 강화학습을 사용한 방법론을 제안한 대표적인 연구[[1]](#ref-1)를 소개하려고 합니다.
+Neural Combinatorial Optimization은 딥러닝을 사용하여 조합최적화문제(Combinatorial Optimization Problem)를 풀고자 하는 연구분야입니다. 이번 포스팅에서는 그 중에서도 조합최적화문제의 풀이에 강화학습의 사용을 제안한 대표적인 연구[[1]](#ref-1)를 소개하려고 합니다.
 
 ## Combinatorial Optimization Problem
 
@@ -19,9 +19,10 @@ Neural Combinatorial Optimization은 딥러닝을 사용하여 조합최적화�
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/tsp.png" alt="tsp solutions comparison">
-  <figcaption style="text-align: center;">[그림1] 주어진 노드에 대한 두 개의 솔루션 비교 [2]</figcaption>
+  <figcaption style="text-align: center;">[그림1] 주어진 노드에 대한 두 개의 솔루션 비교 <a href="#ref-2">[2]</a></figcaption>
 </p>
 </figure>
+
 
 이는 N개 지점에 대한 모든 순열(permutations)을 탐색하는 문제로, [brute-force search](https://en.wikipedia.org/wiki/Brute-force_search)의 경우 $O(N!)$, [dynamic programming](https://en.wikipedia.org/wiki/Held%E2%80%93Karp_algorithm)의 경우 $O(N^2 2^N)$의 계산복잡도를 보이는 NP-Hard 문제입니다 [[3]](#ref-3). 보통 많은 개수의 노드에 대한 솔루션을 구해야 할 때는 적절한 휴리스틱(Heuristic)을 사용하여 탐색공간을 줄이는 방식으로 계산 효율을 높이곤 합니다 [[4]](#ref-4). 하지만 휴리스틱을 사용하는 경우 문제의 세부사항이 변경되면 휴리스틱 또한 적절히 수정해야 하는 번거로움이 발생합니다. 2016년 말, 이 문제의식에 의거한 연구의 성과가 Google Brain의 연구진들로부터 공개되었습니다.
 
@@ -33,31 +34,49 @@ Neural Combinatorial Optimization with Reinforcement Learning[[1]](#ref-1)의 �
 
 #### Pointer Network
 
-이 논문에서는 Pointer Network[[7]](#ref-7)의 기본구조를 그대로 따릅니다. Sequence-to-Sequence 모델이 정해진 정해진 N개 노드에 대한 문제에서만 동작할 수 있는 것에 비해 Pointer Network는 임의 개수의 노드에 대해서도 동작할 수 있는 것이 특징입니다. 즉, 5개~20개 노드의 TSP를 학습한 뒤에 학습데이터에 존재하지 않는 25~50개 노드의 TSP에 대해서도 동작 가능한 구조입니다.
+이 논문에서는 Pointer Network[[7]](#ref-7)의 기본구조를 그대로 이용합니다. Sequence-to-Sequence 모델이 정해진 N개 노드에 대한 문제에서만 동작할 수 있는 것에 비해 Pointer Network는 임의 개수의 노드에 대해서도 동작할 수 있는 것이 특징입니다. 즉, 5개~20개 노드의 TSP를 학습한 뒤에 학습데이터에 존재하지 않는 25~50개 노드의 TSP에 대해서도 동작 가능한 구조입니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/pointer_network_1.png" alt="Squence-to-Sequence vs Pointer Network">
-  <figcaption style="text-align: center;">[그림2] Sequence-to-Sequence vs Pointer Network [8]</figcaption>
 </p>
 </figure>
 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/pointer_network_2.png" alt="Squence-to-Sequence vs Pointer Network">
-  <figcaption style="text-align: center;">[수식1] Sequence-to-Sequence vs Pointer Network [8]</figcaption>
+  <figcaption style="text-align: center;">[그림2] Sequence-to-Sequence vs Pointer Network <a href="#ref-7">[7]</a></figcaption>
 </p>
 </figure>
 
-먼저 Sequence-to-Sequence를 살펴보겠습니다. Sequence-to-Sequence는 전체 입력(각 노드의 이차원 좌표)에 대한 attention mask($a^i$)로 가중평균(weighted average)한 벡터($d_i^{\prime}$)를 디코더의 hidden state($d_i$)와 결합(concatenation)하여 예측에 사용하고 또한 다음 스텝의 입력으로 넣어주는 구조입니다. 이 구조는 고정된 크기의 출력을 내보내기 때문에 출력(예측해야 하는 카테고리)의 크기가 가변적인 경우에는 사용하기에 적합하지 않습니다.
 
-반면, Pointer Network는 Sequence-to-Sequence의 attention mask를 예측에 바로 사용합니다. Attention mask의 차원이 입력의 개수에 따른다는 속성을 이용해 같은 학습파라미터의 차원을 가지고도 가변적인 개수의 TSP에 대해 동작하게 할 수 있습니다.
+먼저 Sequence-to-Sequence를 살펴보겠습니다. Sequence-to-Sequence는 전체 입력(각 노드의 이차원 좌표)에 대한 attention mask($a^i$)로 인코더의 hiden state($e_j$)를 가중평균(weighted average)한 벡터($d_i^{\prime}$)를 디코더의 hidden state($d_i$)와 결합(concatenation)하여 예측에 사용하고 또한 다음 스텝의 입력으로 넣어주는 구조입니다. 이 구조는 고정된 크기의 출력(예측해야 하는 카테고리)을 내보내기 때문에 출력의 크기가 가변적인 경우에는 사용하기에 적합하지 않습니다.
+
+반면, Pointer Network는 Sequence-to-Sequence의 attention mask를 예측에 바로 사용합니다. Attention mask의 차원이 입력의 개수에 따른다는 속성을 이용해 같은 크기의 학습파라미터를 가지고도 가변적인 개수의 TSP에 대해 동작하게 할 수 있습니다. 그럼으로써 5~20개 노드에 대한 Optimal solution으로 학습하여 그것보다 더 많은 (25~50개) 노드의 TSP에 대해서도 유의미한 성능을 얻어냈습니다.
+
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/pointer_network_3.png" alt="Experimental Results (Pointer Network)">
+  <figcaption style="text-align: center;">[그림3] Pointer Network의 실험결과 (A1~A3: Baselines) <a href="#ref-7">[7]</a></figcaption>
+</p>
+</figure>
+
+또한 Pointer Network는 TSP 뿐만 아니라 Convex Hull, Delaunay Triangulation 같은 다른 combinatorial optimization 문제에 대해서도 잘 동작한다는 사실이 실험을 통해 보여진 바가 있습니다. 
+
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/pointer_network_4.png" alt="Experimental Results (Pointer Network)">
+  <figcaption style="text-align: center;">[그림4] Pointer Network의 실험결과: Convex hulls (좌), Delaunay (중앙) and TSP (우) <a href="#ref-7">[7]</a></figcaption>
+</p>
+</figure>
+
+이처럼 다양한 문제에 대해 유연하게 잘 동작하는 구조라는 점에서 본 논문의 저자들이 Pointer Network를 핵심적인 아이디어로 채택하였으며, 실험을 통해 Pointer Network에 강화학습이 적용된 방법론이 TSP 뿐만 아닌 Knapsack 문제에 대해서도 잘 동작함을 보입니다. (본 포스팅에서는 Knapsack 문제에 대한 내용은 생략하도록 하겠습니다.)
 
 #### Policy Gradient (REINFORCE)
 
-Policy는 강화학습 에이전트의 행동방식을 정의합니다. 이는 주어진 상태로부터 어떤 행동(action)을 결정하는 상태-행동의 매핑함수라고도 할 수 있습니다. Policy Gradient는 주어진 문제에서 에이전트가 받는 보상의 기댓값을 최대화 하도록 policy를 직접적으로 업데이트하는 방법들을 통칭하며, 이 중에서도 REINFORCE는 Monte-Carlo method를 통해 얻은 샘플 에피소드로 추정한 리턴값을 이용해 policy를 업데이트하는 방법입니다. (Policy Grandient와 REINFORCE에 대한 자세한 설명은 [Lilian Weng의 블로그 포스팅](https://lilianweng.github.io/lil-log/2018/04/08/policy-gradient-algorithms.html)을 참고해주세요.)
+Policy는 강화학습 에이전트의 행동방식을 정의합니다. 이는 주어진 상태로부터 어떤 행동(action)을 결정하는 상태-행동의 매핑함수라고도 할 수 있습니다. Policy Gradient는 주어진 문제에서 에이전트가 받는 보상의 기댓값을 최대화 하도록 policy를 직접적으로 업데이트하는 방법들을 통칭하며, 이 중에서도 REINFORCE는 Monte-Carlo method를 통해 얻은 샘플 에피소드로 추정한 리턴값을 이용해 policy를 업데이트하는 방법입니다 [[8]](#ref-8).
 
-본 논문에서는 모든 여행거리의 총 합에 대한 기댓값을 목적함수로 정의하고 이를 최소화시키는 것으로 문제를 정의합니다.
+본 논문에서 여행거리의 총 합은 모든 방문노드의 이전 방문노드와의 거리 총합과 마지막 방문노드와 시작 노드 거리의 합으로 정의합니다. 그리고 총 여행거리에 대한 기댓값을 목적함수(J)로 정의하고 이를 최소화시키는 것으로 문제를 정의합니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -70,15 +89,14 @@ Policy는 강화학습 에이전트의 행동방식을 정의합니다. 이는 �
   <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/nco_form_2.png" alt="l2 distance for objective function">
 </p>
 </figure>
-
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/nco_form_3.png" alt="l2 distance for objective function">
-  <figcaption style="text-align: center;">[수식2] 여행거리 총합의 기댓값을 J로 정의 [7]</figcaption>
 </p>
 </figure>
 
-또한 REINFORCE 알고리즘으로 목적함수의 gradient를 표현하고 이를 Monte Carlo sampling 형태로 근사합니다. 더불어 총 여행거리의 기댓값을 예측하는 critic으로 baseline 함수 $b(s)$를 정의합니다.
+
+또한 REINFORCE 알고리즘으로 목적함수의 gradient를 표현하고 이를 Monte Carlo sampling 형태로 근사합니다. 더불어 총 여행거리의 기댓값을 예측하는 네트워크를 baseline 함수 $b(s)$를 정의합니다. (Policy Grandient와 REINFORCE + baseline에 대한 자세한 설명은 [Lilian Weng의 블로그 포스팅](https://lilianweng.github.io/lil-log/2018/04/08/policy-gradient-algorithms.html)을 참고해주세요.)
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -91,13 +109,12 @@ Policy는 강화학습 에이전트의 행동방식을 정의합니다. 이는 �
   <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/nco_form_4_2.png" alt="l2 distance for objective function">
 </p>
 </figure>
-
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/nco_form_5.png" alt="l2 distance for objective function">
-  <figcaption style="text-align: center;">[수식3] 목적함수의 gradient 정의 [7]</figcaption>
 </p>
 </figure>
+
 
 #### Experimental Results
 
@@ -107,8 +124,9 @@ Policy는 강화학습 에이전트의 행동방식을 정의합니다. 이는 �
 <p align="center">
   <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/experiment_config.png" alt="4 experimental configs">
 </p>
-  <figcaption style="text-align: center;">[그림3] 4 가지 실험 설정 [7]</figcaption>
+  <figcaption style="text-align: center;">[그림5] 4 가지 실험 설정 <a href="#ref-1">[1]</a></figcaption>
 </figure>
+
 
 각각이 의미하는 바는 다음과 같습니다.
 
@@ -122,8 +140,9 @@ Policy는 강화학습 에이전트의 행동방식을 정의합니다. 이는 �
 <p align="center">
   <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/nco_result.png" alt="TSP50 / TSP100 experimental results">
 </p>
-  <figcaption style="text-align: center;">[그림4] TSP50 (위) / TSP100 (아래) [7]</figcaption>
+  <figcaption style="text-align: center;">[그림6] 위: TSP50 / 아래: TSP100 (각 그림 아래 숫자는 총 여행거리를 의미) <a href="#ref-1">[1]</a></figcaption>
 </figure>
+
 
 ## Coming Up Next..
 
@@ -145,3 +164,5 @@ Policy는 강화학습 에이전트의 행동방식을 정의합니다. 이는 �
 <a name="ref-6">[6]</a>  [Ilya Sutskever, Oriol Vinyals, and Quoc V. Le. "Sequence to sequence learning with neural networks," In Advances in Neural Information Processing Systems, pp. 3104–3112, 2014.](https://dl.acm.org/doi/10.5555/2969033.2969173)
 
 <a name="ref-7">[7]</a>  [Oriol Vinyals, Meire Fortunato, and Navdeep Jaitly. "Pointer networks," In Advances in Neural Information Processing Systems, pp. 2692–2700, 2015b.](https://proceedings.neurips.cc/paper/2015/file/29921001f2f04bd3baee84a12e98098f-Paper.pdf)
+
+<a name="ref-8">[8]</a>  [Ronald Williams. "Simple statistical gradient following algorithms for connectionnist reinforcement learning," In Machine Learning, 1992.](https://link.springer.com/article/10.1007/BF00992696)
