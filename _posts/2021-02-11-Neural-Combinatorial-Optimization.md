@@ -130,9 +130,10 @@ Policy는 강화학습 에이전트의 행동방식을 정의합니다. 이는 �
 
 각각이 의미하는 바는 다음과 같습니다.
 
-* RL pretraining-Greedy: RL 에이전트가 추정하는 가장 좋은 action을 선택
-* Sampling: Inference에서 의도적으로 다양한 샘플 경로를 획득하고 그 중 가장 좋은 경로를 고르는 방법
-* Active Search (AS): Test 시에 얻은 여러 샘플 경로들에 대해 더 작은 loss를 갖게끔 policy를 개선
+* RL pretraining-Greedy: 임의로 생성한 다수의 TSP 문제(학습을 위해 임의로 생성한 training data)에서 RL 에이전트를 학습시키며, 테스트에서는 RL 에이전트가 평가하는 가장 좋은 action을 선택합니다.
+* Active Search (AS): Training data에서의 학습 없이 test set(1,000개의 임의의 TSP,  LK-H[[9]](#ref-9)로 optimal solution 계산)에서 얻은 여러 샘플 경로들에 대해 더 작은 loss를 갖게끔 policy를 개선합니다.
+* RL pretraining-Sampling: Training data에서 RL 에이전트를 학습시키며, test set에서 stochastic policy를 이용해  다양한 샘플 경로를 획득하고 그 중 가장 좋은 경로를 고르는 방법입니다.
+* RL pretraining-Active Search (AS): Training data에서 RL 에이전트를 학습시키며, test set에서 active search를 하는 방법입니다. ($\star$)
 
 결과적으로 20~100개 노드의 TSP에 대해 Optimal과 유사한 경로를 획득할 수 있었습니다.
 
@@ -166,3 +167,5 @@ Policy는 강화학습 에이전트의 행동방식을 정의합니다. 이는 �
 <a name="ref-7">[7]</a>  [Oriol Vinyals, Meire Fortunato, and Navdeep Jaitly. "Pointer networks," In Advances in Neural Information Processing Systems, pp. 2692–2700, 2015b.](https://proceedings.neurips.cc/paper/2015/file/29921001f2f04bd3baee84a12e98098f-Paper.pdf)
 
 <a name="ref-8">[8]</a>  [Ronald Williams. "Simple statistical gradient following algorithms for connectionnist reinforcement learning," In Machine Learning, 1992.](https://link.springer.com/article/10.1007/BF00992696)
+
+<a name="ref-9">[9]</a>  [S. Lin and B. W. Kernighan. An effective heuristic algorithm for the traveling-salesman problem. Operations Research, 21(2):498–516, 1973.](https://pdfs.semanticscholar.org/88c3/ae44f61301aa2974f4e65f73d17f5944c0bb.pdf)
