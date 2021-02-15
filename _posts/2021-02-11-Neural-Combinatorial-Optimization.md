@@ -54,11 +54,11 @@ Neural Combinatorial Optimization with Reinforcement Learning[[1]](#ref-1)의 �
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/pointer_network_5.png" alt="Experimental Results (Pointer Network)">
-  <figcaption style="text-align: center;">[그림3] u의 계산과정 <a href="#ref-7">[7]</a></figcaption>
+  <figcaption style="text-align: center;">[그림3] u^i의 계산과정 <a href="#ref-7">[7]</a></figcaption>
 </p>
 </figure>
 
-반면, Pointer Network는 Sequence-to-Sequence의 attention mask($u$에 대한 softmax)를 예측에 바로 사용합니다. Attention mask의 차원이 입력의 개수에 따른다는 속성을 이용해 같은 크기의 학습파라미터를 가지고도 가변적인 개수의 TSP에 대해 동작하게 할 수 있습니다. 그럼으로써 5~20개 노드에 대한 Optimal solution으로 학습하여 그것보다 더 많은 (25~50개) 노드의 TSP에 대해서도 유의미한 성능을 얻어냈습니다.
+반면, Pointer Network는 Sequence-to-Sequence의 attention mask($u^i$에 대한 softmax)를 예측에 바로 사용합니다. Attention mask의 차원이 입력의 개수에 따른다는 속성을 이용해 같은 크기의 학습파라미터를 가지고도 가변적인 개수의 TSP에 대해 동작하게 할 수 있습니다. 그럼으로써 5~20개 노드에 대한 Optimal solution으로 학습하여 그것보다 더 많은 (25~50개) 노드의 TSP에 대해서도 유의미한 성능을 얻어냈습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
