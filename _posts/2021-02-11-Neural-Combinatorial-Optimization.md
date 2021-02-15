@@ -49,15 +49,21 @@ Neural Combinatorial Optimization with Reinforcement Learning[[1]](#ref-1)의 �
 </p>
 </figure>
 
-
 먼저 Sequence-to-Sequence를 살펴보겠습니다. Sequence-to-Sequence는 전체 입력(각 노드의 이차원 좌표)에 대한 attention mask($a^i$)로 인코더의 hiden state($e_j$)를 가중평균(weighted average)한 벡터($d_i^{\prime}$)를 디코더의 hidden state($d_i$)와 결합(concatenation)하여 예측에 사용하고 또한 다음 스텝의 입력으로 넣어주는 구조입니다. 이 구조는 고정된 크기의 출력(예측해야 하는 카테고리)을 내보내기 때문에 출력의 크기가 가변적인 경우에는 사용하기에 적합하지 않습니다.
 
-반면, Pointer Network는 Sequence-to-Sequence의 attention mask를 예측에 바로 사용합니다. Attention mask의 차원이 입력의 개수에 따른다는 속성을 이용해 같은 크기의 학습파라미터를 가지고도 가변적인 개수의 TSP에 대해 동작하게 할 수 있습니다. 그럼으로써 5~20개 노드에 대한 Optimal solution으로 학습하여 그것보다 더 많은 (25~50개) 노드의 TSP에 대해서도 유의미한 성능을 얻어냈습니다.
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/pointer_network_5.png" alt="Experimental Results (Pointer Network)">
+  <figcaption style="text-align: center;">[그림3] u의 계산과정 <a href="#ref-7">[7]</a></figcaption>
+</p>
+</figure>
+
+반면, Pointer Network는 Sequence-to-Sequence의 attention mask($u$에 대한 softmax)를 예측에 바로 사용합니다. Attention mask의 차원이 입력의 개수에 따른다는 속성을 이용해 같은 크기의 학습파라미터를 가지고도 가변적인 개수의 TSP에 대해 동작하게 할 수 있습니다. 그럼으로써 5~20개 노드에 대한 Optimal solution으로 학습하여 그것보다 더 많은 (25~50개) 노드의 TSP에 대해서도 유의미한 성능을 얻어냈습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/pointer_network_3.png" alt="Experimental Results (Pointer Network)">
-  <figcaption style="text-align: center;">[그림3] Pointer Network의 실험결과 (A1~A3: Baselines) <a href="#ref-7">[7]</a></figcaption>
+  <figcaption style="text-align: center;">[그림4] Pointer Network의 실험결과 (A1~A3: Baselines) <a href="#ref-7">[7]</a></figcaption>
 </p>
 </figure>
 
@@ -66,7 +72,7 @@ Neural Combinatorial Optimization with Reinforcement Learning[[1]](#ref-1)의 �
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/pointer_network_4.png" alt="Experimental Results (Pointer Network)">
-  <figcaption style="text-align: center;">[그림4] Pointer Network의 실험결과: Convex hulls (좌), Delaunay (중앙) and TSP (우) <a href="#ref-7">[7]</a></figcaption>
+  <figcaption style="text-align: center;">[그림5] Pointer Network의 실험결과: Convex hulls (좌), Delaunay (중앙) and TSP (우) <a href="#ref-7">[7]</a></figcaption>
 </p>
 </figure>
 
@@ -124,7 +130,7 @@ Policy는 강화학습 에이전트의 행동방식을 정의합니다. 이는 �
 <p align="center">
   <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/experiment_config.png" alt="4 experimental configs">
 </p>
-  <figcaption style="text-align: center;">[그림5] 4 가지 실험 설정 <a href="#ref-1">[1]</a></figcaption>
+  <figcaption style="text-align: center;">[그림6] 4 가지 실험 설정 <a href="#ref-1">[1]</a></figcaption>
 </figure>
 
 
@@ -141,7 +147,7 @@ Policy는 강화학습 에이전트의 행동방식을 정의합니다. 이는 �
 <p align="center">
   <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/nco_result.png" alt="TSP50 / TSP100 experimental results">
 </p>
-  <figcaption style="text-align: center;">[그림6] 위: TSP50 / 아래: TSP100 (각 그림 아래 숫자는 총 여행거리를 의미) <a href="#ref-1">[1]</a></figcaption>
+  <figcaption style="text-align: center;">[그림7] 위: TSP50 / 아래: TSP100 (각 그림 아래 숫자는 총 여행거리를 의미) <a href="#ref-1">[1]</a></figcaption>
 </figure>
 
 
