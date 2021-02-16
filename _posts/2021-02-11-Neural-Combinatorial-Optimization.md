@@ -34,22 +34,14 @@ Neural Combinatorial Optimization with Reinforcement Learning[[1]](#ref-1)의 �
 
 #### Pointer Network
 
-이 논문에서는 Pointer Network[[7]](#ref-7)의 기본구조를 그대로 이용합니다. Sequence-to-Sequence 모델이 정해진 N개 노드에 대한 문제에서만 동작할 수 있는 것에 비해 Pointer Network는 임의 개수의 노드에 대해서도 동작할 수 있는 것이 특징입니다. 즉, 5개~20개 노드의 TSP를 학습한 뒤에 학습데이터에 존재하지 않는 25~50개 노드의 TSP에 대해서도 동작 가능한 구조입니다.
-
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/pointer_network_1.png" alt="Squence-to-Sequence vs Pointer Network">
+  <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/pointer_network_1.png" alt="Pointer Network Architecture">
+  <figcaption style="text-align: center;">[그림2] Pointer Network 구조 <a href="#ref-7">[7]</a></figcaption>
 </p>
 </figure>
 
-<figure class="image" style="align: center;">
-<p align="center">
-  <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/pointer_network_2.png" alt="Squence-to-Sequence vs Pointer Network">
-  <figcaption style="text-align: center;">[그림2] Sequence-to-Sequence vs Pointer Network <a href="#ref-7">[7]</a></figcaption>
-</p>
-</figure>
-
-먼저 Sequence-to-Sequence를 살펴보겠습니다. Sequence-to-Sequence는 전체 입력(각 노드의 이차원 좌표)에 대한 attention mask($a^i$)로 인코더의 hiden state($e_j$)를 가중평균(weighted average)한 벡터($d_i^{\prime}$)를 디코더의 hidden state($d_i$)와 결합(concatenation)하여 예측에 사용하고 또한 다음 스텝의 입력으로 넣어주는 구조입니다. 이 구조는 고정된 크기의 출력(예측해야 하는 카테고리)을 내보내기 때문에 출력의 크기가 가변적인 경우에는 사용하기에 적합하지 않습니다.
+이 논문에서는 Pointer Network[[7]](#ref-7)의 기본구조를 그대로 이용합니다. Pointer Network는 임의 개수의 노드에 대해서도 동작할 수 있는 것이 특징입니다. 즉, 상대적으로 적은 노드의 TSP를 학습한 뒤에 (학습데이터에 존재하지 않는) 더 많은 노드의 TSP에 대해서도 동작 가능한 구조입니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -58,7 +50,8 @@ Neural Combinatorial Optimization with Reinforcement Learning[[1]](#ref-1)의 �
 </p>
 </figure>
 
-반면, Pointer Network는 Sequence-to-Sequence의 attention mask($u^i$에 대한 softmax)를 예측에 바로 사용합니다. Attention mask의 차원이 입력의 개수에 따른다는 속성을 이용해 같은 크기의 학습파라미터를 가지고도 가변적인 개수의 TSP에 대해 동작하게 할 수 있습니다. 그럼으로써 5~20개 노드에 대한 Optimal solution으로 학습하여 그것보다 더 많은 (25~50개) 노드의 TSP에 대해서도 유의미한 성능을 얻어냈습니다.
+
+Pointer Network는 입력에 대한 attention mask($u^i$에 대한 softmax)를 예측에 바로 사용합니다. Attention mask의 차원이 입력의 개수에 따른다는 속성을 이용해 같은 크기의 학습파라미터를 가지고도 가변적인 개수의 TSP에 대해 동작하게 할 수 있습니다. 그럼으로써 5~20개 노드에 대한 Optimal solution으로 학습하여 그것보다 더 많은 (25~50개) 노드의 TSP에 대해서도 유의미한 성능을 얻어냈습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -76,7 +69,7 @@ Neural Combinatorial Optimization with Reinforcement Learning[[1]](#ref-1)의 �
 </p>
 </figure>
 
-이처럼 다양한 문제에 대해 유연하게 잘 동작하는 구조라는 점에서 본 논문의 저자들이 Pointer Network를 핵심적인 아이디어로 채택하였으며, 실험을 통해 Pointer Network에 강화학습이 적용된 방법론이 TSP 뿐만 아닌 Knapsack 문제에 대해서도 잘 동작함을 보입니다. (본 포스팅에서는 Knapsack 문제에 대한 내용은 생략하도록 하겠습니다.)
+이처럼 다양한 문제에 대해 유연하게 잘 동작하는 구조라는 점에서 본 논문[[1]](#ref-1)의 저자들이 Pointer Network를 핵심적인 아이디어로 채택하였으며, 실험을 통해 Pointer Network에 강화학습이 적용된 방법론이 TSP 뿐만 아닌 Knapsack 문제에 대해서도 잘 동작함을 보입니다. (본 포스팅에서는 Knapsack 문제에 대한 내용은 생략하도록 하겠습니다.)
 
 #### Policy Gradient (REINFORCE)
 
