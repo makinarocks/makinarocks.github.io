@@ -47,7 +47,12 @@ Google 논문에서 제시하는 방법은 전문가가 직접 배치하고 있�
 
 Agent가 배치하지 않는 다른 모든 소자들에 대해서는 전통적인 Chip Placement 방법론 중 하나인 Force-Directed Method를 사용합니다. 이때 전통적인 알고리즘을 사용한다 하더라도 배치 대상의 개수가 너무 많기 때문에 Standard Cell은 연결성이 높은 소자들끼리 Clustering을 진행한 후, Cluster 단위로 배치를 수행합니다. 아래 그림에서는 Hard Macro는 검은 박스로, Standard Cell Cluster는 회색 구름으로 표현되어 있습니다.
 
-<img src="{{site.image_url}}/paper-review/chip_placement_with_deep_reinforcement_learning_sequence.png" style="width:48em; display: block; margin: 0em auto; margin-top: 1em; margin-bottom: 1em">
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip_placement_with_reinforcement_learning/chip_placement_with_deep_reinforcement_learning_sequence.png" alt="normal gradient" width="90%">
+  <figcaption style="text-align: center;">[그림] - Placement Process</figcaption>
+</p>
+</figure>
 
 배치를 수행하는 Macro의 개수만 두고 본다면 Google에서 제시하는 방법론의 의미가 작아 보이기도 합니다. 하지만 다음 세 가지 면에 있어서 큰 의미를 가지고 있다고 생각합니다.
 
@@ -121,7 +126,12 @@ Chip Canvas는 영역 별로 일정한 Routing Resoure를 가지고 있으며, �
 
 ## 배치 문제를 위한 강화학습 모델
 
-<img src="{{site.image_url}}/paper-review/chip_placement_with_deep_reinforcement_learning_model.png" style="width:48em; display: block; margin: 0em auto;">
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip_placement_with_reinforcement_learning/chip_placement_with_deep_reinforcement_learning_model.png" alt="normal gradient" width="90%">
+  <figcaption style="text-align: center;">[그림] - Model Architecture</figcaption>
+</p>
+</figure>
 
 논문에서 제안하고 있는 모델은 크게 (1) Environemnt로 부터 전달받은 Observation에서 중요한 정보들을 추출하여 State Representation으로 만드는 State Encoder와 (2) State Representation을 바탕으로 적절한 Action을 결정하는 Policy and Value Network 두 부분으로 나누어 볼 수 있습니다.
 
@@ -192,13 +202,21 @@ Policy Network를 직접 업데이트해야 하기 때문에 Policy Gradient 계
 
 이에 대한 실험 결과는 다음과 같습니다. y축이 Placement Cost인 만큼 작으면 작을 수록 좋습니다.
 
-<img src="{{site.image_url}}/paper-review/chip_pre_training_is_need.png" style="width:40em; display: block; margin: 0px auto;">
-
-x축을 기준으로 오른쪽으로 갈수록 복잡도가 높은 문제라고 합니다. 가장 왼쪽의 TPU Block 하나만 가지고 Test를 진행한 경우에는 Pre-Training에 따른 성능 차이가 크지 않으나 문제가 복잡해질수록 그 차이가 커진다는 것을 확인할 수 있습니다. 또한 모든 경우에서 12시간 동안 Test 문제에 대해 Fine Tuning을 실시한 Pre-trained Model이 성능이 가장 좋음을 알 수 있습니다.
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip_placement_with_reinforcement_learning/chip_pre_training_is_need.png" alt="normal gradient" width="90%">
+  <figcaption style="text-align: center;">[그림] - Pre-training & Fine Tuning Performance Results</figcaption>
+</p>
+</figure>
 
 모든 Netlist에 대해 Pre-Training을 수행한 후 12시간 동안 Fine Tuning을 추가적으로 진행했을 때 가장 성능이 좋음을 알 수 있습니다.
 
-<img src="{{site.image_url}}/paper-review/chip_pre_training_make_it_faster.png" style="width:40em; display: block; margin: 0px auto;">
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip_placement_with_reinforcement_learning/chip_pre_training_make_it_faster.png" alt="normal gradient" width="90%">
+  <figcaption style="text-align: center;">[그림] - Pre-training & Fine Tuning Convergence Results</figcaption>
+</p>
+</figure>
 
 위의 그래프는 초록선으로 표현되는 Pre-Trained 방법과 파란선의 From-Scrach 방법 간의 수렴 속도를 비교하고 있으며, 이를 통해  Pre-Training을 수행했을 때 수렴 속도가 월등히 빠르다는 것을 확인할 수 있습니다. 이러한 점에서 Pre-Training과 Fine Tuning을 통해 최대한 많은 종류의 배치 결과를 학습한 에이전트가 배치 성능이 가장 좋으며, 수렴 속도 또한 빠르다고 할 수 있습니다.
 
@@ -206,7 +224,12 @@ x축을 기준으로 오른쪽으로 갈수록 복잡도가 높은 문제라고 
 
 Pre-Training의 목표는 State Encoder가 다양한 Observation을 경험하여 적절한 State Representation을 만들 수 있도록 하는 것입니다. 따라서 다양한 상황이 담기도록 데이터셋을 구성하는 것이 중요합니다. 이와 관련하여 Google 논문에서는 Netlist(TPU Block)의 종류를 2개부터 20개까지 늘려가며 실험을 진행했고, 그 결과 Training Set의 크기가 작을수록 Policy Network가 빠르게 오버피팅 되는 문제가 발생함을 확인할 수 있었다고 합니다. 실험 결과는 아래와 같습니다.
 
-<img src="{{site.image_url}}/paper-review/chip_large_dataset_is_better.png" style="width:40em; display: block; margin: 0px auto;">
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip_placement_with_reinforcement_learning/chip_large_dataset_is_better.png" alt="normal gradient" width="75%">
+  <figcaption style="text-align: center;">[그림] - Size of Pre-Training Dataset</figcaption>
+</p>
+</figure>
 
 위의 도표를 되면 거의 모든 경우에서 Train Set의 크기가 클수록 성능이 좋아지는 경향을 보이며 특히 Fine-Tuning을 적게 수행했을 때 그 차이가 더욱 도드라짐을 알 수 있습니다.
 
@@ -214,7 +237,12 @@ Pre-Training의 목표는 State Encoder가 다양한 Observation을 경험하여
 
 마지막으로 SOTA로 알려져 있는 배치 알고리즘 **RePLAce**와 전문가가 직접 수행하는 방법과 비교하는 실험을 진행하고 그 결과를 정리하고 있습니다. **Ours**로 표기된 것이 논문에서 제시하고 있는 방법을 사용한 것으로, 20개의 TPU Block을 대상으로 Pre-Training을 진행하고 5개의 Test TPU Block에 대해 Fine Tuning하여 얻은 수치라고 합니다. 그리고 **Manual**이 전문가 팀이 직접 EDA tool을 사용하여 반복적으로 개선하여 얻은 결과입니다.
 
-<img src="{{site.image_url}}/paper-review/chip_comparing_with_other_method.png" style="width:40em; display: block; margin: 0px auto;">
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip_placement_with_reinforcement_learning/chip_comparing_with_other_method.png" alt="normal gradient" width="100%">
+  <figcaption style="text-align: center;">[그림] - RL vs Human Experts vs RePlAce</figcaption>
+</p>
+</figure>
 
 Table의 메트릭을 정확하게 이해하기 위해서는 각각이 무엇을 의미하는지 정확하게 알아야하는데, 여기서 표를 이해하는 데에는 WNS가 100ps 이상이거나 Horizontal/Vertical Congestion이 1%를 넘기면 사용할 수 없는 배치가 된다는 점만 알아두시면 될 것 같습니다. 이러한 기준에 따르면 Block 1,2,3에 대한 RePLAce의 배치 결과는 이를 초과하고 있기 때문에 사용할 수 없다고 합니다. 이러한 점에서 자신들의 방법론이 보다 뛰어나다고 주장하고 있습니다.
 
