@@ -7,7 +7,7 @@ categories: [combinatorial_optimization, reinforcement_learning]
 
 안녕하세요. 마키나락스의 우경민입니다.
 
-Neural Combinatorial Optimization은 딥러닝을 사용하여 조합최적화문제(Combinatorial Optimization Problem)를 풀고자 하는 연구분야입니다. 이번 포스팅에서는 반도체 설계 공정 중 하나면서 조합 최적화 문제이기도 한 Chip Placement 문제에 강화학습을 적용하여 해결한 Google의 논문 Chip Placement with Reinforcement Learning을 소개해보고자 합니다.
+Neural Combinatorial Optimization은 딥러닝을 사용하여 조합 최적화 문제(Combinatorial Optimization Problem)를 풀고자 하는 연구분야입니다. 이번 포스팅에서는 반도체 설계 공정 중 하나면서 조합 최적화 문제이기도 한 Chip Placement 문제에 강화학습을 적용하여 해결한 Google의 논문 Chip Placement with Reinforcement Learning을 소개해보고자 합니다.
 
 ## 구글은 어떤 문제를 풀었나?
 
