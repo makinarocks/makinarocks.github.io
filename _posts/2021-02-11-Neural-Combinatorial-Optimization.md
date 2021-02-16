@@ -45,7 +45,7 @@ Neural Combinatorial Optimization with Reinforcement Learning[[1]](#ref-1)의 �
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/pointer_network_5.png" alt="Experimental Results (Pointer Network)">
+  <img style="width: 70%" src="/assets/images/2021-02-11-Neural-Combinatorial-Optimization/pointer_network_5.png" alt="Experimental Results (Pointer Network)">
   <figcaption style="text-align: center;">[그림3] u^i의 계산과정 <a href="#ref-7">[7]</a></figcaption>
 </p>
 </figure>
