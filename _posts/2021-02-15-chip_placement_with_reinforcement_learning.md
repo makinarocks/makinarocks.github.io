@@ -176,7 +176,7 @@ Graph Embedding과 Current Macro Embedding은 앞서 확인한 GNN 구조의 두
 
 Policy의 역할은 현재 주어진 Macro를 Chip Canvas 상의 어떤 지점에 배치할 것인지 결정하는 것입니다. 이때 Grid 형태의 확률 함수를 효과적으로 표현하기 위해 Deconvolution layer를 Policy Network에 사용한 것으로 보입니다.
 
-Policy Network를 직접 업데이트해야 하기 때문에 Policy Gradient 계열의 업데이트 알고리즘을 사용해야 하는데, 상대적으로 적은 연산량과 높은 성능 그리고 분산 학습에 강점을 보이는 PPO 알고리즘을 사용하고 있습니다([Proximal Policy Optimization Algorithms](<https://arxiv.org/pdf/1707.06347.pdf>)).
+Policy Network를 직접 업데이트해야 하기 때문에 Policy Gradient 계열의 업데이트 알고리즘을 사용해야 하는데, 상대적으로 적은 연산량과 높은 성능 그리고 분산 학습에 강점을 보이는 PPO 알고리즘을 사용하고 있습니다[[3](#ref-3)].
 
 ### State Representation을 더 잘 만드는 방법: Transfer Learning
 
@@ -255,3 +255,6 @@ Table의 메트릭을 정확하게 이해하기 위해서는 각각이 무엇을
 
 <a name="ref-2">[2]</a>  [Google AI Blog (2020). Chip Placement with Deep Reinforcement Learning
 .](https://ai.googleblog.com/2020/04/chip-design-with-deep-reinforcement.html)
+
+<a name="ref-3">[3]</a>  [John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, Oleg Klimov. Proximal Policy Optimization Algorithms
+.](https://arxiv.org/pdf/1707.06347.pdf)
