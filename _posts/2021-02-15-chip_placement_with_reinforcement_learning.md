@@ -128,7 +128,7 @@ Chip Canvas는 영역 별로 일정한 Routing Resoure를 가지고 있으며, �
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2021-02-15-chip_placement_with_reinforcement_learning/chip_placement_with_deep_reinforcement_learning_model.png" alt="normal gradient" width="90%">
+  <img src="/assets/images/2021-02-15-chip_placement_with_reinforcement_learning/chip_placement_with_deep_reinforcement_learning_model.png" alt="normal gradient" width="100%">
   <figcaption style="text-align: center;">[그림] - Model Architecture</figcaption>
 </p>
 </figure>
