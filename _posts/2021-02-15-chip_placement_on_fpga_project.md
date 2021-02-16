@@ -9,7 +9,7 @@ categories: [combinatorial_optimization, reinforcement_learning]
 
 MakinaRocks의 COP 팀에서는 지난 2020년 9월부터 2021년 1월까지 반도체 설계 공정 중 하나인 Placement & Routing에 강화학습을 적용하는 프로젝트를 진행했습니다. AI Chip 설계를 전문으로 하는 펩리스(fabless) 스타트업 Furiosa AI와의 협업으로 진행되었으며, Furiosa AI가 가지고 있는 반도체 설계 기술과 Makinarocks의 산업 AI 역량을 결합하여 상용 FPGA EDA Tool과 비교해 효율적인 문제 해결의 가능성을 확인할 수 있었습니다. 
 
-본 프로젝트는 지난 2020년 4월 Google에서 발표한 Chip Placement with Deep Reinforcement Learning 논문에 기초를 두고 있으며, 논문에서 제시하는 문제 정의를 참고하였습니다. 다만 ASIC을 대상으로 하는 논문과는 달리 FPGA를 대상으로 하였다는 점에서 큰 차이가 있습니다. 
+본 프로젝트는 지난 2020년 4월 Google에서 발표한 Chip Placement with Deep Reinforcement Learning[[1](#ref-1)] 논문에 기초를 두고 있으며, 논문에서 제시하는 문제 정의를 참고하였습니다. 다만 ASIC을 대상으로 하는 논문과는 달리 FPGA를 대상으로 하였다는 점에서 큰 차이가 있습니다. 
 
 ## 문제 정의부터 살펴보기
 
@@ -27,19 +27,38 @@ COP 팀에서는 논리적으로 정의된 소자들의 연결 그래프를 입�
 
 #### Programmable의 의미는?
 
-FPGA에서의 배치 문제를 정확하게 이해하기 위해서는 FPGA의 동작 방식에 대해 간략히 알고 있어야 합니다. FPGA가 Programmable 한 이유는 모든 소자가 미리 배치되어 있고, 전선들 또한 개별 소자들을 서로 연결할 수 있도록 미리 배치되어 있기 때문입니다. 즉 FPGA에서 프로그래밍한다는 것은 어떤 소자를 활성화시킬지 결정하는 작업이라고 할 수 있습니다.
+FPGA에서의 배치 문제를 정확하게 이해하기 위해서는 FPGA의 동작 방식에 대해 간략히 알고 있어야 합니다. FPGA가 Programmable 한 이유는 모든 소자가 미리 배치되어 있고, 전선들 또한 개별 소자들을 서로 연결할 수 있도록 미리 배치되어 있기 때문입니다. 즉 FPGA에서 프로그래밍한다는 것은 어떤 소자를 활성화시킬지 결정하는 작업이라고 할 수 있습니다. 아래 그림은 Vivado 상에서 FPGA Board의 일부분을 캡쳐한 것인데, 각각의 작은 네모 박스들이 색깔별로 서로 다른 소자(TILE)를 나타냅니다.
 
-[보드 이미지]
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_chip_canvas.png" alt="normal gradient" width="80%">
+  <figcaption style="text-align: center;">[그림] - FPGA Board</figcaption>
+</p>
+</figure>
 
-이때 활성화의 단위 소자를 BEL이라고 부릅니다. 참고로 BEL은 FPGA를 구성하는 최소 단위이기도 한데, Xilinx FPGA는 다음과 같은 계층 구조로 되어 있습니다. 자세한 내용은 Xilinx의 [Rapid Wright](<https://www.rapidwright.io/docs/Xilinx_Architecture.html>)를 참고하시기 바랍니다.
+이때 활성화의 단위 소자를 BEL이라고 부릅니다. 참고로 BEL은 FPGA를 구성하는 최소 단위이기도 한데, Xilinx FPGA는 다음과 같은 계층 구조로 되어 있습니다. 아래 이미지는 위의 이미지를 매우 크게 확대한 것으로, 자세한 내용은 Xilinx의 Rapid Wright 홈페이지[[3](#ref-3)]를 참고하시기 바랍니다.
 
-[FPGA 계층 구조 이미지]
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_tile_site_bel.png" alt="normal gradient" width="80%">
+  <figcaption style="text-align: center;">[그림] - TILE & SITE & BEL</figcaption>
+</p>
+</figure>
 
 ### 반도체 설계도, Netlist
 
 Netlist는 반도체의 논리적인 설계도로서, 여기에는 반도체가 동작하려면 어떤 소자들이 필요하고, 각각의 소자들은 어떻게 연결되어 있는지 정의되어 있습니다. 이러한 Netlist에는 개별 소자들의 연결 관계만 담겨 있을 뿐 각각의 소자들의 위치 정보나 어떤 소자가 다른 소자와 얼마나 가까워야 하는지에 대한 정보는 포함되어 있지 않습니다. Chip Placement란 Netlist 설계도에 정의되어 있는 내용을 최적 동작이 가능하도록 Netlist를 구성하는 소자들의 위치를 결정하는 과정이라고 할 수 있습니다.
 
-[배치 결과 txt 사진]
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_txt_result.png" alt="normal gradient" width="70%">
+  <figcaption style="text-align: center;">[그림] - txt result</figcaption>
+</p>
+</figure>
+
+프로젝트에서 개발한 모델의 출력 값이라고 할 수 있는 위의 이미지는 Netlist에 정의된 각 소자들이 FPGA에 어떻게 배치되어야 하는지에 대한 정보를 담고 있습니다. 각각의 Row가 소자와 BEL 간의 매핑 값이라고 할 수 있는데, 개별 Row의 의미는 다음과 같습니다.
+
+> [NETLIST MACRO NAME] [FPGA SITE NAME] [FPGA BEL NAME]
 
 #### Macro & Standard Cell
 
@@ -113,7 +132,19 @@ Google 논문에서 제시하는 Observation의 유형으로는 Macro Feature, N
 
 Reward Function 또한 직접 작성했기 때문에 유효성을 검증하는 작업이 필요했습니다. 이에 대해서는 최적 배치를 기준으로 임의성의 수준을 달리하며 구한 배치 결과들의 Reward를 비교하는 방식으로 확인하였습니다.
 
-[Reward Function 검증 실험 이미지 - Wire length / routing congestion]
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_wirelength.png" alt="normal gradient" width="80%">
+  <figcaption style="text-align: center;">[그림] - Wire Length for Random Placement</figcaption>
+</p>
+</figure>
+
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_routing_congestion.png" alt="normal gradient" width="80%">
+  <figcaption style="text-align: center;">[그림] - Routing Congestion for Random Placement</figcaption>
+</p>
+</figure>
 
 오른쪽으로 갈수록 임의성이 높은 배치의 결과를 보여줍니다. 이를 통해 임의성이 높아질수록 Reward를 구성하는 두 요소 Wire Length와 Routing Congestion 모두 증가함을 알 수 있습니다. 각각의 배치는 Vivado를 통해 확보한 8개의 서로 다른 조건에서의 최적 배치를 기준으로 일정 비율의 소자들의 위치를 임의로 변경하는 식으로 확보하였고, 각각의 값은 80개의 배치 결과를 평균하여 얻은 결과입니다.
 
@@ -158,11 +189,27 @@ Vivado Placement의 Overall Score가 -1.1707인 반면 강화학습 에이전트
 
 각 배치를 시각화하면 다음과 같습니다.
 
-[Random 배치]
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_random_result.png" alt="normal gradient" width="90%">
+  <figcaption style="text-align: center;">[그림] - Random result</figcaption>
+</p>
+</figure>
 
-[Vivado 배치]
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_vivado_result.png" alt="normal gradient" width="90%">
+  <figcaption style="text-align: center;">[그림] - Vivado result</figcaption>
+</p>
+</figure>
 
-[RL 배치]
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_rl_result.png" alt="normal gradient" width="90%">
+  <figcaption style="text-align: center;">[그림] - RL result</figcaption>
+</p>
+</figure>
+
 
 시각적으로 보더라도 COP 팀의 RL Placement가 가장 좁은 영역에 배치한 것을 확인할 수 있습니다. 참고로 파란색 사각형은 Vivado에서 배치한 결과를, 주황색 사각형은 제약조건으로 결정된 배치 결과를 의미합니다. RL Placement와 Random Placement의 배치 결과는 모두 Constraint로 Vivado에 전달되므로 모두 주황색 사각형으로 표현되고 있습니다. Routing은 모두 Vivado의 Solution을 따랐습니다.
 
@@ -182,3 +229,14 @@ Google의 Chip Placement with Reinforcement Learning 논문은 강화학습 알�
 또한 전체 문제를 강화학습으로 푸는 것이 아니라 강화학습과 문제의 전통적인 알고리즘들이 가지는 특성을 정확히 이해하고 필요에 따라 분업이 이뤄져야 할 것으로 보입니다. 이와 관련해서는 단순히 성능 뿐만 아니라 연산에 소요되는 시간, 알고리즘의 범용성, Re-Training의 필요성 등이 주요 고려 요소가 될 것입니다.
 
 마지막으로 위의 두 가지 모두 해결하고자 하는 문제의 특성을 정확히 알아야 가능한 부분이라는 공통점을 가지고 있습니다. 이러한 점에서 실험실이 아닌 현실 문제를 해결하기 위해서는 강화학습에서도 Domain Knowledge에 대한 깊은 이해와 머신러닝 지식에 대한 결합이 중요하게 여겨져야 할 것입니다.
+
+## References
+
+<a name="ref-1">[1]</a>  [Azalia Mirhoseini, Anna Goldie, Mustafa Yazgan, Joe Jiang, Ebrahim Songhori, Shen Wang, Young-Joon Lee, Eric Johnson, Omkar Pathak, Sungmin Bae, Azade Nazi, Jiwoo Pak, Andy Tong, Kavya Srinivasa, William Hang, Emre Tuncer, Anand Babu, Quoc V. Le, James Laudon, Richard Ho, Roger Carpenter, Jeff Dean (2020). Chip Placement with Deep Reinforcement Learning
+.](https://arxiv.org/abs/2004.10746)
+
+<a name="ref-2">[2]</a>  [Google AI Blog (2020). Chip Placement with Deep Reinforcement Learning
+.](https://ai.googleblog.com/2020/04/chip-design-with-deep-reinforcement.html)
+
+<a name="ref-3">[3]</a>  [Rapid Wright. Xilinx Architecture Terminology
+.](https://www.rapidwright.io/docs/Xilinx_Architecture.html)
