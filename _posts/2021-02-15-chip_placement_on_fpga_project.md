@@ -7,10 +7,6 @@ categories: [combinatorial_optimization, reinforcement_learning]
 
 안녕하세요. 마키나락스의 우경민입니다.
 
-이번 포스팅에서는 MakinaRocks의 COP(Combinatorial Optimization Problem) 팀에서 진행한 Chip Placement on FPGA 프로젝트를 소개하고자 합니다.
-
-## 어떤 프로젝트인가?
-
 MakinaRocks의 COP 팀에서는 지난 2020년 9월부터 2021년 1월까지 반도체 설계 공정 중 하나인 Placement & Routing에 강화학습을 적용하는 프로젝트를 진행했습니다. AI Chip 설계를 전문으로 하는 펩리스(fabless) 스타트업 Furiosa AI와의 협업으로 진행되었으며, Furiosa AI가 가지고 있는 반도체 설계 기술과 Makinarocks의 산업 AI 역량을 결합하여 상용 FPGA EDA Tool과 비교해 효율적인 문제 해결의 가능성을 확인할 수 있었습니다. 
 
 본 프로젝트는 지난 2020년 4월 Google에서 발표한 Chip Placement with Deep Reinforcement Learning 논문에 기초를 두고 있으며, 논문에서 제시하는 문제 정의를 참고하였습니다. 다만 ASIC을 대상으로 하는 논문과는 달리 FPGA를 대상으로 하였다는 점에서 큰 차이가 있습니다. 
