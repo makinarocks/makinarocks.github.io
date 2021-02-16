@@ -247,3 +247,11 @@ Pre-Training의 목표는 State Encoder가 다양한 Observation을 경험하여
 Table의 메트릭을 정확하게 이해하기 위해서는 각각이 무엇을 의미하는지 정확하게 알아야하는데, 여기서 표를 이해하는 데에는 WNS가 100ps 이상이거나 Horizontal/Vertical Congestion이 1%를 넘기면 사용할 수 없는 배치가 된다는 점만 알아두시면 될 것 같습니다. 이러한 기준에 따르면 Block 1,2,3에 대한 RePLAce의 배치 결과는 이를 초과하고 있기 때문에 사용할 수 없다고 합니다. 이러한 점에서 자신들의 방법론이 보다 뛰어나다고 주장하고 있습니다.
 
 다만 학습 속도와 관련해서는 RePLAce가 보다 나은 방법으로, 한 시간에서 3.5시간 정도 걸리는 데에 반해 논문의 방법은 학습시간까지 모두 포함하여 3시간에서 6시간 정도 걸렸다고 합니다.
+
+## References
+
+<a name="ref-1">[1]</a>  [Azalia Mirhoseini, Anna Goldie, Mustafa Yazgan, Joe Jiang, Ebrahim Songhori, Shen Wang, Young-Joon Lee, Eric Johnson, Omkar Pathak, Sungmin Bae, Azade Nazi, Jiwoo Pak, Andy Tong, Kavya Srinivasa, William Hang, Emre Tuncer, Anand Babu, Quoc V. Le, James Laudon, Richard Ho, Roger Carpenter, Jeff Dean (2020). Chip Placement with Deep Reinforcement Learning
+.](https://arxiv.org/abs/2004.10746)
+
+<a name="ref-2">[2]</a>  [Google AI Blog (2020). Chip Placement with Deep Reinforcement Learning
+.](https://ai.googleblog.com/2020/04/chip-design-with-deep-reinforcement.html)
