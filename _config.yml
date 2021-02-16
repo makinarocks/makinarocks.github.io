@@ -60,6 +60,15 @@ authors:
     web: 
     description:
 
+  kyeongmin woo:
+    name: kyeongmin woo
+    display_name: kyeongmin woo
+    avatar: 'assets/images/team/kyeongminwoo.png'
+    gravatar: 
+    email:
+    web: 
+    description:
+
 # Plugins
 plugins:
   - jekyll-paginate
