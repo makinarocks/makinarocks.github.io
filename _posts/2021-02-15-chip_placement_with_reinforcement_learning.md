@@ -5,7 +5,7 @@ author: kyeongmin woo
 categories: [combinatorial_optimization, reinforcement_learning]
 ---
 
-안녕하세요. 마키나락스의 우경민입니다.
+안녕하세요. Makinarocks의 우경민입니다.
 
 Chip Placement 문제는 반도체 설계 공정 중 하나로 조합 최적화 문제입니다. 이번 포스팅에서는 Chip Placement 문제에 강화학습을 적용한 Google의 Chip Placement with Reinforcement Learning[[1](#ref-1)] 논문(이하 Google의 Chip Placement 논문)을 소개해보고자 합니다.
 
