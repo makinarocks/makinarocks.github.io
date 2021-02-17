@@ -7,45 +7,64 @@ categories: [combinatorial_optimization, reinforcement_learning]
 
 안녕하세요. 마키나락스의 우경민입니다.
 
-Neural Combinatorial Optimization은 딥러닝을 사용하여 조합 최적화 문제(Combinatorial Optimization Problem)를 풀고자 하는 연구분야입니다. 이번 포스팅에서는 반도체 설계 공정 중 하나면서 조합 최적화 문제이기도 한 Chip Placement 문제에 강화학습을 적용하여 해결한 Google의 논문 Chip Placement with Reinforcement Learning을 소개해보고자 합니다.
+이번 포스팅에서는 반도체 설계 공정 중 하나면서 조합 최적화 문제이기도 한 Chip Placement 문제에 강화학습을 적용하여 해결한 Google의 논문 Chip Placement with Reinforcement Learning[[1](#ref-1)]을 소개해보고자 합니다.
 
 ## 구글은 어떤 문제를 풀었나?
 
 현재 범용적으로 사용되고 있는 CPU, GPU, DRAM과 같은 반도체들은 수백 수천만 개의 소자들로 구성되어 있고, 각각의 소자들은 기능에 맞게 연결되어 있습니다. 새로운 건물을 짓는 것과 마찬가지로 반도체 생산 또한 설계부터 제조까지 일련의 공정들을 따라 진행되는데, 나노미터 단위 상에서 수천만 개의 소자들을 다루어야 하다보니 각각의 공정들은 매우 높은 복잡도를 가지고 있습니다. Chip Placement 문제는 반도체 설계 및 제조의 여러 공정 중에서도 Placement & Routing(P&R) 공정에 속하는 문제로, 단순하게 말하면 주어진 Chip Canvas 상에 논리적으로 정의된 반도체의 소자들을 배치하는 작업이라고 할 수 있습니다.
 
-[Placement & Routing 문제에 대한 이미지 추가하기]
-
 반도체 산업을 구성하는 일련의 과정 중 하나라는 관점에서 본다면 P&R 공정은 논리적으로 정의되어 있는 반도체 설계 도면을 실제 물리적인 공간 상에 어떻게 구현할지 결정하는 단계입니다. 따라서 P&R 공정의 입력은 반도체의 논리적인 설계도가 되고, 출력은 각각의 소자 및 이들을 연결하는 선들의 위치가 정확하게 정해져 있는 물리적인 설계도가 됩니다. 
 
-문제에 대한 정확한 이해를 위해 산업에서 사용되는 용어들을 먼저 정리하고 넘어가도록 하겠습니다. 앞서 P&R 공정의 입력을 반도체의 논리적인 설계도라고 하였는데, 각 소자들의 특성과 연결 관계를 논리적으로 정의하고 있는 데이터를 Netlist라고 합니다. 그리고 이 Netlist를 구성하는 소자들 중에서 상대적으로 크기가 큰 소자들을 Macro, 작은 소자들을 Standard Cell이라고 합니다. 각각의 소자들의 연결로서, 전기적 신호를 주고 받는 데에 사용되는 선은 Wire라고 부릅니다. 마지막으로 Macro, Standard Cell, Wire 등 반도체를 구성하는 모든 것이 배치되는 공간을 Chip Canvas라고 합니다.
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip_placement_with_reinforcement_learning/chip_placement_placement_and_routing.png" alt="normal gradient" width="90%">
+  <figcaption style="text-align: center;">[그림] - Placement & Routing</figcaption>
+</p>
+</figure>
+
+문제에 대한 정확한 이해를 위해 산업에서 사용되는 용어들을 먼저 정리하고 넘어가도록 하겠습니다. 앞서 P&R 공정의 입력을 반도체의 논리적인 설계도라고 하였는데, 여기서 말하는 논리적 설계도란 각 소자들의 특성과 연결 관계를 논리적으로 정의하고 있는 데이터이며 이를 **Netlist**라고 합니다. 그리고 이 Netlist를 구성하는 소자들 중에서 상대적으로 크기가 큰 소자들을 **Macro**, 작은 소자들을 **Standard Cell**이라고 합니다. 각각의 소자들의 연결로서, 전기적 신호를 주고 받는 데에 사용되는 선은 Wire라고 부릅니다. 마지막으로 Macro, Standard Cell, Wire 등 반도체를 구성하는 모든 것이 배치되는 공간을 **Chip Canvas**라고 합니다.
 
 ### 좋은 배치란 무엇일까?
 
-그렇다면 Chip Canvas 상에 소자들을 어떻게 배치해야 잘 배치했다고 할 수 있을까요. 산업에서는 Performance, Power, Area, 줄여서 PPA라고 부르는 기준들을 주로 사용합니다. 쉽게 말해 Clock Frequency(Performance)가 높고, 전력(Power)을 적게 소모하며, 사용하는 Chip Canvas의 크기(Area)가 작을수록 좋은 배치라는 것입니다. 이를 반대로 생각해보면 각각의 소자들을 어떻게 배치하느냐에 따라 반도체의 수준이 결정된다고 할 수 있습니다.
+그렇다면 Chip Canvas 상에 소자들을 어떻게 배치해야 잘 배치했다고 할 수 있을까요. 산업에서는 Performance, Power, Area, 줄여서 PPA라고 부르는 기준들을 주로 사용합니다. 쉽게 말해 **Clock Frequency(Performance)가 높고, 전력(Power)을 적게 소모하며, 사용하는 Chip Canvas의 크기(Area)가 작을수록 좋은 배치**라는 것입니다. 이를 반대로 생각해보면 각각의 소자들을 어떻게 배치하느냐에 따라 반도체의 수준이 결정된다고 할 수 있습니다.
 
-소자의 배치와 PPA의 인과 관계를 생각해 본다면, 세 가지 기준 중 Area가 가장 명확하다고 할 수 있습니다. 소자들 간의 빈 공간이 없도록 배치한다면 아래 그림처럼 필요한 배치 영역의 크기가 작을 것이고, 빈 공간이 많아지면 많아질수록 커질 것입니다. 
+소자의 배치와 PPA의 인과 관계를 생각해 본다면, 세 가지 기준 중 Area가 가장 명확하다고 할 수 있습니다. 소자들 간의 빈 공간이 없도록 배치한다면 필요한 배치 영역의 크기가 작을 것이고, 빈 공간이 많아지면 많아질수록 커질 것입니다. Area가 작아지게 되면 하나의 웨이퍼(Wafer)에 많은 Chip을 생산할 수 있다는 것을 의미하므로 수율이 높아지게 됩니다.
 
-[소자의 배치와 PPA 이미지 추가하기]
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip_placement_with_reinforcement_learning/chip_placement_chip_canvas_size.png" alt="normal gradient" width="80%">
+  <figcaption style="text-align: center;">[그림] - Size of Chip Canvas</figcaption>
+</p>
+</figure>
 
-Clock Frequency와 전력에 관한 관계를 이해하려면 컴퓨터 공학 또는 전기 공학적인 지식이 필요한데, 간략하게 짚고 넘어가면 Wire의 길이가 짧으면 짧을수록 전기 신호가 더욱 빨리 도달할 수 있어 높은 Clock Frequency가 가능해지고, 동시에 Wire를 통과하며 사용되는 전력이 줄어든다 정도로 이해할 수 있습니다.
-
-[소자의 배치와 Clock Frequency 이미지 추가하기]
-
-[소자의 배치와 Power 이미지 추가하기]
+또한 Wire의 길이가 짧으면 짧을수록 전기 신호가 더욱 빨리 도달할 수 있어 높은 Clock Frequency가 가능해지고, 동시에 Wire를 통과하며 사용하는 전력이 줄어들게 됩니다. 이는 짧은 길을 가야할 때 더 빨리 도착하고 동시에 더 적은 연료를 소모하는 것과 비슷합니다.
 
 위의 세 가지 기준만 놓고 본다면 소자들 간의 연결성에 비례하여 가깝게 배치하면 최적 배치를 달성할 수 있을 것으로 보입니다. 전체적으로 필요한 면적이나, Wire의 길이 모두 서로 연결된 소자들이 가까우면 줄어들 것이기 때문입니다. 하지만 연결성 만을 고려해서는 현실적인 배치가 이뤄질 수가 없는데, Chip Canvas의 영역마다 Routing Resource, 즉 할당 가능한 Wire의 수가 한정적이기 때문입니다.
 
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip_placement_with_reinforcement_learning/chip_placement_increase_wirelength_with_detour.png" alt="normal gradient" width="80%">
+  <figcaption style="text-align: center;">[그림] - Routing Resource and Wire Length</figcaption>
+</p>
+</figure>
+
 ### 기존에는 어떻게 풀었을까?
 
-위와 같은 여러가지 현실적인 제약 조건들까지 만족하며 배치해야 한다는 점에서 Chip Placement 문제는 복잡도가 매우 높다고 할 수 있습니다. 그런데 보장된 최적의 해를 찾는 것은 불가능 하더라도 그에 가까운 해를 찾는 전통적인 알고리즘들은 많이 알려져 있습니다. 대표적으로는 Simulated Annealing과 Force-Directed Method가 있습니다. 현재 반도체 산업에서는 이러한 알고리즘들을 다양하게 변형하여 여러 상황에서 최적의 P&R을 찾고 있습니다. 기존 알고리즘에 대한 구체적인 설명은 [VLSI Cell Placement Techniques](<http://users.eecs.northwestern.edu/~haizhou/357/p143-shahookar.pdf>) 논문에서 자세히 다루고 있는 만큼 참고하시면 좋을 것 같습니다.
+위와 같은 여러가지 현실적인 제약 조건들까지 만족하며 배치해야 한다는 점에서 Chip Placement 문제는 복잡도가 매우 높다고 할 수 있습니다. 그런데 보장된 최적의 해를 찾는 것은 불가능 하더라도 그에 가까운 해를 찾는 전통적인 알고리즘들은 많이 알려져 있습니다. 대표적으로는 Simulated Annealing과 Force-Directed Method가 있습니다. 현재 반도체 산업에서는 이러한 알고리즘들을 다양하게 변형하여 여러 상황에서 최적의 P&R을 찾고 있습니다. 기존 알고리즘에 대한 구체적인 설명은 VLSI Cell Placement Techniques[[4](#ref-4)]에서 자세히 다루고 있는 만큼 참고하시면 좋을 것 같습니다.
+
+>Five major algorithms for placement are discussed: simulated annealing,
+force-directed placement, rein-cut placement, placement by numerical optimization,
+and evolution-based placement. (VLSI Cell Placement Techniques)
 
 이와 관련하여 산업의 이야기를 덧붙이면 P&R 뿐만 아니라 반도체의 설계 과정에서 많은 부분을 자동화해주는 툴을 EDA(Electronic design automation)라고 하고, 많은 반도체 설계 전문 회사들이 Cadence, Synopsys와 같은 글로벌 기업의 EDA Tool을 사용하여 설계 과정 상의  여러 복잡한 문제들을 해결하고 있습니다. 하지만 자동화 툴이라고 해서 모든 것이 100% 자동적으로 이뤄지는 것은 아니며, EDA Tool을 누가 어떻게 사용하느냐에 따라 결과물의 수준이 확연히 달라진다고 합니다. P&R 문제만 놓고 보더라도 크기가 상대적으로 크고, 내부의 구조가 미리 결정되어 있는 Hard Macro의 경우에는 전문가가 직접 배치하는 것이 일반적입니다.
 
 ### 배치 문제에 강화학습 적용하기
 
-Google 논문에서 제시하는 방법은 전문가가 직접 배치하고 있는 Hard Macro들만 강화학습 Agent로 배치하고 있습니다. 즉 전체 Chip Placement 문제를 강화학습 Agent로 해결하는 것이 아니며, 정확하게 말하면 수백 수천만 개의 소자들 중에서 몇백 개의 소자들만 강화학습으로 배치합니다. 
+Google 논문[[1](#ref-1)]에서 제시하는 방법은 전문가가 직접 배치하고 있는 Hard Macro들만 강화학습 Agent로 배치하고 있습니다. 즉 전체 Chip Placement 문제를 강화학습 Agent로 해결하는 것이 아니며, 정확하게 말하면 수백 수천만 개의 소자들 중에서 몇백 개의 소자들만 강화학습으로 배치합니다. 
 
-Agent가 배치하지 않는 다른 모든 소자들에 대해서는 전통적인 Chip Placement 방법론 중 하나인 Force-Directed Method를 사용합니다. 이때 전통적인 알고리즘을 사용한다 하더라도 배치 대상의 개수가 너무 많기 때문에 Standard Cell은 연결성이 높은 소자들끼리 Clustering을 진행한 후, Cluster 단위로 배치를 수행합니다. 아래 그림에서는 Hard Macro는 검은 박스로, Standard Cell Cluster는 회색 구름으로 표현되어 있습니다.
+Agent가 배치하지 않는 다른 모든 소자들에 대해서는 전통적인 Chip Placement 방법론 중 하나인 Force-Directed Method를 사용합니다. 이때 전통적인 알고리즘을 사용한다 하더라도 배치 대상의 개수가 너무 많기 때문에 Standard Cell은 연결성이 높은 소자들끼리 Clustering을 진행한 후, Cluster 단위로 배치를 수행합니다. 이를 통해 배치 대상의 개수를 수백만 개에서 수천 개 수준으로 축소하여 복잡성을 낮추고 있습니다.
+
+아래 그림[[1](#ref-1)]은 Google 논문의 배치 순서를 나타내고 있습니다. 검은 박스로 나타낸 것이 Hard Macro, 회색 구름으로 나타낸 것이 Standard Cell Cluster 입니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -54,25 +73,25 @@ Agent가 배치하지 않는 다른 모든 소자들에 대해서는 전통적�
 </p>
 </figure>
 
-배치를 수행하는 Macro의 개수만 두고 본다면 Google에서 제시하는 방법론의 의미가 작아 보이기도 합니다. 하지만 다음 세 가지 면에 있어서 큰 의미를 가지고 있다고 생각합니다.
+강화학습을 사용한 Macro 배치는 다음 세 가지 면에 있어서 큰 의미를 가지고 있습니다.
 
 - Chip Placement 문제를 강화학습으로 해결할 수 있도록 수학적으로 정의한 점
-- Chip Placement 자동화 툴에서 제공하지 않아 전문가가 수작업으로 처리해야 했던 부분을 자동화했다는 점
+- 주로 수작업으로 처리했던 배치 과정을 자동화했다는 점
 - 전문가 및 기존 알고리즘과 비교해 볼 때 높은 성능을 보였다는 점
 
 본 포스팅에서는 위의 의미들을 중심으로 논문 리뷰를 진행하려 합니다.
 
 ## 배치 문제를 강화학습에 맞게 재정의하기
 
-어떤 문제를 강화학습으로 풀기 위해서는 강화학습에 맞게 수학적으로 문제를 재정의해야 합니다. 정확하게는 주어진 문제를 MDP(Markov Decision Process)의 형태로 만들어 주어야 합니다. 참고로 MDP는 강화학습의 기본적인 가정으로서, 확률적인 환경 속에서 일정 시간마다 의사결정을 내려야 하는 상황을 수학적으로 모델링하는 방법입니다.
+어떤 문제를 강화학습으로 풀기 위해서는 강화학습에 맞게 문제를 재정의해야 합니다. 정확하게는 주어진 문제를 MDP(Markov Decision Process)의 형태로 만들어 주어야 합니다. 참고로 MDP는 강화학습의 기본적인 가정으로서, 확률적인 환경 속에서 일정 시간마다 의사결정을 내려야 하는 상황을 수학적으로 모델링하는 방법입니다. MDP에 대한 명확한 정의와 특성은 Sutton & Barto의 Reinforcement Learning: Introduction[[5](#ref-5)]를 참고하시면 좋을 것 같습니다.
 
-Chip Placement 문제를 MDP로 정의한다는 것은 구체적으로 MDP의 네 가지 요소인 $$(S, A, P_{s,s'}, R)$$을 Chip Placement 문제의 특성에 맞게 정의한다는 것입니다. 논문에서는 다음과 같이 정의하고 있습니다.
+Chip Placement 문제를 MDP로 정의한다는 것은 구체적으로 MDP의 네 가지 요소인 $$(S, A, P_{s,s'}, R)$$을 문제의 특성에 맞게 정의한다는 것입니다. 논문에서는 각각에 대해 다음과 같이 정의하고 있습니다.
 
 ### $$S$$: State Space
 
 State는 현재 Agent가 처해 있는 상황에 대한 정보를 의미합니다. Chip Placement 문제의 특성상 여기에는 여러 정보들이 포함될 수 있는데, 논문에서 제안하는 정보들은 다음과 같습니다.
 
-- 어떤 소자들이 어떻게 연결되어 있는지 Netlist에서 담고 있는 정보
+- 소자들 간의 연결성에 대한 정보
 - Chip Canvas의 상태, 즉 어떤 Macro가 어디에 배치되어 있는지에 대한 정보
 - 이번 Step에 배치될 Macro의 크기 등에 관한 정보
 - Macro를 배치 가능한지에 대한 정보
@@ -87,7 +106,7 @@ State Transition이란 State $$s$$에서 Action $$a$$를 선택했을 때, 그 �
 
 ### $$R$$: Reward Function
 
-State Transition이 현재 State와 Action의 조합의 결과로 다음에 주어질 State에 관한 것이라면, Reward는 현재 State와 Action의 조합이 얼마나 좋은지 평가하는 스칼라 값입니다. 강화학습은 Reward의 총합에 대한 기대값을 높이는 방향으로 업데이트 되기 때문에 Reward를 결정하는 함수가 어떻게 되어있느냐에 따라 강화학습 알고리즘의 학습 방향이 결정됩니다. 가능한 모든 Netlist Graph 집합을 $$G$$(크기 $$K$$)라고 하고, 각 Netlist $$g$$에 대한 배치 결과를 $$p$$라고 할 때 목적 함수는 다음과 같이 정의됩니다.
+State Transition이 현재 State와 Action의 조합의 결과로 다음에 주어질 State에 관한 것이라면, Reward는 현재 State와 Action의 조합이 얼마나 좋은지 평가하는 스칼라 값입니다. 강화학습은 Reward의 총합에 대한 기댓값을 높이는 방향으로 업데이트 되기 때문에 Reward를 결정하는 함수가 어떻게 되어있느냐에 따라 강화학습 알고리즘의 학습 방향이 결정됩니다. 가능한 모든 Netlist Graph 집합을 $$G$$(크기 $$K$$)라고 하고, 각 Netlist $$g$$에 대한 배치 결과를 $$p$$라고 할 때 목적 함수는 다음과 같이 정의됩니다.
 
 $$
 J(\theta, G) = {1 \over K} \Sigma_{g \backsim G} E_{g,p \backsim \pi_\theta} [R_{p,g}]
@@ -97,14 +116,18 @@ Chip Placement 문제를 해결하는 Agent를 만들기 위해서는 이상적�
 
 하지만 여기에 한 가지 문제가 있다면 어떤 배치에 대해 정확한 WNS와 Dynamic Power를 계산하려면 Placement 이후 작업인 Routing이 완료되어야 합니다. 이렇게 되면 한 번의 Reward 계산에 매우 많은 시간이 요구됩니다. 학습을 위해 만 개 단위의 Transition을 $$(s, a, r, s')$$ 요구하는 강화학습의 특성상 Reward 계산에 너무 많은 시간이 들어가게 되면 전체적인 학습 속도가 크게 느려질 수밖에 없습니다.
 
-이러한 문제를 해결하기 위해 논문에서는 속도가 빠르면서도 전력 소모 및 성능을 간접적으로 파악할 수 있는 값들인 Wire Length와 Routing Congestion을 사용합니다. 이는 정확도를 다소 희생하되, 연산에 필요한 비용과 시간을 줄인 것으로 볼 수 있습니다. 참고로 Reward는 모든 Macro와 Standard Cell이 배치된 이후에 한 번만 계산합니다. 그 이외의 경우에는 Reward가 항상 0으로 저장됩니다.
+#### Wire Length & Routing Congestion
+
+이러한 문제를 해결하기 위해 논문에서는 속도가 빠르면서도 전력 소모 및 성능을 간접적으로 파악할 수 있는 값들인 Wire Length와 Routing Congestion을 Reward 계산에 사용합니다. Wire Length가 짧을수록 Clock Frequency(Performance)와 Power의 측면에서 이점이 있고, 사용하는 영역의 크기(Area)도 더 적을 것이라고 추정할 수 있습니다. 이러한 점에서 Wire Length의 길이에 따라 패널티를 부여하게 됩니다.
+
+그런데 여기서 말하는 Wire Legnth란 단순히 소자 간 물리적인 거리만을 고려하여 계산된 값입니다. 앞서 확인한 대로 실제 Chip Canvas에서는 특정 영역에 Wire가 밀집하면 몇몇 Wire는 우회하여 배치해야 하고, 정확한 Reward 계산을 위해서는 이러한 특성이 반영되어야 합니다. 두 번째 항에서 영역별 Wire의 밀집도라고 할 수 있는 Routing Congestion를 계산하여 패널티를 부여하는 것은 이를 반영한 것입니다.
 
 $$
 R_{p,q} = -\text{Wire Length}(p, g) - \lambda \text{Congestion}(p, g) \\
 \text{S.t. } \text{density}(p,g) \leq \max_{\text{density}}
 $$
 
-논문에서는 $$\lambda = 0.01$$, $$\max_{\text{density}} = 0.6$$으로 하이퍼 파라미터를 설정하여 실험을 진행했다고 합니다.
+위와 같이 Reward를 계산하는 것은 정확도를 다소 희생하되, 연산에 필요한 비용과 시간을 줄인 것으로 볼 수 있습니다. 참고로 Reward는 모든 Macro와 Standard Cell이 배치된 이후에 한 번만 계산합니다. 그 이외의 경우에는 Reward가 항상 0으로 저장됩니다. 논문에서는 위의 식과 관련하여 $$\lambda = 0.01$$, $$\max_{\text{density}} = 0.6$$으로 하이퍼 파라미터를 설정하여 실험을 진행했다고 합니다.
 
 #### (1) Wire Length
 
@@ -133,7 +156,7 @@ Chip Canvas는 영역 별로 일정한 Routing Resoure를 가지고 있으며, �
 </p>
 </figure>
 
-논문에서 제안하고 있는 모델은 크게 (1) Environemnt로 부터 전달받은 Observation에서 중요한 정보들을 추출하여 State Representation으로 만드는 State Encoder와 (2) State Representation을 바탕으로 적절한 Action을 결정하는 Policy and Value Network 두 부분으로 나누어 볼 수 있습니다.
+논문에서 제안하고 있는 모델[[1](#ref-1)]은 크게 (1) Environemnt로 부터 전달받은 Observation에서 중요한 정보들을 추출하여 State Representation으로 만드는 State Encoder와 (2) State Representation을 바탕으로 적절한 Action을 결정하는 Policy and Value Network 두 부분으로 나누어 볼 수 있습니다.
 
 ### 강화학습 모델이 현재 상태를 이해하려면 무엇이 필요할까
 
@@ -160,7 +183,13 @@ $$
 }
 $$
 
-위의 수식에서 $$v_i$$는 $$i$$ 번째 Macro에 대한 embedding을, $$e_{i,j}$$는 $$i$$와 $$j$$ 번쩨 Macro를 잇는 Wire에 대한 Embedding을 의미합니다. 두 수식을 모든 Macro와 Wire에 대해 수렴할 때까지 반복적으로 적용하여 최종적인 Embedding으로 $$v$$와 $$e$$를 사용하게 됩니다. 위의 그림을 기준으로 이 과정을 확인해보면 붉은 색의 Macro Embedding이 $$v$$이고, 푸른 색의 Edge Embeddings가 $$e$$ 입니다. 
+위의 수식에서 $$v_i$$는 $$i$$ 번째 Macro에 대한 embedding을, $$e_{i,j}$$는 $$i$$와 $$j$$ 번쩨 Macro를 잇는 Wire에 대한 Embedding을 의미합니다. 두 수식을 모든 Macro와 Wire에 대해 수렴할 때까지 반복적으로 적용하여 최종적인 Embedding으로 $$v$$와 $$e$$를 사용하게 됩니다. Node Embedding과 Edge Embedding을 함께 얻을 수 있다는 점이 위 구조의 주요 특징이라고 할 수 있습니다.
+
+위 Model Architecture 이미지를 기준으로 보면 $$v$$가 붉은 색의 Macro Embedding이고, $$e$$가 푸른 색의 Edge Embeddings 입니다. Node Embedding에 대해서는 Indexing을 하고 있는데 각 Node의 특성을 가지고 있는 정보이므로 현재 배치할 Node의 정보만을 추출하는 것으로 이해할 수 있습니다. Edge Embedding에 대해서는 Reduce Mean을 하는데 이를 통해 전체 Graph의 특성을 담고 있는 Vector를 만들 수 있다고 합니다.
+
+> We can get a representation of the entire graph by just taking the mean of the all edge embeddings(Lecture by Azalia Mirhoseini & Anna Goldie)
+
+이와 관련하여 Google 논문의 1 저자인 Azalia Mirhoseini와 Anna Goldie는 강연[[6](#ref-6)]에서 위와 같이 표현하고 있습니다.
 
 ### 모두 합쳐 State Representation을 만들자
 
@@ -176,13 +205,20 @@ Graph Embedding과 Current Macro Embedding은 앞서 확인한 GNN 구조의 두
 
 Policy의 역할은 현재 주어진 Macro를 Chip Canvas 상의 어떤 지점에 배치할 것인지 결정하는 것입니다. 이때 Grid 형태의 확률 함수를 효과적으로 표현하기 위해 Deconvolution layer를 Policy Network에 사용한 것으로 보입니다.
 
-Policy Network를 직접 업데이트해야 하기 때문에 Policy Gradient 계열의 업데이트 알고리즘을 사용해야 하는데, 상대적으로 적은 연산량과 높은 성능 그리고 분산 학습에 강점을 보이는 PPO 알고리즘을 사용하고 있습니다[[3](#ref-3)].
+Policy Network를 직접 업데이트해야 하기 때문에 Policy Gradient 계열의 업데이트 알고리즘을 사용해야 하는데, 상대적으로 적은 연산량과 높은 성능 그리고 분산 학습에 강점을 보이는 PPO 알고리즘[[3](#ref-3)]을 사용하고 있습니다[[6](#ref-6)].
 
 ### State Representation을 더 잘 만드는 방법: Transfer Learning
 
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip_placement_with_reinforcement_learning/chip_placement_pre_training.png" alt="normal gradient" width="90%">
+  <figcaption style="text-align: center;">[그림] - Pre-training</figcaption>
+</p>
+</figure>
+
 모델의 학습과 관련하여 한 가지 특이한 점이 있다면 모델의 앞단이라고 할 수 있는 State Encoder 부분을 Supervised Learning으로 미리 업데이트 한 후에 사용한다는 점입니다. State Representation은 에이전트가 환경을 이해하고, 그에 맞춰 최적의 Action을 선택하는 데에 이용된다는 점에서 이를 잘 표현하는 것이 중요합니다. 그런데 State Encoder 부분을 Policy와 함께 처음부터 업데이트하게 되면 초기 Observation에 대해서는 잘 대처할 수 있을지 모르나 학습 과정에서 Policy가 접하게 되는 새로운 Observation에 대해서는 적절하게 표현하지 못할 수도 있습니다.
 
-이러한 문제를 보완하려면 State Encoder가 다양한 Obervation을 사전에 경험해볼 필요가 있습니다. 논문은 이러한 관점에서 Transfer Learning을 제안하고 있으며, 그 목적에 맞게 다양한 배치 결과를 대상으로 해당 배치의 Reward를 예측하도록 Pre-Training을 진행하게 됩니다. 
+이러한 문제를 보완하려면 State Encoder가 다양한 Obervation을 사전에 경험하는 것이 좋습니다. Google 논문에서는 이러한 점에서 Transfer Learning을 제안하고 있으며, 다양한 배치 결과를 입력으로 하여 해당 배치의 Reward를 예측하도록 Pre-Training을 진행하게 됩니다. 구체적인 Pre-Training 도식은 Google 논문의 1 저자인 Azalia Mirhoseini와 Anna Goldie의 강연 [[6](#ref-6)]에서 나온 위 이미지를 참고하시면 좋을 것 같습니다.
 
 ## 논문에서 제시하는 실험과 결론
 
@@ -235,7 +271,7 @@ Pre-Training의 목표는 State Encoder가 다양한 Observation을 경험하여
 
 ### 강화학습을 사용하는 것이 가장 좋다
 
-마지막으로 SOTA로 알려져 있는 배치 알고리즘 **RePLAce**와 전문가가 직접 수행하는 방법과 비교하는 실험을 진행하고 그 결과를 정리하고 있습니다. **Ours**로 표기된 것이 논문에서 제시하고 있는 방법을 사용한 것으로, 20개의 TPU Block을 대상으로 Pre-Training을 진행하고 5개의 Test TPU Block에 대해 Fine Tuning하여 얻은 수치라고 합니다. 그리고 **Manual**이 전문가 팀이 직접 EDA tool을 사용하여 반복적으로 개선하여 얻은 결과입니다.
+마지막으로 SOTA로 알려져 있는 배치 알고리즘 **RePLAce**[[7](#ref-7)]와 전문가가 직접 수행하는 방법과 비교하는 실험을 진행하고 그 결과를 정리하고 있습니다. **Ours**로 표기된 것이 논문에서 제시하고 있는 방법을 사용한 것으로, 20개의 TPU Block을 대상으로 Pre-Training을 진행하고 5개의 Test TPU Block에 대해 Fine Tuning하여 얻은 수치라고 합니다. 그리고 **Manual**이 전문가 팀이 직접 EDA tool을 사용하여 반복적으로 개선하여 얻은 결과입니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -258,3 +294,12 @@ Table의 메트릭을 정확하게 이해하기 위해서는 각각이 무엇을
 
 <a name="ref-3">[3]</a>  [John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, Oleg Klimov. Proximal Policy Optimization Algorithms
 .](https://arxiv.org/pdf/1707.06347.pdf)
+
+<a name="ref-4">[4]</a>  [K. SHAHOOKAR AND P, MAZUMDER(1991). VLSI Cell Placement Techniques](http://users.eecs.northwestern.edu/~haizhou/357/p143-shahookar.pdf)
+
+<a name="ref-5">[5]</a> Richard S. Sutton, Andrew G. Barto(2018). Reinforcement Learning: An Introduction 2nd edition
+
+<a name="ref-6">[6]</a>  [Yisong Yue(2020), Lecture by Azalia Mirhoseini & Anna Goldie (CS 159 Spring 2020)
+](<https://www.youtube.com/watch?v=lBzh9WY5hpU&t=2472s&ab_channel=YisongYue>)
+
+<a name="ref-7">[7]</a>  [Chung-Kuan Cheng, Ilgweon Kang, Lutong Wang(2019), RePlAce: Advancing Solution Quality and Routability Validation in Global Placement](<https://vlsicad.ucsd.edu/Publications/Journals/j126.pdf>)
