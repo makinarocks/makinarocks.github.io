@@ -64,17 +64,6 @@ Netlist를 구성하는 소자들은 그 크기 및 기능에 따라 Macro와 St
 
 COP 팀에서 첫 번째 문제로 확보한 Netlist는 소자의 개수가 72개로 Macro가 2개, Standard Cell이 70개 였습니다. 하지만 Google의 Chip Placement 논문[[1](#ref-1)]에 따라 진행한다면 강화학습 Agent로 단 2개의 Macro만을 배치하는 것이었기 때문에 Agent의 성능을 평가하기에는 너무 적다고 판단하였습니다. 따라서 본 프로젝트에서는 총 72개의 Macro와 Standard Cell 모두를 강화학습 Agent가 배치하도록 문제를 정의하여 실험을 진행했습니다.
 
-### 평가는 무엇을 기준으로 하나?
-
-반도체의 소자들을 연결하며 신호를 주고 받을 수 있게 하는 전선을 Wire라고 부릅니다. 이 Wire의 길이에 따라 반도체의 성능이 달라지고 경우에 따라서는 반도체가 정상적으로 동작하지 못하게 되기도 합니다. 이를 두고 반도체 산업에서는 P&R의 결과로 반도체 성능의 척도인 PPA(Performance, Power, Area)가 결정된다고 말합니다. 즉 개별 소자들을 어떻게 배치하느냐에 따라 각 소자들을 연결하는 Wire의 길이와 필요한 영역의 크기가 달라진다는 것입니다. 
-
-이러한 점에서 P&R 결과의 평가 척도로 PPA를 보여주는 수치들을 주로 사용합니다. COP 팀 또한 이러한 수치들을 기준으로 모델의 최종 성능을 평가했습니다. 프로젝트에서 사용한 구체적인 모델 평가 지표는 다음과 같습니다.
-
-- WNS(Worst Negative Setup-time Slack): Clock Frequency와 관련된 지표
-- WHS(Worst Negative Hold-time Slack): Clock Frequency와 관련된 지표
-- DP(Dynamic Power): Power와 관련된 지표
-- RU(Routing Utilization Ratio): 사용하는 Wire 길이와 관련된 지표
-
 ## 강화학습 환경 만들기
 
 프로젝트에서 다룬 문제에 대한 간략한 소개에 이어 개발 과정에 대해서도 소개해보려 합니다. 어떤 문제에 강화학습을 적용하기 위해 가장 먼저 해야 하는 작업은 에이전트가 학습할 수 있도록 적절한 강화학습 환경(Environment)을 만드는 것입니다. 이때 환경으로 사용 가능한 시뮬레이터가 있다면 에이전트와 시뮬레이터를 연결하는 작업만 수행하면 되지만, 그렇지 못한 상황이라면 주어진 문제에 맞게 동작하는 환경을 직접 개발해야 합니다. 
@@ -100,7 +89,9 @@ R_{p,q} = -\text{WireLength}(p, g) - \lambda \text{Congestion}(p, g) \\
 \text{S.t. } \text{density}(p,g) \leq \text{max}_{\text{density}}
 $$
 
-여기서 Wire Length의 경우 배치된 소자들의 2차원 위치 정보를 통해 HPWL(Half Perimeter Wire Length)[[7](#ref-7)] 방식으로 구합니다. 예시를 통해 확인하면 구현 내용을 보다 쉽게 이해할 수 있을 것 같아 네 개의 소자가 네 개의 Grid Cell에 나누어 배치된 예시 이미지를 준비했습니다. 
+반도체의 소자들을 연결하며 신호를 주고 받을 수 있게 하는 전선을 Wire라고 부릅니다. 이 Wire의 길이에 따라 반도체의 성능이 달라지고 경우에 따라서는 반도체가 정상적으로 동작하지 못하게 되기도 합니다. Wire length가 짧을수록 이점을 가지므로 Reward Function에서 Wire Length에 따라 페널티를 부여하고 있습니다.
+
+Wire Length를 구하는 방법은 여러가지[[7](#ref-7)]가 있는데, Chip Placement 논문에서는 배치된 소자들의 2차원 위치 정보를 통해 HPWL(Half Perimeter Wire Length)[[7](#ref-7)] 방식에 따라 구하고 있습니다. 예시를 통해 확인하면 구현 내용을 보다 쉽게 이해할 수 있을 것 같아 네 개의 소자가 네 개의 Grid Cell에 나누어 배치된 예시 이미지를 준비했습니다. 
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -109,7 +100,7 @@ $$
 </p>
 </figure>
 
-하나씩 확인해보면 1번과 2번과 같이 동일한 Grid Cell 내에 배치된 소자들을 서로 연결하는 빨간 Wire의 Wire Length는 0으로 계산되며, 1번과 3번을 연결하는 녹색 Wire는 1로 계산됩니다. 경우에 따라서는 노란 Wire처럼 하나의 Wire가 복수의 소자들과 연결되어 있기도 합니다. HPWL에서는 Wire와 연결된 지점을 모두 포함하는 최소 사각형을 먼저 그리고, 그 둘레의 절반으로 Wire Length를 추정하기 때문에 이 경우에는 2가 됩니다.
+하나씩 확인해보면 동일한 Grid Cell 내에 배치된 소자들을 서로 연결하는 빨간 Wire(1번-2번)의 HPWL는 0으로 계산되며, 녹색 Wire(1번-3번)는 1로 계산됩니다. 경우에 따라서는 노란 Wire(1,2,3,4번)처럼 하나의 Wire가 복수의 소자들과 연결되어 있기도 합니다. HPWL은 Wire와 연결된 지점을 모두 포함하는 최소 사각형을 먼저 그리고, 그 둘레의 절반으로 Wire Length를 추정하기 때문에 노란 Wire는 길이가 2로 계산됩니다.
 
 Routing Congestion에 대해서는 반도체 설계와 관련된 지식이 요구되는 만큼 Furiosa AI의 도움을 받아 구현하게 되었습니다. 구체적으로는 각각의 Grid Cell를 통과하는 Wire의 갯수를 사용하여 수평 방향과 수직 방향 각각에 대한 congestion을 계산하고, 이 중 상위 10%에 대한 평균 값을 사용하는 방식입니다. Placement Density는 전체 FPGA Board 상에서 배치 영역을 적절하게 조절하는 것으로 제약 조건을 만족하도록 했습니다.
 
@@ -173,6 +164,25 @@ $$
 
 강화학습 알고리즘으로는 Google의 Chip Placement 논문과 동일하게 PPO를 사용했습니다. 다만 논문과는 달리 프로젝트에서는 $$6 \times 6$$의 다소 작은 크기의 Action Space를 산정한 만큼 Deconvolution Layer를 사용하지 않고, Fully Connected Layer로만 Policy Network를 구성했습니다.
 
+
+## 평가는 무엇을 기준으로 하나?
+
+반도체 산업에서는 P&R의 결과로 반도체 성능의 척도인 PPA(Performance, Power, Area)가 결정된다고 말합니다. 즉 개별 소자들을 어떻게 배치하느냐에 따라 각 소자들을 연결하는 Wire의 길이와 필요한 영역의 크기가 달라진다는 것입니다. 이러한 점에서 P&R 결과의 평가 척도로 PPA를 보여주는 수치들을 주로 사용합니다. COP 팀 또한 이러한 수치들을 기준으로 모델의 최종 성능을 평가했습니다. 프로젝트에서 사용한 모델 평가 지표들은 다음과 같습니다.
+
+- WNS(Worst Negative Setup-time Slack): Clock Frequency와 관련된 지표
+- WHS(Worst Negative Hold-time Slack): Clock Frequency와 관련된 지표
+- DP(Dynamic Power): Power와 관련된 지표
+- RU(Routing Utilization Ratio): 사용하는 Wire 길이와 관련된 지표
+
+정확한 설명은 아니나 이해를 돕기 위해 간단히 각각에 대해 설명해보도록 하겠습니다. WNS와 WHS의 Time-Slack 이라는 것은 Clock Frequency를 지키는 데에 얼마나 많은 여유 시간이 있는지 나타내는 것입니다. 따라서 이것이 크면 클수록 보다 여유롭게 Clock Frequency를 유지할 수 있으며, 동시에 더 높은 Clock Frequency 또한 가능하다는 것을 의미합니다. 반대로 이것이 음수가 되면 현재 배치 결과로는 주어진 Clock Frequency 대로 구현하는 것이 불가능하다는 뜻입니다.
+
+Dynamic Power는 전체 전력 소비량 중 배치된 결과로 인해 사용되는 전력량을 의미합니다. FPGA Board 자체가 반도체이기 때문에 배치가 전혀 이뤄지지 않은 상태에서도 전력을 일정량 소모하게 되는데, 이는 Static Power라고 합니다. 마지막으로 Routing Utilization은 전체 사용 가능한 Wire 중에서 얼마나 많은 Wire를 사용하는지를 나타내는 수치입니다. 정확하게는 Horizontal / Vertical 나누어서 구해지며, 실험에서는 두 값의 합으로 계산했습니다.
+
+정리하자면 WNS, WHS는 크면 클수록 좋은 값, DP와 RU는 작으면 작을수록 좋은 값 입니다. 이러한 값들을 모두 종합적으로 반영한 것이 PPA를 나타내는 것이라 할 수 있는 만큼 COP 팀에서는 Overall Score를 계산하여 각 배치들을 비교했습니다. 정확한 계산식은 아래와 같습니다.
+
+> Overall Score = WNS + WHS - 100 * Routing Utilization - 100 * Dynamic Power
+
+
 ## 그래서 얼마나 잘했나?
 
 
@@ -197,9 +207,7 @@ COP 팀에서 개발한 강화학습 알고리즘의 성능을 평가하기 위�
 | Vivado Placement | **0.01** | 0.079 | 0.026 | **0.001188** | 0.001569 | -1.1707 |
 | RL Placement | **0.01** | **0.163** | **0.046** | 0.00130047 | **0.00132467** | -1.053514 |
 
-Random Placement는 모든 소자의 위치를 임의로 선택한 배치 결과를 말하고, Vivado Placement는 Vivado에서 찾은 최적 배치 결과를 말합니다. RL Placement가 COP 팀에서 개발한 에이전트의 배치 결과입니다. Overall Score는 각각의 Metric에 스케일에 따라 가중합한 결과로 높을수록 성능이 좋습니다. 정확한 계산식은 아래와 같습니다.
-
-> Overall Score = WNS + WHS - 100 * Routing Utilization - 100 * Dynamic Power
+Random Placement는 모든 소자의 위치를 임의로 선택한 배치 결과를 말하고, Vivado Placement는 Vivado에서 찾은 최적 배치 결과를 말합니다. RL Placement가 COP 팀에서 개발한 에이전트의 배치 결과입니다.
 
 Vivado Placement의 Overall Score가 -1.1707인 반면 강화학습 에이전트로 배치한 결과는 -1.053514로 나왔습니다. 이는 Random Placement 결과를 0으로, Vivado Placement 결과를 1로 보았을 때 약 1.03에 해당하는 수치로 Vivado의 최적 배치와 비교해 볼 때 3% 정도 더 나은 배치 결과를 얻었다고 할 수 있습니다.
 
