@@ -32,7 +32,7 @@ FPGA 배치 문제의 이해를 돕기위해 FPGA의 동작 방식에 대해 간
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_chip_canvas.png" alt="normal gradient" width="80%">
-  <figcaption style="text-align: center;">[그림] - FPGA Board</figcaption>
+  <figcaption style="text-align: center;">[그림1] - FPGA Board</figcaption>
 </p>
 </figure>
 
@@ -41,7 +41,7 @@ FPGA 배치 문제의 이해를 돕기위해 FPGA의 동작 방식에 대해 간
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_tile_site_bel.png" alt="normal gradient" width="80%">
-  <figcaption style="text-align: center;">[그림] - TILE > SITE > BEL</figcaption>
+  <figcaption style="text-align: center;">[그림2] - TILE > SITE > BEL</figcaption>
 </p>
 </figure>
 
@@ -52,7 +52,7 @@ Netlist는 반도체의 논리적인 설계도로서, 여기에는 반도체가 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_placement_and_routing.png" alt="normal gradient" width="=100%">
-  <figcaption style="text-align: center;">[그림] - Placement & Routing</figcaption>
+  <figcaption style="text-align: center;">[그림3] - Placement & Routing</figcaption>
 </p>
 </figure>
 
@@ -96,7 +96,7 @@ Wire Length를 구하는 방법은 여러가지[[7](#ref-7)]가 있는데, Chip 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_wirelength_calculation.png" alt="normal gradient" width="90%">
-  <figcaption style="text-align: center;">[그림] - Wire Length Example</figcaption>
+  <figcaption style="text-align: center;">[그림4] - Wire Length Example</figcaption>
 </p>
 </figure>
 
@@ -121,7 +121,7 @@ FPGA이므로 사용하는 영역의 크기는 TILE의 갯수를 활용했습니
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_congestion_map.png" alt="normal gradient" width="90%">
-  <figcaption style="text-align: center;">[그림] - Congestion Map</figcaption>
+  <figcaption style="text-align: center;">[그림5] - Congestion Map</figcaption>
 </p>
 </figure>
 
@@ -135,12 +135,14 @@ FPGA이므로 사용하는 영역의 크기는 TILE의 갯수를 활용했습니
 
 에이전트에서 가장 핵심적인 부분은 State를 적절하게 표현하여 강화학습 Policy가 쉽게 이해할 수 있도록 표현하는 부분이라고 생각합니다. 이를 위해서는 환경으로부터 받은 Observation을 적절하게 처리하여 State Representation으로 만들어주어야 합니다.
 
-배치 대상이 되는 Netlist는 Node와 Edge로 구성되는 Graph 형태로 되어 있습니다. 따라서 좋은 State Representation을 확보하기 위해서는 Graph 데이터를 잘 처리할 수 있는 모델이 필요합니다. Google의 Chip Placement 논문에서 제시하는 구조는 다음과 같으며, 이를 수렴할 때까지 반복적으로 각 Embedding을 업데이트 했다고 말합니다.
+배치 대상이 되는 Netlist는 Node와 Edge로 구성되는 Graph 형태로 되어 있습니다. 따라서 좋은 State Representation을 확보하기 위해서는 Graph 데이터를 잘 처리할 수 있는 모델이 필요합니다. Google의 Chip Placement 논문에서 제시하는 구조는 다음과 같으며, 이를 수렴할 때까지 반복적으로 각 Embedding을 업데이트 했다고 말합니다[[12](#ref-12)].
 
 >$$
 \eqalign{
-&e_{ij} = f c_1 (\text{concat}( f c_0(v_i)  \lvert f c_0(v_j) \lvert w^e_{ij}))\\
-&v_i = \text{mean}_{j \in N(v_i)}(e_{ij})
+&\text{While not converged do} \\
+& \qquad \text{Update edge: } e_{ij} = fc_1 (\text{concat}[ fc_0(v_i) \vert fc_0(v_j) \vert w_{ij}^e ]) \\
+& \qquad \text{Update node: } v_i = \text{mean}_{j \in N(v_i)}(e_{ij}) \\
+&\text{end}
 }
 $$
 
@@ -148,7 +150,7 @@ $$
 
 #### 1. $$fc$$에 Activation Function이 필요한가
 
-위의 수식에는 두 개의 $$fc$$가 나옵니다. 그런데 이와 관련하여 Google의 Chip Placement 논문에서는 Activation Function 유무에 대해서는 언급하지 않고 있습니다. 논문에서는 Fully Connected Network로 표현하고 있어 단순히 Affine 연산을 의미하는 것으로 가정하고 Activation Function 없이 구현했습니다. 그러나 Embedding이 수렴하지 않았고, 모든 $$fc$$의 출력에 Activation Function을 추가한 후에야 Embedding이 수렴을 확인할 수 있었습니다.
+위의 수식에는 두 개의 $$fc$$가 나옵니다. 그런데 이와 관련하여 Google의 Chip Placement 논문에서는 Activation Function 유무에 대해서는 언급하지 않고 있습니다. 논문에서는 Fully Connected Network로 표현하고 있어 단순히 Affine 연산을 의미하는 것으로 가정하고 처음에는 Activation Function 없이 구현했습니다. 그러나 Activation function 없이는 Embedding이 수렴하지 않았고, 모든 $$fc$$의 출력에 Activation Function을 추가한 후에야 수렴을 확인할 수 있었습니다.
 
 #### 2. 수렴 여부는 어떻게 결정할 것인가
 
@@ -169,7 +171,7 @@ $$
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_paper_architecture.png" alt="normal gradient" width="110%">
-  <figcaption style="text-align: center;">[그림] - Model Architecture</figcaption>
+  <figcaption style="text-align: center;">[그림6] - Model Architecture</figcaption>
 </p>
 </figure>
 
@@ -199,7 +201,7 @@ COP 팀에서 개발한 강화학습 알고리즘의 성능을 평가하기 위�
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_txt_result.png" alt="normal gradient" width="70%">
-  <figcaption style="text-align: center;">[그림] - txt Result Example</figcaption>
+  <figcaption style="text-align: center;">[그림7] - txt Result Example</figcaption>
 </p>
 </figure>
 
@@ -212,7 +214,7 @@ COP 팀에서 개발한 강화학습 알고리즘의 성능을 평가하기 위�
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_our_result.png" alt="normal gradient" width="90%">
-  <figcaption style="text-align: center;">[테이블] - Experiment Results</figcaption>
+  <figcaption style="text-align: center;">[테이블1] - Experiment Results</figcaption>
 </p>
 </figure>
 
@@ -225,21 +227,21 @@ Vivado Placement의 Overall Score가 -1.1707인 반면 강화학습 에이전트
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_random_result.png" alt="normal gradient" width="100%">
-  <figcaption style="text-align: center;">[그림] - Random result</figcaption>
+  <figcaption style="text-align: center;">[그림8] - Random result</figcaption>
 </p>
 </figure>
 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_vivado_result.png" alt="normal gradient" width="90%">
-  <figcaption style="text-align: center;">[그림] - Vivado result</figcaption>
+  <figcaption style="text-align: center;">[그림9] - Vivado result</figcaption>
 </p>
 </figure>
 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_rl_result.png" alt="normal gradient" width="90%">
-  <figcaption style="text-align: center;">[그림] - RL result</figcaption>
+  <figcaption style="text-align: center;">[그림10] - RL result</figcaption>
 </p>
 </figure>
 
@@ -251,7 +253,7 @@ RL Placement와 Random Placement의 배치 결과는 모두 제약조건으로 V
 
 MakinaRocks COP팀에서 개발한 Chip Placement 알고리즘은 소규모 설계 회로에 있어 기존 상용 EDA Tool의 최적 배치보다 약 3% 정도 높은 성능을 보였습니다. 현재 COP 팀에서는 상용 수준의 반도체 Netlist에 대해서도 잘 동작하는 알고리즘을 목표로 추가적인 연구 개발을 진행하고 있습니다. 최종적으로는 반도체 P&R 문제를 기존 방법론보다 효과적으로 해결할 수 있는 제품을 개발하고자 합니다.
 
-또한 물류 산업의 경로 최적화, 부두 스케쥴링 부터 시작하여 생산 프로세스, 작업 프로세스 최적화까지 현실에는 다양한 형태의 조합 최적화 문제가 존재합니다. 따라서 반도체가 아닌 다양한 산업의 조합 최적화 문제에 Chip Placement on FPGA 프로젝트를 통해 확보한 기술력과 경험을 적용하는 데에도 많은 관심을 가지고 있습니다.
+또한 물류 산업의 경로 최적화, 부두 스케쥴링 부터 시작하여 생산 프로세스, 작업 프로세스 최적화까지 현실에는 다양한 형태의 조합 최적화 문제가 존재합니다. 이러한 점에서 COP 팀에서는 반도체가 아닌 다양한 산업의 조합 최적화 문제에 Chip Placement on FPGA 프로젝트를 통해 확보한 기술력과 경험을 적용하는 데에도 많은 관심을 가지고 있습니다.
 
 ## References
 
@@ -276,3 +278,5 @@ MakinaRocks COP팀에서 개발한 Chip Placement 알고리즘은 소규모 설�
 <a name="ref-10">[10]</a>  [Wikipedia, 2021, Matrix norm, Frobenius norm.](https://en.wikipedia.org/wiki/Matrix_norm#Frobenius_norm)
 
 <a name="ref-11">[11]</a>  [John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, Oleg Klimov, 2021, Proximal Policy Optimization Algorithms, OpenAI.](https://arxiv.org/abs/1707.06347)
+
+<a name="ref-12">[12]</a>  [Yisong Yue, 2020, Lecture by Azalia Mirhoseini & Anna Goldie (CS 159 Spring 2020), Edge-based Graph Convolution: Node Embeddings.](<https://youtu.be/lBzh9WY5hpU?t=2418>)
