@@ -3,12 +3,12 @@ layout: post
 title: Chip Placement on FPGA 프로젝트를 소개합니다!
 author: kyeongmin woo
 categories: [combinatorial_optimization, reinforcement_learning]
-image: assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_placement_and_routing.png
+image: assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_chip_canvas.png
 ---
 
-MakinaRocks의 COP 팀에서는 지난 2020년 9월부터 2021년 1월까지 반도체 설계 공정 중 하나인 Placement & Routing에 강화학습을 적용하는 프로젝트를 진행했습니다. AI Chip 설계를 전문으로 하는 펩리스(fabless)[[9](#ref-9)] 스타트업 Furiosa AI와의 협업으로 진행되었으며, Furiosa AI가 가지고 있는 반도체 설계 기술과 Makinarocks의 산업 AI 역량을 결합하여 상용 FPGA 자동화 도구와 비교해 효율적인 문제 해결의 가능성을 확인할 수 있었습니다. 
+**[MakinaRocks](<http://www.makinarocks.ai/>)의 COP(Combinatorial Optimization Problem) 팀**에서는 지난 2020년 9월부터 2021년 1월까지 반도체 설계 공정 중 하나인 Placement & Routing에 강화학습을 적용하는 프로젝트를 진행했습니다. AI Chip 설계를 전문으로 하는 펩리스(fabless)[[9](#ref-9)] 스타트업 **[Furiosa AI](<https://www.furiosa.ai/>)**와의 협업으로 진행되었으며, Furiosa AI가 가지고 있는 반도체 설계 기술과 Makinarocks의 산업 AI 역량을 결합하여 상용 FPGA 자동화 도구와 비교해 효율적인 문제 해결의 가능성을 확인할 수 있었습니다. 
 
-본 프로젝트는 지난 2020년 4월 Google에서 발표한 Chip Placement with Deep Reinforcement Learning[[1](#ref-1)] 논문(이하 Google의 Chip Placement 논문)에 기초를 두고 있으며, 논문에서 제시하는 문제 정의를 참고하였습니다. 다만 논문에서는 ASIC(Application-Specific Integrated Circuit)[[8](#ref-8)] 반도체를 위한 소자 배치를 가정하는 반면 COP 팀에서는 FPGA(Field-Programmable Gate Array)[[8](#ref-8)]를 대상으로 하였다는 점에서 차이가 있습니다.
+본 프로젝트는 지난 2020년 4월 Google에서 발표한 **Chip Placement with Deep Reinforcement Learning**[[1](#ref-1)] 논문(이하 Google의 Chip Placement 논문)에 기초를 두고 있으며, 논문에서 제시하는 문제 정의를 참고하였습니다. 다만 논문에서는 ASIC(Application-Specific Integrated Circuit)[[8](#ref-8)] 반도체를 위한 소자 배치를 가정하는 반면 COP 팀에서는 FPGA(Field-Programmable Gate Array)[[8](#ref-8)]를 대상으로 하였다는 점에서 차이가 있습니다.
 
 ## 문제 정의부터 살펴보기
 
@@ -50,7 +50,7 @@ Netlist는 반도체의 논리적인 설계도로서, 여기에는 반도체가 
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_placement_and_routing.png" alt="normal gradient" width="=100%">
+  <img src="/assets/images/2021-02-15-chip_placement_with_reinforcement_learning/chip_placement_placement_and_routing.png" alt="normal gradient" width="=100%">
   <figcaption style="text-align: center;">[그림3] - Placement & Routing</figcaption>
 </p>
 </figure>
@@ -73,9 +73,29 @@ FPGA와 관련해서는 Xilinx 사의 Vivado를 시뮬레이터로 사용할 수
 
 ### (1) 어디에 배치할지 어떻게 결정할까
 
-ASIC을 사용하는 Google의 Chip Placement 논문에서는 전체 Chip Canvas를 일정한 간격의 Grid로 나누고, 에이전트가 Action으로서 그 중 하나를 선택하도록 하고 있습니다. FPGA 또한 사용하고자 하는 Board에 동일한 방법으로 Grid를 적용할 수 있습니다. 다만 Chip Canvas 상에 다른 소자들과 겹치지만 않는다면 소자를 자유롭게 배치할 수 있는 ASIC과는 달리 FPGA는 각 소자의 타입에 따라 배치 가능한 위치가 미리 정해져 있다는 문제가 있었습니다.
+ASIC을 사용하는 Google의 Chip Placement 논문에서는 전체 Chip Canvas를 일정한 간격의 Grid로 나누고, 에이전트가 Action으로서 그 중 하나를 선택하도록 하고 있습니다. 아래 그림에서 좌측 이미지는 에이전트의 출력 값을 나타내는데, 전체 Grid 중에서 우측 상단에 위치하는 (0, 3) Grid Cell의 값이 가장 크다는 것을 알 수 있습니다. 이에 따라 배치는 (0,3) Grid Cell 상에 이뤄집니다.
 
-이러한 FPGA의 본질적인 특성 때문에 Google의 Chip Placement 논문보다는 다소 복잡하게 환경을 구성하게 되었습니다. 우선 에이전트가 소자를 배치할 Grid Cell을 선택하면 해당 Grid Cell 내에 포함된 BEL 중 임의로 하나를 추출하여 소자와 매핑하도록 하였습니다. Action에 적용되는 Masking 또한 소자의 타입에 따라 다르게 적용했다는 점에서도 소자 간 구분이 없어 하나의 Mask만 사용하는 논문과는 차이가 있습니다.
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_placement_where_to_place.png" alt="normal gradient" width="=100%">
+  <figcaption style="text-align: center;">[그림4] - Placement logic</figcaption>
+</p>
+</figure>
+
+FPGA 또한 사용하고자 하는 Board에 동일한 방법으로 Grid를 적용할 수 있습니다. 다만 Chip Canvas 상에 다른 소자들과 겹치지만 않는다면 소자를 자유롭게 배치할 수 있는 ASIC과는 달리 FPGA는 각 소자의 타입에 따라 배치 가능한 위치(BEL)들이 미리 정해져 있다는 문제가 있었습니다. 이러한 FPGA의 본질적인 특성 때문에 에이전트가 소자를 배치할 Grid Cell을 선택하면 해당 Grid Cell 내에 포함된 BEL 중 임의로 하나를 추출하여 소자와 매핑하도록 하였습니다. 
+
+#### Masking
+
+경우에 따라서는 이미 많은 소자들이 특정 영역에 배치되어 더 이상 새로운 소자를 해당 영역에 배치할 수 없기도 합니다. 이때 사용하는 것이 Mask이며, 에이전트가 선택할 수 없는 영역을 가리는 작업을 Masking이라고 합니다. 아래 이미지는 Masking이 이뤄지는 경우 동일한 에이전트 출력에 대해 어떻게 다른 Grid Cell이 선택되는지를 보여줍니다.
+
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_placement_making.png" alt="normal gradient" width="=100%">
+  <figcaption style="text-align: center;">[그림5] - Masking</figcaption>
+</p>
+</figure>
+
+#### Size of Grid
 
 Grid의 Row, Column 갯수 또한 중요한 문제인데, Google의 Chip Placement 논문에서는 많게는 $$128 \times 128$$까지 실험을 진행했고, 결과적으로는 $$30 \times 30$$으로 설정했을 때에 성능이 가장 좋았다고 언급합니다. 그러나 본 프로젝트에서는 Netlist의 크기가 논문보다 작은 만큼 Grid의 크기 또한 작게하기로 결정했습니다. 최종적인 실험에는 $$6 \times 6$$ 크기의 Grid를 사용하였습니다. 배치 영역 또한 Netlist의 크기에 맞춰 전체 FPGA Board를 사용하지 않고, 개별 Grid Cell마다 100개 이하의 소자가 포함되는 수준으로 조절하였습니다.
 
@@ -87,6 +107,7 @@ Reward Function은 강화학습에서 가장 중요한 것 요소 중 하나로,
 R_{p,q} = -\text{WireLength}(p, g) - \lambda \text{Congestion}(p, g) \\
 \text{S.t. } \text{density}(p,g) \leq \text{max}_{\text{density}}
 $$
+
 반도체의 소자들을 연결하며 신호를 주고 받을 수 있게 하는 전선을 Wire라고 부릅니다. 이 Wire의 길이에 따라 반도체의 성능이 달라지고 경우에 따라서는 반도체가 정상적으로 동작하지 못하게 되기도 합니다. Wire length가 짧을수록 이점을 가지므로 Reward Function에서 Wire Length에 따라 페널티를 부여하고 있습니다.
 
 Wire Length를 구하는 방법은 여러가지[[7](#ref-7)]가 있는데, Chip Placement 논문에서는 배치된 소자들의 2차원 위치 정보를 통해 HPWL(Half Perimeter Wire Length)[[7](#ref-7)] 방식에 따라 구하고 있습니다. 예시를 통해 확인하면 구현 내용을 보다 쉽게 이해할 수 있을 것 같아 네 개의 소자가 네 개의 Grid Cell에 나누어 배치된 예시 이미지를 준비했습니다. 
@@ -94,7 +115,7 @@ Wire Length를 구하는 방법은 여러가지[[7](#ref-7)]가 있는데, Chip 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_wirelength_calculation.png" alt="normal gradient" width="90%">
-  <figcaption style="text-align: center;">[그림4] - Wire Length Example</figcaption>
+  <figcaption style="text-align: center;">[그림6] - Wire Length Example</figcaption>
 </p>
 </figure>
 
@@ -119,11 +140,11 @@ FPGA이므로 사용하는 영역의 크기는 TILE의 갯수를 활용했습니
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_congestion_map.png" alt="normal gradient" width="90%">
-  <figcaption style="text-align: center;">[그림5] - Congestion Map</figcaption>
+  <figcaption style="text-align: center;">[그림7] - Congestion Map</figcaption>
 </p>
 </figure>
 
-마지막으로 Mask란 현재 배치하고자 하는 소자를 배치할 수 있는 영역에 대해 알려주는 정보입니다. 쉽게 말해 에이전트가 배치할 수 없는 영역을 선택하지 못하게 하는 역할을 합니다. Google의 Chip Placement 논문에서 사용하는 ASIC에서는 배치할 수 있는 적절한 공간만 존재하면 소자의 타입과 무관하게 배치가 가능합니다. 따라서 하나의 Mask만 필요합니다. 그러나 소자의 배치 가능한 위치가 미리 결정되어 있는 FPGA에서는 소자별로 배치 가능한 Grid Cell이 다를 수 밖에 없습니다. 이러한 차이 때문에 본 프로젝트에서는 Mask를 소자의 갯수만큼 만들어두고, 배치할 소자에 따라 서로 다른 Masking을 실시했습니다.
+마지막으로 Google의 Chip Placement 논문에서 사용하는 ASIC에서는 배치할 수 있는 적절한 공간만 존재하면 소자의 타입과 무관하게 배치가 가능합니다. 따라서 잔여 공간에 대한 정보를 알려주는 Mask 하나만 있으면 됩니다. 그러나 소자의 배치 가능한 위치가 미리 결정되어 있는 FPGA에서는 소자별로 배치 가능한 Grid Cell이 다를 수 밖에 없습니다. 이러한 차이 때문에 본 프로젝트에서는 Mask를 소자의 갯수만큼 만들어두고, 배치할 소자에 따라 서로 다른 Masking을 실시했습니다.
 
 ## 강화학습 에이전트 만들기
 
@@ -169,7 +190,7 @@ $$
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_paper_architecture.png" alt="normal gradient" width="110%">
-  <figcaption style="text-align: center;">[그림6] - Model Architecture</figcaption>
+  <figcaption style="text-align: center;">[그림8] - Model Architecture</figcaption>
 </p>
 </figure>
 
@@ -199,7 +220,7 @@ COP 팀에서 개발한 강화학습 알고리즘의 성능을 평가하기 위�
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_txt_result.png" alt="normal gradient" width="70%">
-  <figcaption style="text-align: center;">[그림7] - txt Result Example</figcaption>
+  <figcaption style="text-align: center;">[그림9] - txt Result Example</figcaption>
 </p>
 </figure>
 
@@ -211,7 +232,7 @@ COP 팀에서 개발한 강화학습 알고리즘의 성능을 평가하기 위�
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_our_result.png" alt="normal gradient" width="90%">
+  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_our_result.png" alt="normal gradient" width="100%">
   <figcaption style="text-align: center;">[테이블1] - Experiment Results</figcaption>
 </p>
 </figure>
@@ -225,21 +246,21 @@ Vivado Placement의 Overall Score가 -1.1707인 반면 강화학습 에이전트
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_random_result.png" alt="normal gradient" width="100%">
-  <figcaption style="text-align: center;">[그림8] - Random result</figcaption>
+  <figcaption style="text-align: center;">[그림10] - Random result</figcaption>
 </p>
 </figure>
 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_vivado_result.png" alt="normal gradient" width="90%">
-  <figcaption style="text-align: center;">[그림9] - Vivado result</figcaption>
+  <figcaption style="text-align: center;">[그림11] - Vivado result</figcaption>
 </p>
 </figure>
 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_rl_result.png" alt="normal gradient" width="90%">
-  <figcaption style="text-align: center;">[그림10] - RL result</figcaption>
+  <figcaption style="text-align: center;">[그림12] - RL result</figcaption>
 </p>
 </figure>
 
@@ -247,11 +268,22 @@ RL Placement와 Random Placement의 배치 결과는 모두 제약조건으로 V
 
 참고로 각 소자들을 연결하고 있는 녹색의 실선이 Wire이며, 이를 배치하는 Routing 작업은 모두 Vivado의 Solution을 따랐습니다. 이미지의 가운데 영역에 존재하는 녹색의 선형 블럭이 전체 반도체 배치의 시작과 끝이 되는 입출력 포트입니다. 
 
-## Conclusion
+## Stay Tuned!
 
 MakinaRocks COP팀에서 개발한 Chip Placement 알고리즘은 소규모 설계 회로에 있어 기존 상용 EDA Tool의 최적 배치보다 약 3% 정도 높은 성능을 보였습니다. 현재 COP 팀에서는 상용 수준의 반도체 Netlist에 대해서도 잘 동작하는 알고리즘을 목표로 추가적인 연구 개발을 진행하고 있습니다. 최종적으로는 반도체 P&R 문제를 기존 방법론보다 효과적으로 해결할 수 있는 제품을 개발하고자 합니다.
 
-또한 물류 산업의 경로 최적화, 부두 스케쥴링 부터 시작하여 생산 프로세스, 작업 프로세스 최적화까지 현실에는 다양한 형태의 조합 최적화 문제가 존재합니다. 이러한 점에서 COP 팀에서는 반도체가 아닌 다양한 산업의 조합 최적화 문제에 Chip Placement on FPGA 프로젝트를 통해 확보한 기술력과 경험을 적용하는 데에도 많은 관심을 가지고 있습니다.
+또한 물류 산업의 경로 최적화, 부두 스케쥴링 부터 시작하여 생산 프로세스, 작업 프로세스 최적화까지 현실에는 다양한 형태의 조합 최적화 문제가 존재합니다. 이러한 점에서 MakinaRocks COP 팀에서는 반도체가 아닌 다른 산업의 문제들에 대해서도 관심을 가지고 새로운 적용 사례를 만들기 위해 노력하고 있습니다.
+
+## Related Posts
+
+본 프로젝트에 영감을 준 Google의 Chip Placement 논문에 관한 내용은 아래 링크에서 확인하실 수 있습니다.
+
+- [Chip Placement with Deep Reinforcement Learning (written by 우경민)](/chip_placement_with_reinforcement_learning)
+
+Chip Placement with Deep Reinforcement Learning 연구의 뿌리라고도 할 수 있는 Neural Combinatorial Optimization with Reinforcement Learning에 대해서도 별도 포스팅으로 정리해봤습니다.
+
+- [Neural Combinatorial Optimization with Reinforcement Learning (written by 박진우)](/Neural-Combinatorial-Optimization)
+
 
 ## References
 
