@@ -5,14 +5,11 @@ author: kyeongmin woo
 categories: [combinatorial_optimization, reinforcement_learning]
 ---
 
-* 펩리스 하이퍼링크 추가
-* ASIC에 대한 용어 설명, 하이퍼 링크
-
 안녕하세요. MakinaRocks의 우경민입니다.
 
-MakinaRocks의 COP(Combinatorial Optimization Problem) 팀에서는 지난 2020년 9월부터 2021년 1월까지 반도체 설계 공정 중 하나인 Placement & Routing에 강화학습을 적용하는 프로젝트를 진행했습니다. AI Chip 설계를 전문으로 하는 펩리스(fabless) 스타트업 Furiosa AI와의 협업으로 진행되었으며, Furiosa AI가 가지고 있는 반도체 설계 기술과 Makinarocks의 산업 AI 역량을 결합하여 상용 FPGA 자동화 도구와 비교해 효율적인 문제 해결의 가능성을 확인할 수 있었습니다. 
+MakinaRocks의 COP(Combinatorial Optimization Problem) 팀에서는 지난 2020년 9월부터 2021년 1월까지 반도체 설계 공정 중 하나인 Placement & Routing에 강화학습을 적용하는 프로젝트를 진행했습니다. AI Chip 설계를 전문으로 하는 펩리스(fabless)[[9](#ref-9)] 스타트업 Furiosa AI와의 협업으로 진행되었으며, Furiosa AI가 가지고 있는 반도체 설계 기술과 Makinarocks의 산업 AI 역량을 결합하여 상용 FPGA 자동화 도구와 비교해 효율적인 문제 해결의 가능성을 확인할 수 있었습니다. 
 
-본 프로젝트는 지난 2020년 4월 Google에서 발표한 Chip Placement with Deep Reinforcement Learning[[1](#ref-1)] 논문(이하 Google의 Chip Placement 논문)에 기초를 두고 있으며, 논문에서 제시하는 문제 정의를 참고하였습니다. 다만 논문에서는 ASIC(Application-Specific Integrated Circuit)을 대상으로 하는 반면 COP 팀에서 진행한 프로젝트는 FPGA(Field-Programmable Gate Array)를 대상으로 하였다는 점에서 큰 차이가 있습니다.
+본 프로젝트는 지난 2020년 4월 Google에서 발표한 Chip Placement with Deep Reinforcement Learning[[1](#ref-1)] 논문(이하 Google의 Chip Placement 논문)에 기초를 두고 있으며, 논문에서 제시하는 문제 정의를 참고하였습니다. 다만 논문에서는 ASIC(Application-Specific Integrated Circuit)[[8](#ref-8)] 반도체를 위한 소자 배치를 가정하는 반면 COP 팀에서는 FPGA(Field-Programmable Gate Array)[[8](#ref-8)]를 대상으로 하였다는 점에서 차이가 있습니다.
 
 ## 문제 정의부터 살펴보기
 
@@ -24,9 +21,9 @@ COP 팀에서는 논리적으로 정의된 소자들의 연결 그래프를 입�
 
 ### FPGA란?
 
-시스템 반도체의 일종인 FPGA는 Field Programmable Gate Array의 약자로, Programmable이라는 표현에서도 알 수 있듯이 사용자가 목적에 맞게 내부 로직을 변경할 수 있는 반도체를 말합니다. ASIC의 경우 내부 구조가 모두 결정되어 있기 때문에 정해진 목적대로만 사용할 수 있습니다. 반면 FPGA는 사용자가 자신이 원하는 대로 내부 로직을 조작하는 것이 가능합니다.
+시스템 반도체의 일종인 **FPGA는 Field Programmable Gate Array의 약자**로, Programmable이라는 표현에서도 알 수 있듯이 사용자가 목적에 맞게 내부 로직을 변경할 수 있는 반도체를 말합니다. ASIC의 경우 내부 구조가 모두 결정되어 있기 때문에 정해진 목적대로만 사용할 수 있습니다. 반면 FPGA는 사용자가 자신이 원하는 대로 내부 로직을 조작하는 것이 가능합니다.
 
-따라서 FPGA를 사용하게 되면 강화학습 에이전트가 배치한 결과를 실제 FPGA Board 상에서 구동이 가능한지 빠르게 확인할 수 있습니다. 반면 ASIC을 사용하면 실제 반도체를 제작하기 전까지는 실물을 대상으로 테스트를 진행하는 것이 불가능하다는 점에서 FPGA를 사용하게 되면 보다 효율적으로 검증 작업을 수행할 수 있습니다. 참고로 프로젝트에서 사용한 FPGA는 Xilinx 사의 U250 Board이고, 배치 결과를 분석하는 데에 사용한 프로그램은 동사에서 제작한 [Vivado](https://www.xilinx.com/support/university/vivado.html)를 사용했습니다.
+따라서 FPGA를 사용하게 되면 강화학습 에이전트가 배치한 결과를 실제 FPGA Board 상에서 구동이 가능한지 빠르게 확인할 수 있습니다. 반면 ASIC을 사용하면 실제 반도체를 제작하기 전까지는 실물을 대상으로 테스트를 진행하는 것이 불가능하다는 점에서 FPGA를 사용하게 되면 보다 효율적으로 검증 작업을 수행할 수 있습니다. 참고로 프로젝트에서 사용한 FPGA는 Xilinx 사의 U250 Board이고, 배치 결과를 분석하는 프로그램으로는 동사에서 제작한 [Vivado](https://www.xilinx.com/support/university/vivado.html)를 사용했습니다.
 
 #### Programmable의 의미는?
 
@@ -63,12 +60,9 @@ Netlist는 반도체의 논리적인 설계도로서, 여기에는 반도체가 
 
 Netlist를 구성하는 소자들은 그 크기 및 기능에 따라 Macro와 Standard Cell로 구분합니다. 상대적으로 크기가 큰 Macro는 RAM[[4](#ref-4)], DSP[[5](#ref-5)] 등과 같이 그 자체만으로도 복잡한 기능을 수행할 수 있는 소자들입니다. 반면 Standard Cell은 LUT, Flip-Flop[[6](#ref-6)]과 같이 단순한 연산이나 순간적인 데이터 저장 등의 기능만을 가지고 있습니다. Google의 Chip Placement 논문[[1](#ref-1)]을 기준으로 하면 Macro만 강화학습 알고리즘으로 배치하고 그 이외의 소자들은 Clustering 하여 갯수를 줄이고 Cluster 단위로 전통적인 알고리즘(Force-Directed Method)[[7](#ref-7)]을 사용하여 배치합니다.
 
-
-* 72개가 작은가? 왜 작은가? Google 논문 이야기가 전혀 없음 + 몇백 개 (few hundreds of macros) 이런 식으로 표현하기
-
 #### 작은 문제 정의하기
 
-COP 팀에서 첫 번째 문제로 확보한 Netlist는 소자의 개수가 72개로 Macro가 2개, Standard Cell이 70개 였습니다. 하지만 Google의 Chip Placement 논문[[1](#ref-1)]에 따라 진행한다면 강화학습 Agent로 단 2개의 Macro만을 배치하는 것이었기 때문에 Agent의 성능을 평가하기에는 너무 적다고 판단하였습니다. 따라서 본 프로젝트에서는 총 72개의 Macro와 Standard Cell 모두를 강화학습 Agent가 배치하도록 문제를 정의하여 실험을 진행했습니다.
+COP 팀에서 첫 번째 문제로 확보한 Netlist는 소자의 개수가 72개로 Macro가 2개, Standard Cell이 70개 였습니다. 하지만 Google의 Chip Placement 논문[[1](#ref-1)]에 따라 진행한다면 강화학습 Agent로 단 2개의 Macro만을 배치하게 됩니다. 동일한 기준으로도 수백 개의 Macro를 배치(few hundreds of macros)하는 Google의 Chip Placement 논문[[1](#ref-1)]과 비교해 볼 때 2개만을 배치하는 것은 Agent의 성능을 평가하기에는 너무 적다고 판단하였습니다. 따라서 본 프로젝트에서는 총 72개의 Macro와 Standard Cell 모두를 강화학습 Agent가 배치하도록 문제를 정의하여 실험을 진행했습니다.
 
 ## 강화학습 환경 만들기
 
@@ -84,16 +78,11 @@ ASIC을 사용하는 Google의 Chip Placement 논문에서는 전체 Chip Canvas
 
 이러한 FPGA의 본질적인 특성 때문에 Google의 Chip Placement 논문보다는 다소 복잡하게 환경을 구성하게 되었습니다. 우선 에이전트가 소자를 배치할 Grid Cell을 선택하면 해당 Grid Cell 내에 포함된 BEL 중 임의로 하나를 추출하여 소자와 매핑하도록 하였습니다. Action에 적용되는 Masking 또한 소자의 타입에 따라 다르게 적용했다는 점에서도 소자 간 구분이 없어 하나의 Mask만 사용하는 논문과는 차이가 있습니다.
 
-
-* Grid를 어떻게 잡았는지, 한 셀 안에 몇 개 정도가 들어가는지
-
-Grid의 Row, Column 갯수 또한 중요한 문제인데, Google의 Chip Placement 논문에서는 많게는 $$128 \times 128$$까지 실험을 진행했고, 결과적으로는 $$30 \times 30$$으로 설정했을 때에 성능이 가장 좋았다고 언급합니다. 그러나 본 프로젝트에서는 Netlist의 크기가 논문보다 작기 때문에 Grid의 크기 또한 작게하기로 결정했습니다. 최종적인 실험에는 $$6 \times 6$$ 크기의 Grid를 사용하였습니다.
+Grid의 Row, Column 갯수 또한 중요한 문제인데, Google의 Chip Placement 논문에서는 많게는 $$128 \times 128$$까지 실험을 진행했고, 결과적으로는 $$30 \times 30$$으로 설정했을 때에 성능이 가장 좋았다고 언급합니다. 그러나 본 프로젝트에서는 Netlist의 크기가 논문보다 작은 만큼 Grid의 크기 또한 작게하기로 결정했습니다. 최종적인 실험에는 $$6 \times 6$$ 크기의 Grid를 사용하였습니다. 배치 영역 또한 Netlist의 크기에 맞춰 전체 FPGA Board를 사용하지 않고, 개별 Grid Cell마다 100개 이하의 소자가 포함되는 수준으로 조절하였습니다.
 
 ### (2) Reward는 어떻게 계산할까
 
-Reward Function은 강화학습에서 가장 중요한 것 요소 중 하나로, 학습의 방향을 결정합니다. Google의 Chip Placement 논문에서는 아래와 같이 Reward Function을 제안하고 있습니다.
-
-* p, g 가 뭘까요? placement, graph
+Reward Function은 강화학습에서 가장 중요한 것 요소 중 하나로, 학습의 방향을 결정합니다. Google의 Chip Placement 논문에서는 아래와 같이 Reward Function을 제안하고 있습니다. 참고로 아래 수식에서 $$p$$와 $$g$$는 각각 placement, graph를 의미합니다.
 
 >$$
 R_{p,q} = -\text{WireLength}(p, g) - \lambda \text{Congestion}(p, g) \\
@@ -115,10 +104,7 @@ Wire Length를 구하는 방법은 여러가지[[7](#ref-7)]가 있는데, Chip 
 
 Routing Congestion에 대해서는 반도체 설계와 관련된 지식이 요구되는 만큼 Furiosa AI의 도움을 받아 구현하게 되었습니다. 구체적으로는 각각의 Grid Cell를 통과하는 Wire의 갯수를 사용하여 수평 방향과 수직 방향 각각에 대한 congestion을 계산하고, 이 중 상위 10%에 대한 평균 값을 사용하는 방식입니다. 
 
-
-* Placement Density 설명 추가하기
-
-마지막으로 Placement Density는 전체 FPGA Board 상에서 배치 영역을 적절하게 조절하는 것으로 제약 조건을 만족하도록 했습니다.
+마지막으로 Placement Density란 물리적인 배치 가능한 영역의 크기 당 배치하고자 하는 매크로의 전체 크기를 말합니다. 이러한 Placement Density는 전체 FPGA Board 상에서 배치 영역을 적절하게 조절하는 것으로 제약 조건을 만족하도록 했습니다.
 
 ### (3) 환경에서 어떤 정보를 주어야 할까
 
@@ -130,10 +116,7 @@ Google의 Chip Placement 논문에서 제시하는 Observation의 유형으로�
 - Netlist Metadata: 사용하는 영역의 크기, Grid의 크기, Congestion Map, 총 Macro/Wire의 갯수
 - Mask: 타입별 마스킹 정보
 
-
-* 포트 갯수에 대한 설명 추가하기 / Google에서는 안 쓰고 있음
-
-FPGA이므로 사용하는 영역의 크기는 TILE의 갯수를 활용했습니다. 또한 Congestion Map은 Google의 Chip Placement 논문에 나오지 않는 요소로, 쉽게 말해 각 Grid Cell 단위로 배치되어 있는 Macro들의 총 Port 갯수에 대한 정보를 가지고 있습니다. 포트 갯수가 많을수록 해당 영역과 연결되어 있는 Wire의 갯수가 많을 것이라고 추정할 수 있는 만큼 Routing Congestion을 추정하는 데에 도움이 될 것이라 판단하여 추가하게 되었습니다.
+FPGA이므로 사용하는 영역의 크기는 TILE의 갯수를 활용했습니다. Congestion Map은 Google의 Chip Placement 논문에 나오지 않는 요소로, 쉽게 말해 각 Grid Cell 단위로 배치되어 있는 Macro들의 총 Port 갯수에 대한 정보를 가지고 있습니다. 포트 갯수가 많을수록 해당 영역과 연결되어 있는 Wire의 갯수가 많을 것이라고 추정할 수 있는 만큼 Routing Congestion을 추정하는 데에 도움이 될 것이라 판단하여 추가하게 되었습니다. Macro Feature의 포트 갯수 정보 또한 논문에서는 명시하고 있지 않으나, 동일한 이유로 추가하게 되었습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -141,6 +124,8 @@ FPGA이므로 사용하는 영역의 크기는 TILE의 갯수를 활용했습니
   <figcaption style="text-align: center;">[그림] - Congestion Map</figcaption>
 </p>
 </figure>
+
+마지막으로 Mask란 현재 배치하고자 하는 소자를 배치할 수 있는 영역에 대해 알려주는 정보입니다. 쉽게 말해 에이전트가 배치할 수 없는 영역을 선택하지 못하게 하는 역할을 합니다. Google의 Chip Placement 논문에서 사용하는 ASIC에서는 배치할 수 있는 적절한 공간만 존재하면 소자의 타입과 무관하게 배치가 가능합니다. 따라서 하나의 Mask만 필요합니다. 그러나 소자의 배치 가능한 위치가 미리 결정되어 있는 FPGA에서는 소자별로 배치 가능한 Grid Cell이 다를 수 밖에 없습니다. 이러한 차이 때문에 본 프로젝트에서는 Mask를 소자의 갯수만큼 만들어두고, 배치할 소자에 따라 서로 다른 Masking을 실시했습니다.
 
 ## 강화학습 에이전트 만들기
 
@@ -163,20 +148,13 @@ $$
 
 #### 1. $$fc$$에 Activation Function이 필요한가
 
-위의 수식에는 두 개의 $$fc$$가 나옵니다. 그런데 이와 관련하여 Google의 Chip Placement 논문에서는 Activation Function 유무에 대해서는 언급하지 않고 있습니다. 처음에 Fully Connected Network에 
-
-* Fully Connected Network - 구글 논문 확인해보기 - 처음에는 가장 단순하게 Fully Connected Layer로 보았다. Affine 연산만으로 가정 -> 그런데 안 됨 -> Activation function을 추가하니 되었다.
-
-
-단순히 Affine 연산을 의미하는 것으로 해석하여 Activation Function 없이 구현하였으나 Embedding이 수렴하지 않았고, 모든 $$fc$$의 출력에 Activation Function을 추가한 후에야 Embedding이 수렴을 확인할 수 있었습니다.
+위의 수식에는 두 개의 $$fc$$가 나옵니다. 그런데 이와 관련하여 Google의 Chip Placement 논문에서는 Activation Function 유무에 대해서는 언급하지 않고 있습니다. 논문에서는 Fully Connected Network로 표현하고 있어 단순히 Affine 연산을 의미하는 것으로 가정하고 Activation Function 없이 구현했습니다. 그러나 Embedding이 수렴하지 않았고, 모든 $$fc$$의 출력에 Activation Function을 추가한 후에야 Embedding이 수렴을 확인할 수 있었습니다.
 
 #### 2. 수렴 여부는 어떻게 결정할 것인가
 
 Embedding이 수렴한다는 것은 결국 이전 Embedding과 현재 Embedding 간의 차이가 점차 줄어든다는 것을 의미합니다. 그런데 그 차이가 무한히 작아질 때까지 계속 연산을 반복하는 것은 비효율적이므로 그 차이가 일정 수준 이하로 떨어지면 수렴한 것으로 판단합니다.
 
-* wiki frobenius norm 링크 추가하기
-
-Google의 Chip Placement 논문에서 구체적인 방안은 제시하지 않고 있습니다. COP 팀에서는 두 Embedding의 차이를 계산하는 방법으로 **Frobenius Norm**을 사용했습니다. $$n \times m$$ 행렬 $$A$$의 Frobenius Norm은 아래와 같이 계산됩니다.
+Google의 Chip Placement 논문에서 구체적인 방안은 제시하지 않고 있습니다. COP 팀에서는 두 Embedding의 차이를 계산하는 방법으로 **Frobenius Norm**[[10](#ref-10)]을 사용했습니다. $$n \times m$$ 행렬 $$A$$의 Frobenius Norm은 아래와 같이 계산됩니다.
 
 $$
 \| A \|_\text{F} = \root \of {\Sigma_{i=1}^n \Sigma_{j=1}^m \vert a_{ij} \vert^2}
@@ -186,49 +164,41 @@ $$
 
 이러한 문제에 대처하기 위해 Max iteration의 크기를 hyper parameter로 추가하여 일정 횟수 이상 반복적으로 Embedding이 업데이트되지는 않도록 했습니다. 참고로 최종 실험은 Max iteration은 10으로, Threshold는 1-e7로 설정하고 진행했습니다.
 
-
-* PPO 레퍼런스 추가하기
-
 ### 강화학습 알고리즘
 
-강화학습 알고리즘으로는 Google의 Chip Placement 논문과 동일하게 PPO를 사용했습니다.
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_paper_architecture.png" alt="normal gradient" width="110%">
+  <figcaption style="text-align: center;">[그림] - Model Architecture</figcaption>
+</p>
+</figure>
 
-* Chip Placement 이미지 추가하기
-
-아키텍쳐 구조는 원 논문을 따랏다.
-
+강화학습 알고리즘으로는 Google의 Chip Placement 논문과 동일하게 PPO[[11](#ref-11)]를 사용했으며, 전체적인 에이전트의 구조 또한 위 이미지와 동일하게 구성했습니다.
 
 ## 평가는 무엇을 기준으로 하나?
 
 반도체 산업에서는 P&R의 결과로 반도체 성능의 척도인 PPA(Performance, Power, Area)가 결정된다고 말합니다. 즉 개별 소자들을 어떻게 배치하느냐에 따라 각 소자들을 연결하는 Wire의 길이와 필요한 영역의 크기가 달라진다는 것입니다. 이러한 점에서 P&R 결과의 평가 척도로 PPA를 보여주는 수치들을 주로 사용합니다. COP 팀 또한 이러한 수치들을 기준으로 모델의 최종 성능을 평가했습니다. 프로젝트에서 사용한 모델 평가 지표들은 다음과 같습니다.
 
-- WNS(Worst Negative Setup-time Slack): Clock Frequency와 관련된 지표
-- WHS(Worst Negative Hold-time Slack): Clock Frequency와 관련된 지표
-- DP(Dynamic Power): Power와 관련된 지표
-- RU(Routing Utilization Ratio): 사용하는 Wire 길이와 관련된 지표
+- WNS(Worst Negative Setup-time Slack)
+- WHS(Worst Negative Hold-time Slack)
+- DP(Dynamic Power)
+- RU(Routing Utilization Ratio)
 
 WNS와 WHS의 Time-Slack 이라는 것은 Clock Frequency를 지키는 데에 얼마나 많은 여유 시간이 있는지 나타내는 것입니다. 따라서 이것이 크면 클수록 보다 여유롭게 Clock Frequency를 유지할 수 있으며, 동시에 더 높은 Clock Frequency 또한 가능하다는 것을 의미합니다. 반대로 이것이 음수가 되면 현재 배치 결과로는 주어진 Clock Frequency 대로 구현하는 것이 불가능하다는 뜻입니다.
 
+Dynamic Power는 전체 전력 소비량 중 배치된 결과로 인해 사용되는 전력량을 의미합니다. 참고로 FPGA Board 자체가 반도체이기 때문에 배치가 전혀 이뤄지지 않은 상태에서도 전력을 일정량 소모하게 되는데, 이는 Static Power라고 합니다. 배치를 평가하는 것이 목표이므로 Static Power는 계산에 반영하지 않았습니다. 마지막으로 Routing Utilization은 전체 사용 가능한 Wire 중에서 얼마나 많은 Wire를 사용하는지를 나타내는 수치입니다. Horizontal / Verㄴtical 방향으로 나누어 구해지며, 두 가지를 합하여 사용했습니다.
 
-* 문장 흐름 다듬기
-
-Dynamic Power는 전체 전력 소비량 중 배치된 결과로 인해 사용되는 전력량을 의미합니다. FPGA Board 자체가 반도체이기 때문에 배치가 전혀 이뤄지지 않은 상태에서도 전력을 일정량 소모하게 되는데, 이는 Static Power라고 합니다. 마지막으로 Routing Utilization은 전체 사용 가능한 Wire 중에서 얼마나 많은 Wire를 사용하는지를 나타내는 수치입니다. 정확하게는 Horizontal / Vertical 나누어서 구해지며, 실험에서는 두 값의 합으로 정의했습니다.
-
-* Magnitude 설명 부분 살려내기
-
-정리하자면 WNS, WHS는 크면 클수록 좋은 값, DP와 RU는 작으면 작을수록 좋은 값 입니다. PPA는 이러한 값들을 모두 종합적으로 반영한 것인 만큼 COP 팀에서는 Overall Score를 계산하여 각 배치들을 비교했습니다. 정확한 계산식은 아래와 같습니다.
+정리하자면 WNS, WHS는 크면 클수록 좋은 값, Routing Utilization과 Dynamic Power는 작으면 작을수록 좋은 값 입니다. PPA는 이러한 값들을 모두 종합적으로 반영한 것인 만큼 COP 팀에서는 Overall Score를 계산하여 각 배치들을 비교했습니다. 이때 각각의 값들의 Magnitude가 모두 다르므로 Routing Utilization과 Dynamic Power에 대해서는 100을 곱해주었습니다. 정확한 계산식은 아래와 같습니다.
 
 > Overall Score = WNS + WHS - 100 * Routing Utilization - 100 * Dynamic Power
 
-
 ## 그래서 얼마나 잘했나?
-
 
 COP 팀에서 개발한 강화학습 알고리즘의 성능을 평가하기 위해서는 Vivado 내에서 강화학습 알고리즘이 결정한 대로 배치하고, Routing을 수행한 후 FPGA에서 사용되는 평가 척도들을 계산해야 합니다. COP 팀에서는 강화학습 알고리즘의 배치 결과를 아래와 같은 txt 파일로 저장하고 이를 Vivado에 입력 제약 조건으로 전달하여 이러한 과정이 이뤄질 수 있도록 했습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_txt_result.png" alt="normal gradient" width="90%">
+  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_txt_result.png" alt="normal gradient" width="70%">
   <figcaption style="text-align: center;">[그림] - txt Result Example</figcaption>
 </p>
 </figure>
@@ -239,21 +209,22 @@ COP 팀에서 개발한 강화학습 알고리즘의 성능을 평가하기 위�
 
 최종적인 배치 결과는 다음과 같습니다.
 
-| Place-name | Dyn-power | WNS | WHS | Route-V | Route-H | Overall |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Random Placement | 0.014 | -0.494 | 0.124 | 0.006291 | 0.003450 | -2.744234 |
-| Vivado Placement | **0.01** | 0.079 | 0.026 | **0.001188** | 0.001569 | -1.1707 |
-| RL Placement | **0.01** | **0.163** | **0.046** | 0.001301 | **0.001324** | -1.053514 |
-ㄴ
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_our_result.png" alt="normal gradient" width="90%">
+  <figcaption style="text-align: center;">[테이블] - Experiment Results</figcaption>
+</p>
+</figure>
+
 Random Placement는 모든 소자의 위치를 임의로 선택한 배치 결과를 말하고, Vivado Placement는 Vivado에서 찾은 최적 배치 결과를 말합니다. RL Placement가 COP 팀에서 개발한 에이전트의 배치 결과입니다.
 
-Vivado Placement의 Overall Score가 -1.1707인 반면 강화학습 에이전트로 배치한 결과는 -1.053514로 나왔습니다. 이는 Random Placement 결과를 0으로, Vivado Placement 결과를 1로 보았을 때 약 1.03에 해당하는 수치로 Vivado의 최적 배치와 비교해 볼 때 3% 정도 더 나은 배치 결과를 얻었다고 할 수 있습니다.
+Vivado Placement의 Overall Score가 -1.1707인 반면 강화학습 에이전트로 배치한 결과는 -1.053514로 나왔습니다. 이는 Random Placement 결과를 0으로, Vivado Placement 결과를 1로 보았을 때 약 1.03에 해당하는 수치로 Vivado의 최적 배치와 비교해 볼 때 3% 정도 더 나은 배치 결과를 얻었다고 할 수 있습니다. Overall을 제외한 5개의 개별 수치를 보더라도 4개 수치에서 Vivado와 비슷하거나 보다 월등한 결과를 얻었음을 알 수 있습니다.
 
-각 배치를 시각화하면 다음과 같습니다.
+각각의 실험 결과에 대한 배치 결과를 시각화해보면 다음과 같습니다. 주황색 또는 파란색의 사각형이 소자의 위치를 나타냅니다. 모두 동일한 배치 영역을 가지고 진행했으나, Vivado Placement와 RL Placement는 일부 영역에 집중되어 있어 Random Placement 보다 확대하였습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_random_result.png" alt="normal gradient" width="90%">
+  <img src="/assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_on_fpga_random_result.png" alt="normal gradient" width="100%">
   <figcaption style="text-align: center;">[그림] - Random result</figcaption>
 </p>
 </figure>
@@ -272,21 +243,15 @@ Vivado Placement의 Overall Score가 -1.1707인 반면 강화학습 에이전트
 </p>
 </figure>
 
+RL Placement와 Random Placement의 배치 결과는 모두 제약조건으로 Vivado에 전달되므로 모두 주황색 사각형으로 표현되고 있습니다. 파란색 사각형은 Vivado 내부 알고리즘에 따라 배치한 소자를, 주황색 사각형은 제약 조건에 따라 배치된 소자를 의미합니다. RL Placcement 결과에도 파란색 사각형이 존재하는데, 입력 포트 등 에이전트의 배치 대상이 아닌 소자들의 경우 Vivado가 배치하기 때문입니다.
 
-* 가운데 초록색에 대한 설명 / 라우팅 선에 대한 설명 추가
+참고로 각 소자들을 연결하고 있는 녹색의 실선이 Wire이며, 이를 배치하는 Routing 작업은 모두 Vivado의 Solution을 따랐습니다. 이미지의 가운데 영역에 존재하는 녹색의 선형 블럭이 전체 반도체 배치의 시작과 끝이 되는 입출력 포트입니다. 
 
-RL Placement와 Random Placement의 배치 결과는 모두 제약조건으로 Vivado에 전달되므로 모두 주황색 사각형으로 표현되고 있습니다(일부 파란색 사각형은 입력 포트 등 에이전트의 배치 범위를 벗어난 것입니다). 참고로 파란색 사각형은 Vivado 내부 알고리즘에 따라 배치한 소자를, 주황색 사각형은 제약 조건에 따라 배치된 소자를 의미합니다. Placement 이후의 Routing 작업은 모두 Vivado의 Solution을 따랐습니다.
+## Conclusion
 
+MakinaRocks COP팀에서 개발한 Chip Placement 알고리즘은 소규모 설계 회로에 있어 기존 상용 EDA Tool의 최적 배치보다 약 3% 정도 높은 성능을 보였습니다. 현재 COP 팀에서는 상용 수준의 반도체 Netlist에 대해서도 잘 동작하는 알고리즘을 목표로 추가적인 연구 개발을 진행하고 있습니다. 최종적으로는 반도체 P&R 문제를 기존 방법론보다 효과적으로 해결할 수 있는 제품을 개발하고자 합니다.
 
-* 실험의 의의
-
-- FPGA에서도 잘 되더라.
-- 앞으로 더 잘할거다.
-- 이산 최적화 문제를 앞으로 더 많이 풀어볼 것이다.
-
-* 비즈니스 벨류 이야기 추가하기
-
-* 마지막에 세 포스팅 링크 연결하기
+또한 물류 산업의 경로 최적화, 부두 스케쥴링 부터 시작하여 생산 프로세스, 작업 프로세스 최적화까지 현실에는 다양한 형태의 조합 최적화 문제가 존재합니다. 따라서 반도체가 아닌 다양한 산업의 조합 최적화 문제에 Chip Placement on FPGA 프로젝트를 통해 확보한 기술력과 경험을 적용하는 데에도 많은 관심을 가지고 있습니다.
 
 ## References
 
@@ -304,6 +269,10 @@ RL Placement와 Random Placement의 배치 결과는 모두 제약조건으로 V
 
 <a name="ref-7">[7]</a>  [K. Shahookar & P. Mazumder, 1991, VLSI Cell Placement Techniques, ACM Computing Surveys.](http://users.eecs.northwestern.edu/~haizhou/357/p143-shahookar.pdf)
 
+<a name="ref-8">[8]</a>  Clive Maxfield, 2004, The design warrior's guide to FPGAs, Elsevier
 
-막스필드 Guide
-<a name="ref-7">[7]</a>  [K. Shahookar & P. Mazumder, 1991, VLSI Cell Placement Techniques, ACM Computing Surveys.](http://users.eecs.northwestern.edu/~haizhou/357/p143-shahookar.pdf)
+<a name="ref-9">[9]</a>  [위키 백과, 2020, 팹리스 반도체 기업.](https://ko.wikipedia.org/wiki/%ED%8C%B9%EB%A6%AC%EC%8A%A4_%EB%B0%98%EB%8F%84%EC%B2%B4_%EA%B8%B0%EC%97%85)
+
+<a name="ref-10">[10]</a>  [Wikipedia, 2021, Matrix norm, Frobenius norm.](https://en.wikipedia.org/wiki/Matrix_norm#Frobenius_norm)
+
+<a name="ref-11">[11]</a>  [John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, Oleg Klimov, 2021, Proximal Policy Optimization Algorithms, OpenAI.](https://arxiv.org/abs/1707.06347)
