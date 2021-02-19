@@ -3,6 +3,7 @@ layout: post
 title: Chip Placement with Deep Reinforcement Learning 
 author: kyeongmin woo
 categories: [combinatorial_optimization, reinforcement_learning]
+image: assets/images/2021-02-15-chip_placement_with_reinforcement_learning/chip_placement_with_deep_reinforcement_learning_model.png
 ---
 
 Chip Placement 문제는 반도체 설계 공정 중 하나로 조합 최적화 문제입니다. 이번 포스팅에서는 Chip Placement 문제에 강화학습을 적용한 Google의 Chip Placement with Deep Reinforcement Learning[[1](#ref-1)] 논문(이하 Google의 Chip Placement 논문)을 소개해보고자 합니다.
@@ -291,11 +292,11 @@ Pre-Training의 목표는 State Encoder가 다양한 Observation을 경험하여
 </p>
 </figure>
 
-테이블의 메트릭을 정확하게 이해하기 위해서는 각각이 무엇을 의미하는지 정확하게 알아야하는데, 여기서 표를 이해하는 데에는 WNS가 100ps 이상이거나 Horizontal/Vertical Congestion이 1%를 넘기면 사용할 수 없는 배치가 된다는 점만 알아두시면 될 것 같습니다. 이러한 기준에 따르면 Block 1,2,3에 대한 RePLAce의 배치 결과는 이를 초과하여 사용할 수 없기 때문에 논문의 저자들은 자신들이 제안하는 방법론이 가장 뛰어나다고 결론내립니다.
+테이블2의 메트릭을 정확하게 이해하기 위해서는 각각이 무엇을 의미하는지 정확하게 알아야하는데, 여기서 표를 이해하는 데에는 WNS가 100ps 이상이거나 Horizontal/Vertical Congestion이 1%를 넘기면 사용할 수 없는 배치가 된다는 점만 알아두시면 될 것 같습니다. 이러한 기준에 따르면 Block 1,2,3에 대한 RePLAce의 배치 결과는 이를 초과하여 사용할 수 없기 때문에 논문의 저자들은 자신들이 제안하는 방법론이 가장 뛰어나다고 결론내립니다.
 
 다만 학습 속도에 있어서는 RePlAce가 보다 나은 방법으로, 1시간에서 3.5시간 정도 걸리는 데에 비해 논문의 방법은 학습시간까지 모두 포함하여 3시간에서 6시간 정도 걸렸다고 합니다.
 
-## Conclusion
+## 결론
 
 Google의 Chip Placement 논문은 다음 네 가지 면에 있어서 큰 의미를 가지고 있습니다.
 
