@@ -3,9 +3,8 @@ layout: post
 title: Chip Placement on FPGA 프로젝트를 소개합니다!
 author: kyeongmin woo
 categories: [combinatorial_optimization, reinforcement_learning]
+image: assets/images/2021-02-15-chip-placement-on-fpga-project/chip_placement_placement_and_routing.png
 ---
-
-안녕하세요. MakinaRocks의 우경민입니다.
 
 MakinaRocks의 COP 팀에서는 지난 2020년 9월부터 2021년 1월까지 반도체 설계 공정 중 하나인 Placement & Routing에 강화학습을 적용하는 프로젝트를 진행했습니다. AI Chip 설계를 전문으로 하는 펩리스(fabless) 스타트업 Furiosa AI와의 협업으로 진행되었으며, Furiosa AI가 가지고 있는 반도체 설계 기술과 Makinarocks의 산업 AI 역량을 결합하여 상용 FPGA 자동화 도구와 비교해 효율적인 문제 해결의 가능성을 확인할 수 있었습니다. 
 
@@ -88,7 +87,6 @@ Reward Function은 강화학습에서 가장 중요한 것 요소 중 하나로,
 R_{p,q} = -\text{WireLength}(p, g) - \lambda \text{Congestion}(p, g) \\
 \text{S.t. } \text{density}(p,g) \leq \text{max}_{\text{density}}
 $$
-
 반도체의 소자들을 연결하며 신호를 주고 받을 수 있게 하는 전선을 Wire라고 부릅니다. 이 Wire의 길이에 따라 반도체의 성능이 달라지고 경우에 따라서는 반도체가 정상적으로 동작하지 못하게 되기도 합니다. Wire length가 짧을수록 이점을 가지므로 Reward Function에서 Wire Length에 따라 페널티를 부여하고 있습니다.
 
 Wire Length를 구하는 방법은 여러가지[[7](#ref-7)]가 있는데, Chip Placement 논문에서는 배치된 소자들의 2차원 위치 정보를 통해 HPWL(Half Perimeter Wire Length)[[7](#ref-7)] 방식에 따라 구하고 있습니다. 예시를 통해 확인하면 구현 내용을 보다 쉽게 이해할 수 있을 것 같아 네 개의 소자가 네 개의 Grid Cell에 나누어 배치된 예시 이미지를 준비했습니다. 
