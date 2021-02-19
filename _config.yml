@@ -60,6 +60,23 @@ authors:
     web: 
     description:
 
+  jinwoo park:
+    name: jinwoo park
+    display_name: Jinwoo Park
+    avatar: 'assets/images/team/jinwoopark.png'
+    gravatar:
+    email: 'jinwoo.park@makinarocks.ai'
+    web: 'https://github.com/Curt-Park'
+    description:
+
+  kyeongmin woo:
+    name: kyeongmin woo
+    display_name: Kyeongmin Woo
+    avatar: 'assets/images/team/kyeongminwoo.png'
+    gravatar: 
+    email: 'wgm0601@makinarocks.ai'
+    web: 'https://github.com/enfow'
+
 # Plugins
 plugins:
   - jekyll-paginate
