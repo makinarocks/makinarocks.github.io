@@ -71,19 +71,21 @@ Hard Coding으로 Test Case를 작성하는 것에 부담을 느끼기도 하고
 
 Test의 목적은 현재 코드에서 작성자가 원하는 대로 동작하지 않는 부분을 찾아내는 것입니다. 따라서 Test 결과가 나왔을 때 어떤 부분이 문제인지 빠르고 정확하게 확인할 수 있도록 해야 합니다. 구체적으로 다음과 같은 점들을 고려하는 것이 도움이 되었습니다.
 
-- Test Case는 최대한 잘게 쪼개어주는 것이 좋다.
-- Test Case의 이름에서 검증 대상이 드러나야 한다.
-- Test Case의 특성에 따라 그룹화하는 것이 좋다.
+- Test Case는 최대한 잘게 쪼개어주는 것이 좋습니다.
+- Test Case의 이름에서 검증 대상이 잘 드러나도록 해야 합니다.
+- Test Case의 특성에 따라 그룹화하는 것이 좋습니다.
 
-#### 3. 가능한 경우의 수를 모두 생각해 보아야 한다. 
+#### 3. 가능한 경우의 수를 모두 생각해 보아야 한다
 
 함수는 어떤 입력이 주어졌을 때 원하는 출력 값을 반환해야 합니다. 따라서 입출력을 검증하는 것이 필수적이라 할 수 있는데, 이와 관련하여 다음과 같은 점들을 확인해 볼 필요가 있습니다.
 
-- 입력의 범위, 입력의 타입이 정해져 있다면 이에 대한 check가 필요하다.
-- 가능한 Edge Case를 list-up 하고 모두 검증할 수 있도록 한다.
-- Method의 경우에는 중간에 Attribute를 변경하기도 하는데, 이에 대해서도 출력과 마찬가지로 검증한다.
+- 입력의 범위, 입력의 타입이 정해져 있다면 이에 대한 check가 필요합니다.
+- 가능한 Edge Case를 list-up 하고 어디까지 검증할 것인지 결정해야 합니다.
+- Class의 Method는 Attribute를 변경하기도 하는데, 이에 대해서도 반환값과 마찬가지로 검증이 필요합니다.
 
-Edge Case를 선정할 때에는 가능한 State를 모두 나열해보는 것이 중요합니다. 예를 들어 다음과 같이 하나의 Method 내에 if 문에 총 3개 있다면 8개의 State가 존재하므로, 모든 State를 검증하기 위해서는 최소 8개의 Edge Case가 필요합니다.
+Edge Case란 입력값으로 특별한 처리가 필요한 값이 들어오는 경우를 의미합니다[[1](#ref-1)]. Edge Case를 검증한다는 것은 입력으로 0 부터 1 까지의 실수가 들어올 것으로 가정하는 함수가 있을 때, 0과 1처럼 경계에 있는 입력이나, -1, 100 처럼 경계 밖의 입력이 들어올 때에도 적절히 처리하는지 확인하는 것을 의미합니다. 
+
+이러한 Edge를 선정할 때에는 함수의 가능한 State를 모두 나열해보는 것이 중요합니다. 예를 들어 다음과 같이 하나의 Method 내에 if 문에 총 3개 있다면 8개의 State가 존재하므로, 개별 State에 대한 Edge Case를 고려해 Test Code를 작성하는 것이 좋습니다.
 
 ```python
 def it_has_eight_state(inp1: int, inp2: int, inp3: int) -> int:
@@ -107,6 +109,8 @@ def it_has_eight_state(inp1: int, inp2: int, inp3: int) -> int:
 | 1  | 0  | 1  | 2  |
 | 1  | 1  | 0  | 2  |
 | 1  | 1  | 1  | 3  |
+
+모든 State, 모든 Edge Case를 검증하는 것이 Unit Test의 입장에서는 바람직한 일이지만 전체 프로젝트를 진행하는 입장에서는 비효율적일 수도 있습니다. 상황에 따라서는 Edge Case를 모두 나열해보고 발생하지 않을 것이라는 믿음이 있는 Edge Case에 대해서는 제외할 필요도 있습니다.
 
 ##### 4. Test Case마다 그 목적이 무엇인지 Docstring을 명확히 작성해야 한다
 
@@ -137,9 +141,9 @@ Test Code 또한 유지 보수의 대상이며, 새로운 기능을 추가하거
 
 PyTest가 사용자의 Test Code를 인식하도록 하기 위해서는 다음과 같은 Directory Convention에 따라 Test Code를 작성해야 합니다. 
 
-- Test File들은 모두 testpaths 내에 위치해야 한다. 일반적으로 testpaths는 `tests/`로 한다.
-- testpaths 내에서는 디렉토리를 생성하여 Test File들을 분류할 수 있다. Recursive하게 testpaths 내의 디렉토리를 탐색하기 때문이다.
-- testpaths 내의 Test File의 이름은 모두 `test_*.py` 또는 `*_test.py` 꼴이어야 한다.
+- Test File들은 모두 testpaths 내에 위치해야 한다. 일반적으로 Test Paths는 `tests/`로 해야 합니다.
+- testpaths 내에서는 디렉토리를 생성하여 Test File들을 분류할 수 있습니다. PyTest는 Test Paths에서 Recursive하게 탐색합니다.
+- testpaths 내의 Test File의 이름은 모두 `test_*.py` 또는 `*_test.py` 꼴로 해야 합니다.
 
 PyTest에서 제공하는 [디렉토리 구조의 예시](<https://docs.pytest.org/en/stable/example/pythoncollection.html>)는 다음과 같습니다.
 
@@ -161,14 +165,14 @@ tests/
 
 개별 Test Case들은 Class의 Method 혹은 Function의 형태로 Test File 내에 정의됩니다. 이때 Class의 형태로 묶어서 정의하면 Class 이름에 따라 그루핑(Grouping)되는데, 구체적으로 다음 두 가지 장점을 가지게 됩니다.
 
-- 설정값, initializing 등을 공유할 수 있어 Test Code 작성이 편리해진다.
-- Test 결과가 Class 이름으로 묶여서 표시되기 때문에 결과 확인이 편리해진다.
+- 설정값, initializing 등을 공유할 수 있어 Test Code 작성이 편리해집니다.
+- Test 결과가 Class 이름으로 묶여서 표시되기 때문에 결과 확인이 편리해집니다.
 
 Test Case들에 대해서도 Convention을 따라야 PyTest가 Test Case로 인식할 수 있습니다. 대표적으로 다음과 같은 규칙들이 있습니다.
 
-- Test File 내에 정의된 모든 Test Case들은 Class의 Method 혹은 Function 형태로 정의되어야 하며, 이때 Class와 Method, Function의 이름은 모두 `test_*` 꼴이어야 한다.
-- Class의 이름은 `Test*.py`여야 한다.
-- Class를 사용한다면 생성자 `__init__()` Method를 만들지 말아야 한다.
+- Test File 내에 정의된 모든 Test Case들은 Class의 Method 혹은 Function 형태로 정의되어야 하며, 이때 Class와 Method, Function의 이름은 모두 `test_*` 꼴이어야 합니다.
+- Class의 이름은 `Test*.py`여야 합니다.
+- Class를 사용한다면 생성자 `__init__()` Method를 만들지 않습니다.
 
 관련하여 예시 코드는 TDD를 공부하며 작성한 Repository [PyTest 예시 Code](<https://github.com/enfow/test-driven-dev-python/blob/main/tests/test_ch1.py>)에서 확인하실 수 있습니다.
 
@@ -195,3 +199,7 @@ utest:
 ```
 
 위와 같은 내용을 담아 Project Directory에 Makefile을 정의해두면 `$ make utest`로 PyTest를 실행할 수 있습니다. 참고로 위 명령어는 `./tests` 디렉토리에서 Test Case들을 찾되 test_example_01.py에 정의된 Test Case는 포함하지 않는다는 의미를 가지고 있습니다. 추가적인 option 값들은 [PyTest 홈페이지](<https://docs.pytest.org/en/stable/reference.html#command-line-flags>)에서 확인할 수 있습니다. `env PYTHONPATH=.`는 때때로 PyTest가 디렉토리를 잘못 잡는 경우가 있어 방어적으로 추가한 것입니다.
+
+## Reference
+
+<a name="ref-1">[1]</a>  [Wikipedia, 2021, Edge case.](https://en.wikipedia.org/wiki/Edge_case#Software_engineering)
