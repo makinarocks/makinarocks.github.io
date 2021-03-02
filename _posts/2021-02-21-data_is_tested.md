@@ -3,7 +3,7 @@ layout: post
 title: 온라인 환경에서 Data 검증하기
 author: minjoo lee
 categories: [deeplearning]
-image: assets/images/2020-12-29-Gradient-Accumulation/noisy_gradient.jpeg
+image: assets/images/2021-02-21-data_is_tested/total.gif
 ---
 
 ## Introduction
@@ -26,6 +26,25 @@ image: assets/images/2020-12-29-Gradient-Accumulation/noisy_gradient.jpeg
 - Input Sample Test
 - Input Feature Test
 - Dataset Test
+
+<div class="row">
+    <div style="width:45%; float:left; margin-right:10px;">
+        <figure class="image" style="align: center;">
+            <p align="center">
+                <img src="/assets/images/2021-02-21-data_is_tested/valid.gif" alt="valid-data" width="120%">
+                <figcaption style="text-align: center;">Input Valid Data</figcaption>
+            </p>
+        </figure>
+    </div>
+    <div style="width:45%; float:right;">
+        <figure class="image" style="align: center;">
+            <p align="center">
+                <img src="/assets/images/2021-02-21-data_is_tested/invalid.gif" alt="invalid-data" width="120%">
+                <figcaption style="text-align: center;">Input Invalid Data</figcaption>
+            </p>
+        </figure>
+    </div>
+</div>
 
 ## Input Sample Test
 
