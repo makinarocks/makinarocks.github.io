@@ -3,7 +3,7 @@ layout: post
 title: Regression Test, Are you sure?
 author: wontak ryu
 categories: [test]
-image: assets/images/2020-02-10-Performance-Test/13_.gif
+image: assets/images/2020-02-10-Regression-Test/13_.gif
 ---
 
 ## 들어가며
@@ -21,7 +21,7 @@ image: assets/images/2020-02-10-Performance-Test/13_.gif
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Performance-Test/1.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/1.png" alt="Gitflow Workflow" width="60%">
   <figcaption style="text-align: center;">[그림1] - Gitflow Workflow [16]</figcaption>
 </p>
 </figure>
@@ -33,7 +33,7 @@ image: assets/images/2020-02-10-Performance-Test/13_.gif
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Performance-Test/2.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/2.png" alt="Gitflow Workflow" width="60%">
   <figcaption style="text-align: center;">[그림2] - Problem in Makinarocks</figcaption>
 </p>
 </figure>
@@ -42,7 +42,7 @@ image: assets/images/2020-02-10-Performance-Test/13_.gif
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Performance-Test/3.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/3.png" alt="Gitflow Workflow" width="60%">
   <figcaption style="text-align: center;">[그림3] - Search Space</figcaption>
 </p>
 </figure>
@@ -51,7 +51,7 @@ image: assets/images/2020-02-10-Performance-Test/13_.gif
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Performance-Test/4.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/4.png" alt="Gitflow Workflow" width="60%">
   <figcaption style="text-align: center;">[그림4] - Causes</figcaption>
 </p>
 </figure>
@@ -67,13 +67,13 @@ image: assets/images/2020-02-10-Performance-Test/13_.gif
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Performance-Test/5.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/5.png" alt="Gitflow Workflow" width="60%">
   <figcaption style="text-align: center;">[그림5] - 경우의 수</figcaption>
 </p>
 </figure>
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Performance-Test/graph1.png" alt="Gitflow Workflow" width="40%">
+  <img src="/assets/images/2020-02-10-Regression-Test/graph1.png" alt="Gitflow Workflow" width="40%">
   <figcaption style="text-align: center;">[그래프1] - Cost of Debugging</figcaption>
 </p>
 </figure>
@@ -97,7 +97,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Performance-Test/6.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/6.png" alt="Gitflow Workflow" width="60%">
   <figcaption style="text-align: center;">[그림6] - Pipeline #1</figcaption>
 </p>
 </figure>
@@ -108,7 +108,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Performance-Test/7.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/7.png" alt="Gitflow Workflow" width="60%">
   <figcaption style="text-align: center;">[그림7] - Pipeline #2</figcaption>
 </p>
 </figure>
@@ -120,7 +120,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Performance-Test/8.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/8.png" alt="Gitflow Workflow" width="60%">
   <figcaption style="text-align: center;">[그림8] - Pipeline #3</figcaption>
 </p>
 </figure>
@@ -131,7 +131,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Performance-Test/9.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/9.png" alt="Gitflow Workflow" width="60%">
   <figcaption style="text-align: center;">[그림9] - Problem of Device Dependency</figcaption>
 </p>
 </figure>
@@ -148,7 +148,7 @@ Kubernetes를 사용한 목적은 내부의 컴퓨팅 자원을 추상화하기 
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Performance-Test/10.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/10.png" alt="Gitflow Workflow" width="60%">
   <figcaption style="text-align: center;">[그림10] - Kubernetes in Makinarocks </figcaption>
 </p>
 </figure>
@@ -161,7 +161,7 @@ Jenkins Container의 역할은 특정 Device내에서 Container로 Regression Te
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Performance-Test/11.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/11.png" alt="Gitflow Workflow" width="60%">
   <figcaption style="text-align: center;">[그림11] - Pipeline #4 </figcaption>
 </p>
 </figure>
@@ -175,7 +175,7 @@ Jenkins Container의 역할은 특정 Device내에서 Container로 Regression Te
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Performance-Test/12.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/12.png" alt="Gitflow Workflow" width="60%">
   <figcaption style="text-align: center;">[그림12] - Pipeline #5 </figcaption>
 </p>
 </figure>
@@ -187,7 +187,7 @@ GitHub Action에서 Trigger Event Type에 대해서 정할 수 있습니다. 여
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Performance-Test/13.gif" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/13.gif" alt="Gitflow Workflow" width="60%">
   <figcaption style="text-align: center;">[그림13] - Click for Regression Test </figcaption>
 </p>
 </figure>
@@ -196,7 +196,7 @@ Regression Test Pipeline의 모습을 [그림13]으로 도식화해봤습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Performance-Test/14.png" alt="Gitflow Workflow" width="80%">
+  <img src="/assets/images/2020-02-10-Regression-Test/14.png" alt="Gitflow Workflow" width="80%">
   <figcaption style="text-align: center;">[그림14] - Pipeline Overview </figcaption>
 </p>
 </figure>
@@ -206,7 +206,7 @@ Regression Test Pipeline의 모습을 [그림13]으로 도식화해봤습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Performance-Test/15.png" alt="Gitflow Workflow" width="80%">
+  <img src="/assets/images/2020-02-10-Regression-Test/15.png" alt="Gitflow Workflow" width="80%">
   <figcaption style="text-align: center;">[그림15] - Reduced Search Space </figcaption>
 </p>
 </figure>
