@@ -127,7 +127,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 ### Device Dependency
 
-하지만, Pipeline #1 ~ #3이 모두 공통적으로 한 컴퓨팅 자원에 의존적이라는 문제가 있었습니다. 예를 들어서, Regression Test에 사용하는 컴퓨팅자원에 만약 다른 작업이 돌아가고 있었다면, Regression Test가 아예 작동하지 못하거나, 다른 작업을 망칠 수도 있습니다. [그림9]를 보면, 3개의 노트북이 MRX-Desktop1에 접속하여 사용하고 있는 모습을 볼 수 있습니다. 만약 Jenkins Container가 MRX-Desktop1에서 작동하고 있다면, Regression Test가 정상적으로 작동하지 않을 것입니다.
+하지만 Pipeline #1 ~ #3은 모두 공통적으로 한 컴퓨팅 자원에 의존적이라는 문제가 있습니다. 예를 들어 Regression Test에 사용하는 컴퓨터에서 다른 작업이 돌아가고 있다면 Regression Test가 아예 작동하지 못하거나, 다른 작업을 망칠 수도 있습니다. [그림9]를 보면, 3개의 노트북이 MRX-Desktop1에 접속하여 사용하고 있는 모습을 볼 수 있습니다. 만약 Jenkins Container가 MRX-Desktop1에서 작동하고 있다면, Regression Test가 정상적으로 작동하지 않을 것입니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
