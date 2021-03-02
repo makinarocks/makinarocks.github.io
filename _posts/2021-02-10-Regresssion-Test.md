@@ -135,7 +135,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 </p>
 </figure>
 
-또한 다른 MRX-Desktop2, 3를 보면 컴퓨팅 자원이 여유있다는 것을 알 수 있습니다. 자원을 효율적으로 사용하기 위해서 Device Dependency를 제거하는 작업이 필요했습니다.
+또한 다른 MRX-Desktop2, 3를 보면 컴퓨팅 자원이 여유있다는 것을 알 수 있습니다. 자원을 효율적으로 사용하기 위해서 남은 자원에 효율적으로 접근하는 것이 필요했습니다. 이를 위해서는 Regression Test Pipeline이 특정 자원에 종속되지 않고, 필요한 자원에 동적으로 접근하여야 합니다. 
 
 ### Pipeline #4: InDependent on Device
 
