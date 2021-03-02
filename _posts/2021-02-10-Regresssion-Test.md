@@ -91,7 +91,9 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 ### Pipeline #1: Dependent on Repository
 
-첫 번째로 구현한 Pipeline은 아래 [그림6]에서 볼 수 있습니다. Jenkins Container가 Regression Test 대상이 되는 Repository의 Requiremnts를 미리 가지고 있습니다. 학습에 필요한 데이터의 경우 NAS에 저장해두고 요청 시 접근하여 사용합니다. GitHub에서 Test요청을 보내면, Regression Test를 진행하게 됩니다. 이런 구조는 한 Repository에 의존성을 가지게 된다는 문제를 가지고 있습니다.
+첫 번째로 구현한 Pipeline은 아래 [그림6]에서 볼 수 있습니다. Jenkins Container가 Regression Test 대상이 되는 Repository의 Requirements를 미리 가지고 있습니다. 학습에 필요한 데이터의 경우 NAS에 저장해두고 요청 시 접근하여 사용합니다. GitHub에서 Test요청을 보내면, Regression Test를 진행하게 됩니다. 
+
+이런 구조는 한 Repository에 의존성을 가지게 된다는 문제를 가지고 있습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
