@@ -169,7 +169,7 @@ Jenkins Container의 역할은 특정 Device내에서 Container로 Regression Te
 
 ## (Selected) Method: Self-Hosted Runner in GitHub Action
 
-위에서, Pipeline #1 ~ #4까지 살펴볼 수 있었습니다. 하지만, Jenkins에 익숙하지 않다보니 기술적인 이슈가 발생할때 대처하는데 쉽지 않았습니다. 특히 Kubernetes환경에서 jenkins를 활용하기 위해서는 조금 더 많은 지식이 필요했습니다. 아쉽게도 이에 대한 문서를 쉽게 찾을 수 없어서, 유지보수 측면에서 아쉬움이 있었습니다.
+Pipeline #1부터 #4까지 모두 Jenkins를 사용하고 있습니다. 하지만 Jenkins라는 툴에 익숙하지 않다보니 기술적인 이슈가 발생했을 때 대처하는데 쉽지 않았습니다. 특히 Kubernetes 환경에서 jenkins를 활용하기 위해서는 조금 더 많은 지식이 필요했습니다. 아쉽게도 이에 대한 문서를 쉽게 찾을 수 없어서 유지보수 측면에서 아쉬움이 있었습니다.
 
 그러던 중, GitHub Action에서 Self-Hosted Runner라는 서비스를 제공하는 것을 발견했습니다.[[4]](#ref-2) Self-Hosted-Runner는 가지고 있는 자원을 통해서 Github Action 진행할 수 있었습니다. 상대적으로 GitHub에서 관련내용에 대해서 문서를 제공하였고, 문법도 직관적이라고 생각이 들었습니다. 이런 특징들은 유지보수 관점에서 높은 점수를 줄 수 있었고, 기존의 Jenkins의 역할을 GitHub Action으로 대체하기로 하였습니다.
 
