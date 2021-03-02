@@ -16,7 +16,7 @@ image: assets/images/2020-02-10-Performance-Test/13_.gif
 
 ## Problem: Can't find the cause of the lower performance!
 
-우선, 내부에서 겪었던 문제에 대해서 공유드리도록 하겠습니다. 마키나락스에서는 협업기반의 개발문화를 가지고 있습니다. 개발을 하면서, Branch들이 Pull-Request를 날리고 Review하고 Merge되는 과정을 반복하게 됩니다.
+우선 내부에서 AI Product를 개발하며 겪었던 문제에 대해서 공유드리도록 하겠습니다. 마키나락스에서는 GitHub를 통해 협업을 관리하고  있습니다. 따라서 개발자들은 작업이 어느 정도 완료되면 작업 중인 Branch에서 Pull-Request를 날리게 됩니다. 그럼 다른 개발자들이 해당 코드들을  Review하고 이상이 없으면 Merge 합니다.
 
 
 <figure class="image" style="align: center;">
