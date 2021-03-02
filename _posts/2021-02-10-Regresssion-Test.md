@@ -16,7 +16,7 @@ image: assets/images/2020-02-10-Regression-Test/13_.gif
 
 ## Problem: Can't find the cause of the lower performance!
 
-우선 내부에서 AI Product를 개발하며 겪었던 문제에 대해서 공유드리도록 하겠습니다. 마키나락스에서는 GitHub를 통해 협업을 관리하고  있습니다. 따라서 개발자들은 작업이 어느 정도 완료되면 작업 중인 Branch에서 Pull-Request를 날리게 됩니다. 그럼 다른 개발자들이 해당 코드들을  Review하고 이상이 없으면 Merge 합니다.
+우선 내부에서 AI Product를 개발하며 겪었던 문제에 대해서 공유드리도록 하겠습니다. 마키나락스에서는 GitHub를 통해 협업을 관리하고 있습니다. 따라서 개발자들은 작업이 어느 정도 완료되면 작업 중인 Branch에서 Pull-Request를 날리게 됩니다. 그럼 다른 개발자들이 해당 코드들을  Review하고 이상이 없으면 Merge 합니다.
 
 
 <figure class="image" style="align: center;">
@@ -87,7 +87,7 @@ image: assets/images/2020-02-10-Regression-Test/13_.gif
 
 Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 겪었습니다. 겪었던 시행착오를 통해서, 필요했던 **추상화 과정**에 대해서 설명드리겠습니다.
 
-우선, 자동화 도구로 Jenkins를 활용하였습니다. [[1]](#ref-1) Jenkins는 소프트웨어 개발 시 지속적으로 통합 서비스를 제공하는 툴입니다. 비교적 높은 자유도가 있었고, 자동화 도구로 접근성이 좋다고 판단했습니다. 
+우선, 자동화 도구로 Jenkins를 활용하였습니다 [[1]](#ref-1). Jenkins는 소프트웨어 개발 시 지속적으로 통합 서비스를 제공하는 툴입니다. 비교적 높은 자유도가 있었고, 자동화 도구로 접근성이 좋다고 판단했습니다. 
 
 ### Pipeline #1: Dependent on Repository
 
@@ -116,7 +116,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 ### Pipeline #3: InDependent on Repository, But!
 
-첫 번째로 구현한 Pipeline은 아래 [그림7]에서 볼 수 있습니다. Docker Image는 Requirements가 변경되었을 때만 Update가 필요했습니다. 따라서 미리 DockerImage를 만들어 두고 Jenkins Container가 이를 받아서 사용하도록 구조를 변경하였습니다. Pipeline #3과 비교해봤을 때 효율적이었습니다.
+첫 번째로 구현한 Pipeline은 아래 [그림8]에서 볼 수 있습니다. Docker Image는 Requirements가 변경되었을 때만 Update가 필요했습니다. 따라서 미리 DockerImage를 만들어 두고 Jenkins Container가 이를 받아서 사용하도록 구조를 변경하였습니다. Pipeline #3과 비교해봤을 때 효율적이었습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -140,7 +140,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 ### Pipeline #4: InDependent on Device
 
-Device Dendency를 해결하기 위해서 Kubernetes를 사용하였습니다[[2]](#ref-2). Kubernetes에 대해서 알고 싶으신 분들은 Reference를 참고하시는 것을 추천드립니다[[6]](#ref-2).
+Device Dendency를 해결하기 위해서 Kubernetes를 사용하였습니다 [[2]](#ref-2). Kubernetes에 대해서 알고 싶으신 분들은 Reference를 참고하시는 것을 추천드립니다 [[6]](#ref-2).
 
 Kubernetes를 사용한 목적은 내부의 컴퓨팅 자원을 추상화하기 위함입니다. 쉽게 풀어쓰면, **Kubernetes에 특정 Device를 요청하는 것이 아니라, 필요한 컴퓨팅 자원에 대해서 요청만 하면, 그에 맞는 자원할당을 받기 위해서입니다.** [그림10]을 보면, 여러가지 컴퓨팅 자원이 하나의 클러스터로 묶여있습니다. 이제 원하는 자원의 스펙을 적으면, 그에 맞는 자원이 할당될 것입니다.
 
@@ -153,7 +153,7 @@ Kubernetes를 사용한 목적은 내부의 컴퓨팅 자원을 추상화하기 
 </p>
 </figure>
 
-Jenkins Container의 역할은 특정 Device내에서 Container로 Regression Test를 진행하는 것이 아닙니다. Jenkins Container는 미리 정의된 컴퓨팅 자원 스펙에 해당하는 Ray Cluster를 만드는 것입니다. [[3]](#ref-2) 여기서 Ray Cluster의 역할은 Regression Test를 병렬적으로 진행하기 위한 목적으로 사용되고, 작업이 끝나게 되면 Ray Cluster는 사라지게 됩니다. 참고로 [그림10]에서 구성한 Cluster와 Ray Cluster는 다른 역할을 합니다. [그림10]은 자원자체를 묶는 작업을 의미한다면, Ray Cluster는 이미 묶인 자원을 활용하는 것입니다. 
+Jenkins Container의 역할은 특정 Device내에서 Container로 Regression Test를 진행하는 것이 아닙니다. Jenkins Container는 미리 정의된 컴퓨팅 자원 스펙에 해당하는 Ray Cluster를 만드는 것입니다 [[3]](#ref-2). 여기서 Ray Cluster의 역할은 Regression Test를 병렬적으로 진행하기 위한 목적으로 사용되고, 작업이 끝나게 되면 Ray Cluster는 사라지게 됩니다. 참고로 [그림10]에서 구성한 Cluster와 Ray Cluster는 다른 역할을 합니다. [그림10]은 자원자체를 묶는 작업을 의미한다면, Ray Cluster는 이미 묶인 자원을 활용하는 것입니다. 
 
 **이번 포스팅에서 Kubernetes와 Ray Cluster에 대해서 자세히 다루지는 않겠지만, 수요가 있다면 마키나락스에서 Kubernetes를 활용하는 방법을 다룰 예정입니다. 혹시 관심있으신 분은 댓글 남겨주시면 감사하겠습니다.**
 
@@ -171,7 +171,7 @@ Jenkins Container의 역할은 특정 Device내에서 Container로 Regression Te
 
 Pipeline #1부터 #4까지 모두 Jenkins를 사용하고 있습니다. 하지만 Jenkins라는 툴에 익숙하지 않다보니 기술적인 이슈가 발생했을 때 대처하는데 쉽지 않았습니다. 특히 Kubernetes 환경에서 jenkins를 활용하기 위해서는 조금 더 많은 지식이 필요했습니다. 아쉽게도 이에 대한 문서를 쉽게 찾을 수 없어서 유지보수 측면에서 아쉬움이 있었습니다.
 
-그러던 중, GitHub Action에서 Self-Hosted Runner라는 서비스를 제공하는 것을 발견했습니다.[[4]](#ref-2) Self-Hosted-Runner는 가지고 있는 자원을 통해서 Github Action 진행할 수 있었습니다. 상대적으로 GitHub에서 관련내용에 대해서 문서를 제공하였고, 문법도 직관적이라고 생각이 들었습니다. 이런 특징들은 유지보수 관점에서 높은 점수를 줄 수 있었고, 기존의 Jenkins의 역할을 GitHub Action으로 대체하기로 하였습니다.
+그러던 중, GitHub Action에서 Self-Hosted Runner라는 서비스를 제공하는 것을 발견했습니다 [[4]](#ref-2). Self-Hosted-Runner는 가지고 있는 자원을 통해서 Github Action 진행할 수 있었습니다. 상대적으로 GitHub에서 관련내용에 대해서 문서를 제공하였고, 문법도 직관적이라고 생각이 들었습니다. 이런 특징들은 유지보수 관점에서 높은 점수를 줄 수 있었고, 기존의 Jenkins의 역할을 GitHub Action으로 대체하기로 하였습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -183,7 +183,7 @@ Pipeline #1부터 #4까지 모두 Jenkins를 사용하고 있습니다. 하지�
 
 ## Are You Sure? Yes!
 
-GitHub Action에서 Trigger Event Type에 대해서 정할 수 있습니다. 여러 논의 끝에, Workflow Dispatch라는 Type을 선택하였습니다. 이제 마우스 클릭으로 GitHub Web에서 Regression Test를 실행할 수 있습니다. [[5]](#ref-2)
+GitHub Action에서 Trigger Event Type에 대해서 정할 수 있습니다. 여러 논의 끝에, Workflow Dispatch라는 Type을 선택하였습니다. 이제 마우스 클릭으로 GitHub Web에서 Regression Test를 실행할 수 있습니다 [[5]](#ref-2).
 
 <figure class="image" style="align: center;">
 <p align="center">
