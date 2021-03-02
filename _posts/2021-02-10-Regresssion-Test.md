@@ -16,7 +16,7 @@ image: assets/images/2020-02-10-Regression-Test/13_.gif
 
 ## Problem: Can't find the cause of the lower performance!
 
-우선, 내부에서 겪었던 문제에 대해서 공유드리도록 하겠습니다. 마키나락스에서는 협업기반의 개발문화를 가지고 있습니다. 개발을 하면서, Branch들이 Pull-Request를 날리고 Review하고 Merge되는 과정을 반복하게 됩니다.
+우선 내부에서 AI Product를 개발하며 겪었던 문제에 대해서 공유드리도록 하겠습니다. 마키나락스에서는 GitHub를 통해 협업을 관리하고  있습니다. 따라서 개발자들은 작업이 어느 정도 완료되면 작업 중인 Branch에서 Pull-Request를 날리게 됩니다. 그럼 다른 개발자들이 해당 코드들을  Review하고 이상이 없으면 Merge 합니다.
 
 
 <figure class="image" style="align: center;">
@@ -116,7 +116,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 ### Pipeline #3: InDependent on Repository, But!
 
-첫 번째로 구현한 Pipeline은 아래 [그림7]에서 볼 수 있습니다. Docker Image는 Requirements가 변경되었을 때만 Update가 필요했습니다. 따라서, 미리 DockerImage를 만들어두고, Jenkins Container가 이를 받아서 사용하도록 변경하였습니다. Pipeline #3과 비교해봤을 때, 효율적이었습니다.
+첫 번째로 구현한 Pipeline은 아래 [그림7]에서 볼 수 있습니다. Docker Image는 Requirements가 변경되었을 때만 Update가 필요했습니다. 따라서 미리 DockerImage를 만들어 두고 Jenkins Container가 이를 받아서 사용하도록 구조를 변경하였습니다. Pipeline #3과 비교해봤을 때 효율적이었습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -127,7 +127,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 ### Device Dependency
 
-하지만, Pipeline #1 ~ #3이 모두 공통적으로 한 컴퓨팅 자원에 의존적이라는 문제가 있었습니다. 예를 들어서, Regression Test에 사용하는 컴퓨팅자원에 만약 다른 작업이 돌아가고 있었다면, Regression Test가 아예 작동하지 못하거나, 다른 작업을 망칠 수도 있습니다. [그림9]를 보면, 3개의 노트북이 MRX-Desktop1에 접속하여 사용하고 있는 모습을 볼 수 있습니다. 만약 Jenkins Container가 MRX-Desktop1에서 작동하고 있다면, Regression Test가 정상적으로 작동하지 않을 것입니다.
+하지만 Pipeline #1 ~ #3은 모두 공통적으로 한 컴퓨팅 자원에 의존적이라는 문제가 있습니다. 예를 들어 Regression Test에 사용하는 컴퓨터에서 다른 작업이 돌아가고 있다면 Regression Test가 아예 작동하지 못하거나, 다른 작업을 망칠 수도 있습니다. [그림9]를 보면, 3개의 노트북이 MRX-Desktop1에 접속하여 사용하고 있는 모습을 볼 수 있습니다. 만약 Jenkins Container가 MRX-Desktop1에서 작동하고 있다면, Regression Test가 정상적으로 작동하지 않을 것입니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -140,7 +140,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 ### Pipeline #4: InDependent on Device
 
-Device Dendency를 해결하기 위해서, Kubernetes를 사용하였습니다. [[2]](#ref-2) 대략적으로 Kubernetes에 대해서 알고 싶으신 분들은 다음 Reference를 참고하시는 것을 추천드립니다. [[6]](#ref-2)
+Device Dendency를 해결하기 위해서 Kubernetes를 사용하였습니다[[2]](#ref-2). Kubernetes에 대해서 알고 싶으신 분들은 Reference를 참고하시는 것을 추천드립니다[[6]](#ref-2).
 
 Kubernetes를 사용한 목적은 내부의 컴퓨팅 자원을 추상화하기 위함입니다. 쉽게 풀어쓰면, **Kubernetes에 특정 Device를 요청하는 것이 아니라, 필요한 컴퓨팅 자원에 대해서 요청만 하면, 그에 맞는 자원할당을 받기 위해서입니다.** [그림10]을 보면, 여러가지 컴퓨팅 자원이 하나의 클러스터로 묶여있습니다. 이제 원하는 자원의 스펙을 적으면, 그에 맞는 자원이 할당될 것입니다.
 
@@ -169,7 +169,7 @@ Jenkins Container의 역할은 특정 Device내에서 Container로 Regression Te
 
 ## (Selected) Method: Self-Hosted Runner in GitHub Action
 
-위에서, Pipeline #1 ~ #4까지 살펴볼 수 있었습니다. 하지만, Jenkins에 익숙하지 않다보니 기술적인 이슈가 발생할때 대처하는데 쉽지 않았습니다. 특히 Kubernetes환경에서 jenkins를 활용하기 위해서는 조금 더 많은 지식이 필요했습니다. 아쉽게도 이에 대한 문서를 쉽게 찾을 수 없어서, 유지보수 측면에서 아쉬움이 있었습니다.
+Pipeline #1부터 #4까지 모두 Jenkins를 사용하고 있습니다. 하지만 Jenkins라는 툴에 익숙하지 않다보니 기술적인 이슈가 발생했을 때 대처하는데 쉽지 않았습니다. 특히 Kubernetes 환경에서 jenkins를 활용하기 위해서는 조금 더 많은 지식이 필요했습니다. 아쉽게도 이에 대한 문서를 쉽게 찾을 수 없어서 유지보수 측면에서 아쉬움이 있었습니다.
 
 그러던 중, GitHub Action에서 Self-Hosted Runner라는 서비스를 제공하는 것을 발견했습니다.[[4]](#ref-2) Self-Hosted-Runner는 가지고 있는 자원을 통해서 Github Action 진행할 수 있었습니다. 상대적으로 GitHub에서 관련내용에 대해서 문서를 제공하였고, 문법도 직관적이라고 생각이 들었습니다. 이런 특징들은 유지보수 관점에서 높은 점수를 줄 수 있었고, 기존의 Jenkins의 역할을 GitHub Action으로 대체하기로 하였습니다.
 
