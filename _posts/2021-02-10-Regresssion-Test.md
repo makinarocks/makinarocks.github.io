@@ -140,7 +140,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 ### Pipeline #4: InDependent on Device
 
-Device Dendency를 해결하기 위해서, Kubernetes를 사용하였습니다. [[2]](#ref-2) 대략적으로 Kubernetes에 대해서 알고 싶으신 분들은 다음 Reference를 참고하시는 것을 추천드립니다. [[6]](#ref-2)
+Device Dendency를 해결하기 위해서 Kubernetes를 사용하였습니다[[2]](#ref-2). Kubernetes에 대해서 알고 싶으신 분들은 Reference를 참고하시는 것을 추천드립니다[[6]](#ref-2).
 
 Kubernetes를 사용한 목적은 내부의 컴퓨팅 자원을 추상화하기 위함입니다. 쉽게 풀어쓰면, **Kubernetes에 특정 Device를 요청하는 것이 아니라, 필요한 컴퓨팅 자원에 대해서 요청만 하면, 그에 맞는 자원할당을 받기 위해서입니다.** [그림10]을 보면, 여러가지 컴퓨팅 자원이 하나의 클러스터로 묶여있습니다. 이제 원하는 자원의 스펙을 적으면, 그에 맞는 자원이 할당될 것입니다.
 
