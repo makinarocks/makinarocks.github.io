@@ -126,7 +126,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 ### Device Dependency
 
-하지만 Pipeline #1 ~ #3은 모두 공통적으로 한 컴퓨팅 자원에 의존적이라는 문제가 있습니다. 예를 들어 Regression Test에 사용하는 컴퓨터에서 다른 작업이 돌아가고 있다면 Regression Test가 아예 작동하지 못하거나, 다른 작업을 망칠 수도 있습니다. [그림9]를 보면, 3개의 노트북이 MRX-Desktop1에 접속하여 사용하고 있는 모습을 볼 수 있습니다. 붉은 색으로 표현된 것은 남은 Memory가 많지 않다는 것을 의미합니다. 만약 Jenkins Container가 MRX-Desktop1에서 작동하고 있다면, Regression Test가 정상적으로 작동하지 않을 것입니다.
+하지만 Pipeline #1 ~ #3은 모두 공통적으로 한 컴퓨팅 자원에 의존적이라는 문제가 있습니다. 예를 들어 Regression Test에 사용하는 컴퓨터에서 다른 작업이 돌아가고 있다면 Regression Test가 아예 작동하지 못하거나, 다른 작업을 망칠 수도 있습니다. [그림9]를 보면, 3개의 노트북이 MRX-Decktop1에 접속하여 사용하고 있는 모습을 볼 수 있습니다. 붉은 색으로 표현된 것은 남은 Memory가 많지 않다는 것을 의미합니다. 만약 Jenkins Container가 MRX-Decktop1에서 작동하고 있다면, Regression Test가 정상적으로 작동하지 않을 것입니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -135,7 +135,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 </p>
 </figure>
 
-또한 다른 MRX-Desktop2, 3를 보면 컴퓨팅 자원이 여유있다는 것을 알 수 있습니다. 자원을 효율적으로 사용하기 위해서 남은 자원에 효율적으로 접근하는 것이 필요했습니다. 이를 위해서는 Regression Test Pipeline이 특정 자원에 종속되지 않고, 필요한 자원에 동적으로 접근하여야 합니다. 위의 [그림9] 예시처럼 Regression Test Pipeline이 특정 자원의 영향을 받는 것을 개선해야합니다.
+또한 다른 MRX-Decktop2, 3를 보면 컴퓨팅 자원이 여유있다는 것을 알 수 있습니다. 자원을 효율적으로 사용하기 위해서 남은 자원에 효율적으로 접근하는 것이 필요했습니다. 이를 위해서는 Regression Test Pipeline이 특정 자원에 종속되지 않고, 필요한 자원에 동적으로 접근하여야 합니다. 위의 [그림9] 예시처럼 Regression Test Pipeline이 특정 자원의 영향을 받는 것을 개선해야합니다.
 
 ### Pipeline #4: InDependent on Device
 
