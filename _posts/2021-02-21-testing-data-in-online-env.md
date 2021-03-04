@@ -321,7 +321,7 @@ def check_validation_set(scores):
 ## Conclusion
 ~~
 
-<a name="ref-1">[1]</a> [1](https://static.googleusercontent.com/media/research.google.com/ko//pubs/archive/aad9f93b86b7addfea4c419b9100c6cdd26cacea.pdf)
+<a name="ref-1">[1]</a> [Eric Breck Shanqing Cai Eric Nielsen Michael Salib D. Sculley, 2017, The ML Test Score: A Rubric for ML Production Readiness and Technical Debt Reduction.](https://static.googleusercontent.com/media/research.google.com/ko//pubs/archive/aad9f93b86b7addfea4c419b9100c6cdd26cacea.pdf)
 
 <a name="ref-2">[2]</a> [https://json-schema.org](https://json-schema.org/)
 
