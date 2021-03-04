@@ -116,18 +116,15 @@ def it_has_eight_state(inp1: int, inp2: int, inp3: int) -> int:
 
 ##### 4. Test Case마다 그 목적이 무엇인지 Docstring을 명확히 작성해야 한다
 
-Test Case마다 Docstring으로 무엇을 검증하기 위한 것이며, 입력과 출력은 어떠해야 한다는 것을 명시해주어야 합니다. 실제 프로젝트에서 사용한 예시는 다음과 같습니다.
+Test Case마다 Docstring으로 무엇을 검증하기 위한 것이며, 입력과 출력은 어떠해야 한다는 것을 명시해주어야 합니다. 대표적인 Activation Function인 ReLU를 직접 구현하고 이를 검증한다고 하면 다음과 같이 Docstring을 작성할 수 있습니다.
 
 ```python
-def test_reward_and_done_with_step_iteration(self):
-    """Check return(reward and done value) of the step function is correct.
-    
-    CheckList:
-        - The reward is always zero except the last step.
-        - The done is always False except the last step.
+def check_relu(self, mean: float, std:float):
+    """Check actiovation function ReLU is correct.
 
-    Notes:
-        - The 72th step is the last step.
+    CheckList
+        - The return value of the relu(x) is 0 when x < 0
+        - The return value of the relu(x) is x when x >= 0
     """
 ```
 
