@@ -126,7 +126,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 ### Device Dependency
 
-하지만 Pipeline #1 ~ #3은 모두 공통적으로 한 컴퓨팅 자원에 의존적이라는 문제가 있습니다. 예를 들어 Regression Test에 사용하는 컴퓨터에서 다른 작업이 돌아가고 있다면 Regression Test가 아예 작동하지 못하거나, 다른 작업을 망칠 수도 있습니다. [그림9]를 보면, 3개의 노트북이 MRX-Decktop1에 접속하여 사용하고 있는 모습을 볼 수 있습니다. 붉은 색으로 표현된 것은 남은 Memory가 많지 않다는 것을 의미합니다. 만약 Jenkins Container가 MRX-Decktop1에서 작동하고 있다면, Regression Test가 정상적으로 작동하지 않을 것입니다.
+하지만 Pipeline #1 ~ #3은 모두 공통적으로 한 컴퓨팅 자원에 의존적이라는 문제가 있습니다. 예를 들어 Regression Test에 사용하는 컴퓨터에서 다른 작업이 돌아가고 있다면 Regression Test가 아예 작동하지 못하거나, 다른 작업을 망칠 수도 있습니다. [그림9]를 보면, 3개의 노트북이 MRX-Decktop1에 접속하여 사용하고 있는 모습을 볼 수 있습니다. 붉은 색으로 표현된 것은 남은 Memory가 많지 않다는 것을 의미합니다. 만약 Jenkins Container가 MRX-Decktop1에서 작동하고 있다면, Regression Test가 OOM(Out-of-Memory)이 발생하여 Regression Test가 정상적으로 작동할 수 없습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -168,9 +168,44 @@ Jenkins Container의 역할은 특정 Device내에서 Container로 Regression Te
 
 ## (Selected) Method: Self-Hosted Runner in GitHub Action
 
-Pipeline #1부터 #4까지 모두 Jenkins를 사용하고 있습니다. 하지만 Jenkins라는 툴에 익숙하지 않다보니 기술적인 이슈가 발생했을 때 대처하는데 쉽지 않았습니다. 특히 Kubernetes 환경에서 jenkins를 활용하기 위해서는 조금 더 많은 지식이 필요했습니다. 예를 들어서, Jenkins에서 Kubernetes의 Application을 활용하려면, 별로의 Plugin설치와 문법을 익혀야합니다. 별도의 문법을 익혀야하며 다양한 자료를 찾기 힘들어, 다른 대안을 찾아봤습니다.
+Pipeline #1부터 #4까지 모두 Jenkins를 사용하고 있습니다. 하지만 Jenkins라는 툴에 익숙하지 않다보니 기술적인 이슈가 발생했을 때 대처하는데 쉽지 않았습니다. 특히 Jenkins에서 Kubernetes의 Application을 활용하려면 별도의 Plugin설치와 문법을 익혀야합니다. 조금 더 쉬운 방법이 없을까 고민이 들었습니다.
 
-그러던 중, GitHub Action에서 Self-Hosted Runner라는 서비스를 제공하는 것을 발견했습니다 [[4]](#ref-2). Self-Hosted-Runner는 가지고 있는 자원을 통해서 Github Action 진행할 수 있었습니다. 상대적으로 GitHub에서 관련내용에 대해서 문서를 제공하였고, 문법도 직관적이라고 생각이 들었습니다. 이런 특징들은 유지보수 관점에서 높은 점수를 줄 수 있었고, 기존의 Jenkins의 역할을 GitHub Action으로 대체하기로 하였습니다.
+아래의 예시는 Kubernetes에서 Pod을 운영하는 예제입니다. 아래의 문법은 Kubernetes와의 것과는 다릅니다. 그렇기 때문에, 사용하는 입장에서도 Kubernetes와 Jenkins에 대한 것을 모두 이해해야하니, 부담이 되었습니다.
+
+```
+podTemplate(containers: [
+    containerTemplate(name: 'maven', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
+    containerTemplate(name: 'golang', image: 'golang:1.8.0', ttyEnabled: true, command: 'cat')
+  ]) {
+
+    node(POD_LABEL) {
+        stage('Get a Maven project') {
+            git 'https://github.com/jenkinsci/kubernetes-plugin.git'
+            container('maven') {
+                stage('Build a Maven project') {
+                    sh 'mvn -B clean install'
+                }
+            }
+        }
+
+        stage('Get a Golang project') {
+            git url: 'https://github.com/hashicorp/terraform.git'
+            container('golang') {
+                stage('Build a Go project') {
+                    sh """
+                    mkdir -p /go/src/github.com/hashicorp
+                    ln -s `pwd` /go/src/github.com/hashicorp/terraform
+                    cd /go/src/github.com/hashicorp/terraform && make core-dev
+                    """
+                }
+            }
+        }
+
+    }
+}
+```
+
+그러던 중 GitHub Action에서 Self-Hosted Runner라는 서비스를 제공하는 것을 발견했습니다 [[4]](#ref-2). Self-Hosted-Runner는 가지고 있는 자원을 통해서 Github Action 진행할 수 있었습니다. 상대적으로 GitHub에서 관련내용에 대해서 문서를 제공하였고, 문법도 직관적이라고 생각이 들었습니다. 이런 특징들은 유지보수 관점에서 높은 점수를 줄 수 있었고, 기존의 Jenkins의 역할을 GitHub Action으로 대체하기로 하였습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
