@@ -56,6 +56,12 @@ Input Sample Test 란 입력으로 받은 데이터의 각 Sample(Row)의 유효
 def make_feature_c(feature_a, feature_b):
     return feature_a * feature_b
 ```
+<figure class="image" style="align: center;">
+    <p align="center">
+        <img src="/assets/images/2021-02-21-data_is_tested/make-feature-c.png" alt="invalid-data" width="50%">
+        <!-- <figcaption style="text-align: center;"></figcaption> -->
+    </p>
+</figure>
 
 실험 환경에서의 코드의 Unit Test는 `Feature A`와 `Feature B` 모두 존재하는 것을 가정하고, `Feature C`가 생성되는 로직을 확인합니다. 
 
@@ -81,6 +87,26 @@ def test_make_feature_c():
 `Feature A`가 잘못 들어온 것으로 Error가 나는 것이 기대되지만, 이 경우 0이 나와 의도하지 않은 결과로 다음 프로세스까지 영향을 미치게 됩니다.
 
 이렇게 기본적으로 데이터에 의도한 Feature가 모두 있는지, Type이 올바르게 들어왔는지 등 미리 정해놓은 구조대로 구성되어 있는지 최소한의 검증이 필요합니다. 
+
+<div class="row">
+    <div style="width:45%; float:left; margin-right:10px;">
+        <figure class="image" style="align: center;">
+            <p align="center">
+                <img src="/assets/images/2021-02-21-data_is_tested/test-normal-case.png" alt="valid-data" width="120%">
+                <figcaption style="text-align: center;">Test Normal Case</figcaption>
+            </p>
+        </figure>
+    </div>
+    <div style="width:45%; float:right;">
+        <figure class="image" style="align: center;">
+            <p align="center">
+                <img src="/assets/images/2021-02-21-data_is_tested/test-input-sample.png" alt="invalid-data" width="120%">
+                <figcaption style="text-align: center;">Test Input Sample</figcaption>
+            </p>
+        </figure>
+    </div>
+</div>
+
 
 **Json Schema**를 활용해 약속한 대로 데이터가 들어오는지 확인할 수 있습니다. Json Schema란 `JSON`형식으로 작성된 다른 데이터의 구조를 설명하는 하나의 데이터 자체입니다.[[2]](#ref-2) 의도하는 데이터의 형식을 표현하고, 새로 들어오는 데이터가 Schema에 맞는지 검증합니다.
 
