@@ -273,7 +273,7 @@ def test_column_aligner():
 
 Validation Set은 학습에 사용되지 않은 데이터로서 주로 모델을 평가하는 데 사용됩니다. 
 마키나락스에서는 Validation Set의 Anomaly Score를 이용해 알람의 Threshold를 결정하는데 사용합니다. 
-그런데 Validation Set이 모델을 평가하는데 적절하지 않은 데이터 셋이 었다면 어떻게 될까요?
+그런데 Validation Set이 모델을 평가하는데 적절하지 않은 데이터 셋이었다면 어떻게 될까요?
 모델에 대한 평가도 왜곡되고, 이상탐지 시스템에서 중요한 Threshold 값 또한 잘못 계산될 수 있습니다. 
 
 예를 들어 시계얼 데이터에서는 데이터 중 가장 오래된 데이터부터 Train Set으로, 나머지 뒷 부분을 Validation Set으로 사용합니다.[그림1]
@@ -326,4 +326,3 @@ def check_validation_set(scores):
 <a name="ref-2">[2]</a> [https://json-schema.org](https://json-schema.org/)
 
 <a name="ref-3">[3]</a> [https://winderresearch.com/unit-testing-data-what-is-it-and-how-do-you-do-it](https://winderresearch.com/unit-testing-data-what-is-it-and-how-do-you-do-it/)
-
