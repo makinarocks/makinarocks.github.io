@@ -119,7 +119,7 @@ def it_has_eight_state(inp1: int, inp2: int, inp3: int) -> int:
 Test Case마다 Docstring으로 무엇을 검증하기 위한 것이며, 입력과 출력은 어떠해야 한다는 것을 명시해주어야 합니다. 대표적인 Activation Function인 ReLU를 직접 구현하고 이를 검증한다고 하면 다음과 같이 Docstring을 작성할 수 있습니다.
 
 ```python
-def check_relu(self, mean: float, std:float):
+def check_activation_relu(self, mean: float, std: float) -> None:
     """Check actiovation function ReLU is correct.
 
     CheckList
