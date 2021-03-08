@@ -344,7 +344,10 @@ def check_validation_set(scores):
 ```
 
 ## Conclusion
-~~
+
+이번 포스트에서 데이터 유효성 검증이 필요한 이유와 검증 방법을 다뤄보았습니다.
+데이터를 이용해 모델을 학습하는 머신러닝 특성상 코드뿐만 아니라 데이터에 대해 유효성을 판단하는 과정이 필요합니다.
+이번 포스트를 통해서 비슷한 문제를 고민하는 분들께 작은 도움이 되었으면 좋겠습니다.
 
 <a name="ref-1">[1]</a> [Eric Breck Shanqing Cai Eric Nielsen Michael Salib D. Sculley, 2017, The ML Test Score: A Rubric for ML Production Readiness and Technical Debt Reduction.](https://static.googleusercontent.com/media/research.google.com/ko//pubs/archive/aad9f93b86b7addfea4c419b9100c6cdd26cacea.pdf)
 
