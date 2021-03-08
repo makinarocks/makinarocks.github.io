@@ -6,21 +6,22 @@ categories: [deeplearning]
 image: assets/images/2021-02-21-data_is_tested/total.gif
 ---
 
-## Introduction
-
-마키나락스가 이상탐지 시스템을 적용하고자 하는 제조 생산 현장은 제품 및 공정의 변화가 잦은 곳이 많습니다. 
-잦은 변화로 사전에 학습된 모델이 적용하려는 시점에는 정상 작동하기 어렵습니다.
+마키나락스가 이상탐지 시스템을 적용하고자 하는 제조 생산 현장은 제품 및 공정의 변화가 잦은 곳이 많습니다.
+공정이 변화하면 데이터 분포가 달라지기 때문에, 사전에 학습된 모델이 적용하려는 시점에는 정상 작동하기 어렵습니다.
 이런 문제를 해결하기 위해 온라인 환경에서 학습과 추론이 동시에 가능한 코드 형태로 모델을 배포합니다.
 온라인 환경에서 사용되는 모델은 배포된 코드와 함께 현장에서 수집한 학습 데이터로 완성됩니다.[[1]](#ref-1)
 
-온라인 환경에서 모델이 안정적으로 학습되고 추론하기 위해서는 코드와 데이터의 유효성에 대해서 테스트가 필요합니다.
-앞선 포스트에서 코드의 안정성을 보장하기 위한 Unit Test와 Regression Test에 대해서 소개해 드렸습니다. (앞 포스트 확인하고 표현 수정 필요)
+온라인 환경에서 모델이 안정적으로 학습되고 추론하기 위해서는 코드뿐만 아니라 데이터에 대해서 유효성 테스트가 필요합니다.
+앞선 포스트에서 코드의 안정성을 보장하기 위한 Software Test와 Regression Test에 대해서 소개해 드렸습니다.
 이번 포스트에서는 온라인 환경에서 데이터의 유효성을 확인할 수 있는 방법에 대해 소개드리겠습니다. 
 
 ## Why data need test?
 
-온라인 환경에서 예상치 못한 데이터가 들어 올 경우 배포된 코드로 학습된 모델이 예상과 다르게 작동할 수 있습니다.
-예상치 못한 데이터로 발생하는 문제는 데이터 유효성 테스트를 통해 미리 방지할 수 있습니다.
+온라인 환경에서 예상과 다르게 입력된 데이터로 모델을 학습, 추론한 경우 의도와 다른 결과를 출력할 수 있습니다.
+예를 들어, Numeric 데이터 입력을 받는 연산 코드에서 Boolean 데이터 `False`가 입력됐을 경우를 생각해보겠습니다.
+입력된 데이터의 Type이 다르지만 `False`를 0으로 변환해 연산한 결과가 출력될 수 있습니다.
+이 경우 코드가 작동하는데 문제 없기 때문에, 나중에 출력 결과를 디버깅하는 것은 불가능하다고 볼 수 있습니다.
+이와 같은 문제는 데이터 유효성 테스트를 통해 미리 방지할 수 있습니다.
 
 데이터의 유효성을 확인하는 방법 3가지를 소개하겠습니다.
 - Input Sample Test
@@ -50,6 +51,13 @@ image: assets/images/2021-02-21-data_is_tested/total.gif
 
 Input Sample Test 란 입력으로 받은 데이터의 각 Sample(Row)의 유효성에 대해서 판단하는 Test입니다.
 
+<figure class="image" style="align: center;">
+    <p align="center">
+        <img src="/assets/images/2021-02-21-data_is_tested/sample.png" alt="invalid-data" width="50%">
+        <!-- <figcaption style="text-align: center;">Sample</figcaption> -->
+    </p>
+</figure>
+
 예를 들어, `Feature A`와 `Feature B`를 이용해 새로운 `Feature C`를 만들어 내는 Feature Engineering 코드가 있습니다. 
 
 ```python
@@ -63,7 +71,7 @@ def make_feature_c(feature_a, feature_b):
     </p>
 </figure>
 
-실험 환경에서의 코드의 Unit Test는 `Feature A`와 `Feature B` 모두 존재하는 것을 가정하고, `Feature C`가 생성되는 로직을 확인합니다. 
+Unit Test는 `Feature A`와 `Feature B`의 예상된 입력을 가정하고, `Feature C`가 생성되는 로직을 확인합니다. 
 
 ```python 
 def test_make_feature_c():
@@ -73,7 +81,8 @@ def test_make_feature_c():
     assert feature_c == 12
 ```
 
-그런데 만약 온라인 환경에서 `Feature A` 또는 `Feature B`가 정상적으로 들어오지 않는 상황일 경우를 생각해 보겠습니다. 
+그런데 만약 온라인 환경에서 `Feature A` 또는 `Feature B`가 정상적으로 들어오지 않는 상황을 생각해 보겠습니다.
+
 ```python
 >>> feature_a = False
 >>> feature_b = 4
@@ -83,10 +92,11 @@ def test_make_feature_c():
 0
 ```
 
-이 때는 Engineering 할 Feature에 `boolean`값이 들어오면서 예상치 못한 `Feature C`가 만들어지게 됩니다. 
+이때는 Engineering 할 Feature에 Boolean 값이 들어오면서 예상치 못한 `Feature C`가 만들어지게 됩니다. 
 `Feature A`가 잘못 들어온 것으로 Error가 나는 것이 기대되지만, 이 경우 0이 나와 의도하지 않은 결과로 다음 프로세스까지 영향을 미치게 됩니다.
 
-이렇게 기본적으로 데이터에 의도한 Feature가 모두 있는지, Type이 올바르게 들어왔는지 등 미리 정해놓은 구조대로 구성되어 있는지 최소한의 검증이 필요합니다. 
+`make_feature_c` 함수 내에 입력된 값이 Numeric 아닌 경우 Error를 Raise하도록 구현할 수 있습니다.
+하지만 앞의 예시 외에도 데이터가 입력되었을 때, 기본적으로 데이터에 의도한 Feature가 모두 있는지, Type이 올바르게 들어왔는지 등 미리 정해놓은 구조대로 구성되어 있는지 최소한의 검증을 미리하는 것이 모델의 안정성에 많은 도움이 됩니다.
 
 <div class="row">
     <div style="width:45%; float:left; margin-right:10px;">
@@ -130,7 +140,7 @@ Json Schema를 주요 요소를 소개해 드리겠습니다.
 
 앞의 예시에 적용할 수 있는 Json Schema를 보여드리겠습니다.
 
-모델에 입력되는 데이터는 대부분 Feature 이름과 값 맵핑되어 있는 Python의 `dict`구조 입니다. `dict`는 JSON 형식 중 "object"와 유사합니다. 데이터는 `Feature A`와 `Feature B`를 필수로 가져야합니다. 추가로 두 feature 모두 수치형 데이터이어야 한다면 아래와 같이 Schema를 작성할 수 있습니다. (추가 사용법은 Json Schema[[2]](#ref-2) 참고)
+현재 마키나락스에서 구현한 모델의 입력 데이터는 대부분 Feature 이름과 값이 맵핑되어 있는 Python `dict` 자료형 입니다. 여기서 `dict`는 JSON 형식 중 "object"와 유사하므로 type Field의 값은 object로 했습니다. 데이터는 `Feature A`와 `Feature B`를 필수로 가져야하므로 required Field에 추가했습니다. 마지막으로 두 feature 모두 수치형 데이터이어야 하므로 아래와 같이 properties Field를 작성했습니다. (추가 사용법은 Json Schema[[2]](#ref-2) 참고)
 
 ```json
 {
@@ -175,7 +185,9 @@ On instance['feature A']:
 
 ### Applications
 
-실제 사용하는 예시를 소개해 드리겠습니다. 예를들어 추론 시점마다 데이터가 100개 들어오는 환경일 경우, 들어오는 100개의 데이터에 대해 모두 확인하면 부하가 생길 수 있습니다. 이럴 경우 random으로 10% 데이터만 추출해 검증하고 넘거갈 수 있습니다.
+추론 시점마다 데이터가 100개 들어오는 환경에서 사용하는 경우를 소개해 드리겠습니다. 
+이때, 추론 주기가 짧다면 들어오는 100개의 데이터에 대해 모두 확인하는 경우 결과를 출력하는데
+시간이 오래걸릴 수 있습니다. 이럴 경우 random으로 10% 데이터만 추출해 검증하고 넘어갈 수 있습니다.
 
 ```python
 import jsonschema
@@ -199,6 +211,12 @@ def json_schema_validator(datapoints, sample_ratio=0.1):
 
 다음으로 Input Feature Test 란 입력으로 받은 데이터의 각 Feature(Column)의 유효성에 대해서 판단하는 Test입니다.
 
+<figure class="image" style="align: center;">
+    <p align="center">
+        <img src="/assets/images/2021-02-21-data_is_tested/feature.png" alt="invalid-data" width="50%">
+        <!-- <figcaption style="text-align: center;">Feature</figcaption> -->
+    </p>
+</figure>
 
 ### Preprocessing for Validity
 
@@ -270,6 +288,13 @@ def test_column_aligner():
 전처리 과정이 제대로 동작하는지 계속 확인 하는 것이 매우 중요합니다.
 
 ## Validation Set Test
+
+<figure class="image" style="align: center;">
+    <p align="center">
+        <img src="/assets/images/2021-02-21-data_is_tested/dataset.png" alt="invalid-data" width="50%">
+        <!-- <figcaption style="text-align: center;">Dataset</figcaption> -->
+    </p>
+</figure>
 
 Validation Set은 학습에 사용되지 않은 데이터로서 주로 모델을 평가하는 데 사용됩니다. 
 마키나락스에서는 Validation Set의 Anomaly Score를 이용해 알람의 Threshold를 결정하는데 사용합니다. 
