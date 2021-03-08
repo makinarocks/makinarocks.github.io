@@ -53,7 +53,7 @@ Input Sample Test 란 입력으로 받은 데이터의 각 Sample(Row)의 유효
 
 <figure class="image" style="align: center;">
     <p align="center">
-        <img src="/assets/images/2021-02-21-data_is_tested/sample.png" alt="invalid-data" width="50%">
+        <img src="/assets/images/2021-02-21-data_is_tested/sample.png" alt="" width="50%">
         <!-- <figcaption style="text-align: center;">Sample</figcaption> -->
     </p>
 </figure>
@@ -66,7 +66,7 @@ def make_feature_c(feature_a, feature_b):
 ```
 <figure class="image" style="align: center;">
     <p align="center">
-        <img src="/assets/images/2021-02-21-data_is_tested/make-feature-c.png" alt="invalid-data" width="50%">
+        <img src="/assets/images/2021-02-21-data_is_tested/make-feature-c.png" alt="" width="50%">
         <!-- <figcaption style="text-align: center;"></figcaption> -->
     </p>
 </figure>
@@ -102,7 +102,7 @@ def test_make_feature_c():
     <div style="width:45%; float:left; margin-right:10px;">
         <figure class="image" style="align: center;">
             <p align="center">
-                <img src="/assets/images/2021-02-21-data_is_tested/test-normal-case.png" alt="valid-data" width="120%">
+                <img src="/assets/images/2021-02-21-data_is_tested/test-normal-case.png" alt="" width="120%">
                 <figcaption style="text-align: center;">Test Normal Case</figcaption>
             </p>
         </figure>
@@ -110,7 +110,7 @@ def test_make_feature_c():
     <div style="width:45%; float:right;">
         <figure class="image" style="align: center;">
             <p align="center">
-                <img src="/assets/images/2021-02-21-data_is_tested/test-input-sample.png" alt="invalid-data" width="120%">
+                <img src="/assets/images/2021-02-21-data_is_tested/test-input-sample.png" alt="" width="120%">
                 <figcaption style="text-align: center;">Test Input Sample</figcaption>
             </p>
         </figure>
@@ -213,7 +213,7 @@ def json_schema_validator(datapoints, sample_ratio=0.1):
 
 <figure class="image" style="align: center;">
     <p align="center">
-        <img src="/assets/images/2021-02-21-data_is_tested/feature.png" alt="invalid-data" width="50%">
+        <img src="/assets/images/2021-02-21-data_is_tested/feature.png" alt="" width="50%">
         <!-- <figcaption style="text-align: center;">Feature</figcaption> -->
     </p>
 </figure>
@@ -287,26 +287,32 @@ def test_column_aligner():
 하지만 데이터가 전처리 함수를 지나면서 변해가는 과정에 생기는 문제는 쉽게 파악하기 어렵습니다.[[1]](#ref-1) 
 전처리 과정이 제대로 동작하는지 계속 확인 하는 것이 매우 중요합니다.
 
-## Validation Set Test
+## Input Dataset Test
+
+다음으로 입력 Dataset에 대해 유효성 Test입니다.
 
 <figure class="image" style="align: center;">
     <p align="center">
-        <img src="/assets/images/2021-02-21-data_is_tested/dataset.png" alt="invalid-data" width="50%">
+        <img src="/assets/images/2021-02-21-data_is_tested/dataset.png" alt="" width="50%">
         <!-- <figcaption style="text-align: center;">Dataset</figcaption> -->
     </p>
 </figure>
 
-Validation Set은 학습에 사용되지 않은 데이터로서 주로 모델을 평가하는 데 사용됩니다. 
-마키나락스에서는 Validation Set의 Anomaly Score를 이용해 알람의 Threshold를 결정하는데 사용합니다. 
-그런데 Validation Set이 모델을 평가하는데 적절하지 않은 데이터 셋이었다면 어떻게 될까요?
+### Example of Invalid Validation Dataset
+
+Validation Dataset 검증이 필요한 경우에 대해 예를 들어보겠습니다.
+
+Validation Dataset은 학습에 사용되지 않은 데이터로서 주로 모델을 평가하는 데 사용됩니다. 
+마키나락스에서는 Validation Dataset의 Anomaly Score를 이용해 알람의 Threshold를 결정하는데 사용합니다. 
+그런데 Validation Dataset이 모델을 평가하는데 적절하지 않은 데이터 셋이었다면 어떻게 될까요?
 모델에 대한 평가도 왜곡되고, 이상탐지 시스템에서 중요한 Threshold 값 또한 잘못 계산될 수 있습니다. 
 
-예를 들어 시계얼 데이터에서는 데이터 중 가장 오래된 데이터부터 Train Set으로, 나머지 뒷 부분을 Validation Set으로 사용합니다.[그림1]
-월요일 부터 일요일까지 일주일 데이터를 이용해 모델을 학습한다고 가정해 보겠습니다.
-Train Set : Validation Set 비율을 5 : 2로 할 경우, 월요일부터 금요일까지 데이터를 Train Set으로, 토요일과 일요일 데이터를 Validation Set으로 사용하게 됩니다.[그림2]
+시계얼 데이터에서는 데이터 중 가장 오래된 데이터부터 Train Set으로, 나머지 뒷 부분을 Validation Dataset으로 사용합니다.[그림1]
+월요일 부터 일요일까지 일주일 데이터를 이용해 모델을 학습하는 상황을 예를 들어보겠습니다.
+Train Set : Validation Dataset 비율을 5 : 2로 할 경우, 월요일부터 금요일까지 데이터를 Train Set으로, 토요일과 일요일 데이터를 Validation Dataset으로 사용하게 됩니다.[그림2]
 
 그런데 일요일이 현장 휴일이라면 월요일 ~ 토요일과 다른 분포의 데이터를 갖게 될 것 입니다. 
-이런 경우 토요일과 일요일로 구성된 Validation Set은 적절하지 않다고 할 수 있습니다.
+이런 경우 토요일과 일요일로 구성된 Validation Dataset은 적절하지 않다고 할 수 있습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -322,13 +328,15 @@ Train Set : Validation Set 비율을 5 : 2로 할 경우, 월요일부터 금요
 </p>
 </figure>
 
-모델을 학습하기 전 이런 현장의 상황을 몰랐다면, 모델은 예상하지 못한 방향으로 작동하게 됩니다.
+모델을 학습하기 전 이런 현장의 상황을 몰랐다면, 모델은 예상하지 못한 방향으로 작동하게 됩니다. (예시에서는 의도와 다른 Threshold 결과를 출력합니다.)
 이처럼 현장에서는 실험 환경과 다른 경우를 예상해 전체적인 데이터셋의 결과에 대해 테스트 코드를 작성하는 것이 필요합니다. 
 
-### Example of Validation Set Verification
-유효한 데이터로 이루어진 Validation Set은 Train Set에 근접한 부분의 Anomaly Score와 먼 부분의 Anomaly Score가 비슷한 분포를 가집니다.
+### Example of Validation Dataset Verification
+
+유효한 데이터로 이루어진 Validation Dataset은 Train Set에 근접한 부분의 Anomaly Score와 먼 부분의 Anomaly Score가 비슷한 분포를 가집니다.
 이 경우 확인 방법으로 AUROC를 적용할 수 있습니다. ([AUROC-위키피디아](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) 참고) 
-0.4 ~ 0.6 사이의 AUROC가 나올 경우 적어도 Validation Set 내에서 데이터 변화하지 않는다고 판단하고 배포합니다.
+데이터 분포가 변화하지 않는 경우라면 0.4 ~ 0.6 사이의 AUROC가 나올 것입니다. 
+계산한 AUROC를 바탕으로 Validation Dataset의 유효성을 검증 할 수 있습니다.
 
 ```python
 from sklearn.metrics import roc_auc_score
