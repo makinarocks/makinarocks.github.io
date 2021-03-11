@@ -26,7 +26,7 @@ image: assets/images/2020-02-10-Regression-Test/13_.gif
 </p>
 </figure>
 
-내부에 Unit Test가 구현되어 있어서, 어느정도의 안전성이 검증된 상태였습니다. 하지만, 마키나락스는 Machine Learning Software를 다루는 조직이기 때문에 더 높은 수준의 Test System이 필요했습니다. Machine Learning의 특성상 안정성 검증뿐만 아니라 성능검증도 함께 이루어져야합니다. 현재 Test system내에서 "Unit Test는 통과하지만, 성능저하를 일으키는 Commit"같은 경우에는 추적을 할 수 없다는 문제가 있습니다. 실제로 겪었던 사례가 있습니다. Activation Function을 선택할 때, Relu를 사용하면 특정 모델의 성능저하가 일어나는 것을 발견하였습니다. Relu가 잘못된 알고리즘은 아니나, 특정모델에서는 정상적으로 작동하지 않았습니다.
+내부에 Unit Test가 구현되어 있어서, 어느정도의 안전성이 검증된 상태였습니다. 하지만, 마키나락스는 Machine Learning Software를 다루는 조직이기 때문에 더 높은 수준의 Test System이 필요했습니다. Machine Learning의 특성상 안정성 검증뿐만 아니라 성능검증도 함께 이루어져야합니다. 현재 Test System내에서 "Unit Test는 통과하지만, 성능저하를 일으키는 Commit"같은 경우에는 추적을 할 수 없다는 문제가 있습니다. 실제로 겪었던 사례가 있습니다. Activation Function을 선택할 때, Relu를 사용하면 특정 모델의 성능저하가 일어나는 것을 발견하였습니다. Relu가 잘못된 알고리즘은 아니나, 특정모델에서는 정상적으로 작동하지 않았습니다.
 
 아래의 [그림2]는 실제로 마키나락스에서 겪었던 문제입니다. 여러 Branch가 Merge된 상태에서 origin/master의 성능저하를 발견하였습니다. 
 
@@ -90,7 +90,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 ### Pipeline #1: Dependent on Repository
 
-첫 번째로 구현한 Pipeline은 아래 [그림6]에서 볼 수 있습니다. Jenkins Container가 Regression Test 대상이 되는 Repository의 Requirements를 미리 가지고 있습니다. 학습에 필요한 데이터의 경우 NAS에 저장해두고 요청 시 접근하여 사용합니다. GitHub에서 Test요청을 보내면, Regression Test를 진행하게 됩니다. 
+첫 번째로 구현한 Pipeline은 아래 [그림6]에서 볼 수 있습니다. Jenkins Container가 Regression Test 대상이 되는 Repository의 Requirements를 미리 가지고 있습니다. 학습에 필요한 데이터의 경우 원격 저장소에 저장해두고 요청 시 접근하여 사용합니다. GitHub에서 Test요청을 보내면, Regression Test를 진행하게 됩니다. 
 
 이런 구조는 한 Repository에 의존성을 가지게 된다는 문제를 가지고 있습니다. 즉, 특정 Repository를 위한 Jenkins Container가 다른 Repository를 운영할 수 없습니다.
 
@@ -126,7 +126,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 ### Device Dependency
 
-하지만 Pipeline #1 ~ #3은 모두 공통적으로 한 컴퓨팅 자원에 의존적이라는 문제가 있습니다. 예를 들어 Regression Test에 사용하는 컴퓨터에서 다른 작업이 돌아가고 있다면 Regression Test가 아예 작동하지 못하거나, 다른 작업을 망칠 수도 있습니다. [그림9]를 보면, 3개의 노트북이 MRX-Decktop1에 접속하여 사용하고 있는 모습을 볼 수 있습니다. 붉은 색으로 표현된 것은 남은 Memory가 많지 않다는 것을 의미합니다. 만약 Jenkins Container가 MRX-Decktop1에서 작동하고 있다면, Regression Test가 OOM(Out-of-Memory)이 발생하여 Regression Test가 정상적으로 작동할 수 없습니다.
+하지만 Pipeline #1 ~ #3은 모두 공통적으로 한 컴퓨팅 자원에 의존적이라는 문제가 있습니다. 예를 들어 Regression Test에 사용하는 컴퓨터에서 다른 작업이 돌아가고 있다면 Regression Test가 아예 작동하지 못하거나, 다른 작업을 망칠 수도 있습니다. [그림9]를 보면, 3개의 Process가 모두 동일한 하나의 서버에 접속하여 사용하고 있는 모습을 볼 수 있습니다. 붉은 색으로 표현된 것은 남은 Memory가 많지 않다는 것을 의미합니다. 만약 Jenkins Container도 동일한 서버에서 작동하고 있다면, Regression Test가 OOM(Out-of-Memory)이 발생하여 Regression Test가 정상적으로 작동할 수 없습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
