@@ -77,6 +77,14 @@ authors:
     email: 'wgm0601@makinarocks.ai'
     web: 'https://github.com/enfow'
 
+  minjoo lee:
+    name: minjoo lee
+    display_name: Minjoo Lee
+    avatar: 'assets/images/team/minjoolee.png'
+    gravatar: 
+    email: 'minjoo.lee@makinarocks.ai'
+    web: 'https://github.com/LEEMINJOO'
+
 # Plugins
 plugins:
   - jekyll-paginate
