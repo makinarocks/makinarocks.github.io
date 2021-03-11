@@ -9,7 +9,7 @@ image: assets/images/2020-02-10-Regression-Test/13_.gif
 ## 들어가며
 
 마키나락스는 AI Project를 넘어 AI Product로 나아가고 있습니다. Product로 나아가는 여정 속에서 재미있는 엔지니어링 이슈들이 생겼습니다.
-특히, 마키나락스가 제공하는 Machine Learning Software의 성능 대해서 신속하고 정확한 검증에 대한 필요가 있었습니다. 마키나락스에서는 Unit Test는 기본적으로 적용하고 있지만, Unit Test만으로는 성능을 보장 할 수 없습니다.
+제품에 다가갈수록 시장의 요구사항을 빠르게 반영해야하며 이런 요구사항은 계속해서 발생합니다. 이에 맞춰 Machine Learning Software도 여러가지 변화들을 빠르게 도입해야했습니다. 이를 위해서 마키나락스가 제공하는 Machine Learning Software의 성능 대해서 신속하고 정확한 검증에 대한 필요가 있었습니다. 마키나락스에서는 Unit Test는 기본적으로 적용하고 있지만, Unit Test만으로는 성능을 보장 할 수 없습니다.
 
 이번 포스트에서는 Machine Learning Software에 대한 성능검증을 어떤 방식으로 진행하고 있는지 공유드리도록 하겠습니다.
 
