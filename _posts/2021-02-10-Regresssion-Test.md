@@ -19,7 +19,7 @@ image: assets/images/2020-02-10-Regression-Test/13_.gif
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/1.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/1.png"  width="60%">
   <figcaption style="text-align: center;">[그림1] - Gitflow Workflow [16]</figcaption>
 </p>
 </figure>
@@ -30,7 +30,7 @@ image: assets/images/2020-02-10-Regression-Test/13_.gif
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/2.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/2.png"  width="60%">
   <figcaption style="text-align: center;">[그림2] - Problem in Makinarocks</figcaption>
 </p>
 </figure>
@@ -39,7 +39,7 @@ image: assets/images/2020-02-10-Regression-Test/13_.gif
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/3.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/3.png"  width="60%">
   <figcaption style="text-align: center;">[그림3] - Search Space</figcaption>
 </p>
 </figure>
@@ -48,7 +48,7 @@ image: assets/images/2020-02-10-Regression-Test/13_.gif
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/4.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/4.png"  width="60%">
   <figcaption style="text-align: center;">[그림4] - Causes</figcaption>
 </p>
 </figure>
@@ -64,13 +64,13 @@ image: assets/images/2020-02-10-Regression-Test/13_.gif
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/5.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/5.png"  width="60%">
   <figcaption style="text-align: center;">[그림5] - 경우의 수</figcaption>
 </p>
 </figure>
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/graph1.png" alt="Gitflow Workflow" width="40%">
+  <img src="/assets/images/2020-02-10-Regression-Test/graph1.png"  width="40%">
   <figcaption style="text-align: center;">[그래프1] - Cost of Debugging</figcaption>
 </p>
 </figure>
@@ -94,7 +94,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/6.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/6.png"  width="60%">
   <figcaption style="text-align: center;">[그림6] - Pipeline #1</figcaption>
 </p>
 </figure>
@@ -105,7 +105,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/7.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/7.png"  width="60%">
   <figcaption style="text-align: center;">[그림7] - Pipeline #2</figcaption>
 </p>
 </figure>
@@ -117,7 +117,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/8.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/8.png"  width="60%">
   <figcaption style="text-align: center;">[그림8] - Pipeline #3</figcaption>
 </p>
 </figure>
@@ -128,7 +128,7 @@ Regression Test Pipeline을 만들기 위해서, 여러가지 시행착오를 �
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/9.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/9.png"  width="60%">
   <figcaption style="text-align: center;">[그림9] - Problem of Device Dependency</figcaption>
 </p>
 </figure>
@@ -145,20 +145,46 @@ Kubernetes를 사용한 목적은 내부의 컴퓨팅 자원을 추상화하기 
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/10.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/10.png"  width="60%">
   <figcaption style="text-align: center;">[그림10] - Kubernetes in Makinarocks </figcaption>
 </p>
 </figure>
 
+
+#### Remark: Kubernetes
+
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2020-02-10-Regression-Test/remark_1.png" alt="Kubernetes" width="60%">
+  <figcaption style="text-align: center;"> Containerization and Container Orchestration </figcaption>
+</p>
+</figure>
+
+Kubernetes는 Container Orchestration을 위한 도구입니다. Container는 VM과 비교했을 때 격리 속성을 완화하여 애플리케이션 간에 운영체제를 공유합니다. 따라서 VM보다 더 가볍게 이용할 수 있습니다. Container에 대한 관심이 많아지자 자연스럽게 Container Orchestration에 대한 필요성도 강조되었습니다. Container를 쉽고 효율적으로 관리하기 위한 도구 중 하나가 Kubernetes입니다. 프로덕션 환경에서 애플리케이션을 실행하는 컨테이너가 정상작동하는지 확인하고 다운되었다면 다른 컨테이너를 실행해야합니다. Kubernetes를 활용하면 이런 문제를 시스템에 의해서 자동으로 처리할 수 있습니다. [[2]](#ref-2)
+ 
+또한, Kubernetes에서는 여러 Node(Computing Resource)를 묶어서 Cluster를 구성할 수 있습니다. Cluster로 묶인 Node의 집합은 하나의 큰 Computing Resource처럼 사용될 수 있습니다. Kubernetes의 도입으로 특정 Node에 직접 접근할 필요가 없어졌고 Device Dependency 문제를 해결할 수 있었습니다.
+
+
+#### Remark: Ray Cluster
+
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2020-02-10-Regression-Test/remark_2.png" alt="Kubernetes" width="60%">
+  <figcaption style="text-align: center;"> Ray Cluster </figcaption>
+</p>
+</figure>
+
+Ray Cluster는 Head Node와 Worker Node로 구성됩니다. Head Node에서는 작업들을 Worker Node에 분배하여 병렬로 테스크를 수행합니다. Ray Autoscaler는 Cluster의 자원상황을 고려하여 Worker Node의 개수를 동적으로 조절할 수 있습니다. [[3]](#ref-3)
+
+
 Jenkins Container의 역할은 특정 Device내에서 Container로 Regression Test를 진행하는 것이 아닙니다. Jenkins Container는 미리 정의된 컴퓨팅 자원 스펙에 해당하는 Ray Cluster를 만드는 것입니다 [[3]](#ref-2). 여기서 Ray Cluster의 역할은 Regression Test를 병렬적으로 진행하기 위한 목적으로 사용되고, 작업이 끝나게 되면 Ray Cluster는 사라지게 됩니다. 참고로 [그림10]에서 구성한 Cluster와 Ray Cluster는 다른 역할을 합니다. [그림10]은 자원자체를 묶는 작업을 의미한다면, Ray Cluster는 이미 묶인 자원을 활용하는 것입니다. 
 
-**이번 포스팅에서 Kubernetes와 Ray Cluster에 대해서 자세히 다루지는 않겠지만, 수요가 있다면 마키나락스에서 Kubernetes를 활용하는 방법을 다룰 예정입니다. 혹시 관심있으신 분은 댓글 남겨주시면 감사하겠습니다.**
 
 이제 Kubernetes 그리고 Ray Cluster를 활용하여, [그림11]과 같은 Pipeline을 구축하였습니다. Repository에 의존성을 제거하였으며, Docker Image도 미리 만들어둔 Image를 활용하였습니다. 또한, Device에 대한 의존성을 제거하여, 내부의 컴퓨팅 자원을 더욱 효율적으로 사용할 수 있습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/11.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/11.png"  width="60%">
   <figcaption style="text-align: center;">[그림11] - Pipeline #4 </figcaption>
 </p>
 </figure>
@@ -207,7 +233,7 @@ podTemplate(containers: [
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/12.png" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/12.png"  width="60%">
   <figcaption style="text-align: center;">[그림12] - Pipeline #5 </figcaption>
 </p>
 </figure>
@@ -219,7 +245,7 @@ GitHub Action에서 Trigger Event Type에 대해서 정할 수 있습니다. 여
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/13.gif" alt="Gitflow Workflow" width="60%">
+  <img src="/assets/images/2020-02-10-Regression-Test/13.gif"  width="60%">
   <figcaption style="text-align: center;">[그림13] - Click for Regression Test </figcaption>
 </p>
 </figure>
@@ -228,7 +254,7 @@ Regression Test Pipeline의 모습을 [그림13]으로 도식화해봤습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/14.png" alt="Gitflow Workflow" width="80%">
+  <img src="/assets/images/2020-02-10-Regression-Test/14.png"  width="80%">
   <figcaption style="text-align: center;">[그림14] - Pipeline Overview </figcaption>
 </p>
 </figure>
@@ -238,7 +264,7 @@ Regression Test Pipeline의 모습을 [그림13]으로 도식화해봤습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/15.png" alt="Gitflow Workflow" width="80%">
+  <img src="/assets/images/2020-02-10-Regression-Test/15.png"  width="80%">
   <figcaption style="text-align: center;">[그림15] - Reduced Search Space </figcaption>
 </p>
 </figure>
