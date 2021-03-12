@@ -351,6 +351,25 @@ def check_validation_set(scores):
     return True
 ```
 
+<div class="row">
+    <div style="width:45%; float:left; margin-right:10px;">
+        <figure class="image" style="align: center;">
+            <p align="center">
+                <img src="/assets/images/2021-02-21-data_is_tested/valid_auroc.png" alt="" width="120%">
+                <figcaption style="text-align: center;">Valid Case</figcaption>
+            </p>
+        </figure>
+    </div>
+    <div style="width:45%; float:right;">
+        <figure class="image" style="align: center;">
+            <p align="center">
+                <img src="/assets/images/2021-02-21-data_is_tested/invalid_auroc.png" alt="" width="120%">
+                <figcaption style="text-align: center;">Invalid Case</figcaption>
+            </p>
+        </figure>
+    </div>
+</div>
+
 ## Conclusion
 
 이번 포스트에서 데이터 유효성 검증이 필요한 이유와 검증 방법을 다뤄보았습니다.
