@@ -12,12 +12,12 @@ image: assets/images/2020-02-10-Regression-Test/13_.gif
 이를 위해 Machine Learning Software의 신속하고 정확한 성능 검증을 필요로 하게 되었습니다.
 유닛테스트 검증만으로 모델의 학습성능에 대한 검증이 어려우므로, 성능검증에 대한 다른 방법이 필요했습니다.
 
-이번 포스트에서는 Machine Learning Software에 대한 성능검증을 어떤 방식으로 진행하고 있는지 공유드리도록 하겠습니다.
+이번 포스트에서는 Machine Learning Software에 대한 성능검증을 어떤 방식으로 진행하고 있는지 공유드리겠습니다.
 
 
 ## Problem: Can't find the cause of the lower performance!
 
-우선 AI Product를 개발하며 겪었던 문제에 대해서 공유드리도록 하겠습니다. 
+우선 AI Product를 개발하며 겪었던 문제에 대해서 공유드리겠습니다. 
 GitHub를 통해 협업을 관리하고 있습니다. 
 개발자들은 작업이 어느 정도 완료되면 작업 중인 브랜치에서 Pull-Request를 날리게 됩니다. 
 유닛테스트로 코드가 제대로 작동하는지 검증합니다. 
@@ -112,7 +112,7 @@ GitHub Actions는 자동화된 CI/CD 기능들을 제공하며 이를 커스터�
 더 자세한 정보를 알고 싶으신 분들은 GitHub Actions의 Quickstart for GitHub Actions[[8]](#ref-8)을 참고하시기 바랍니다.
 
 GitHub Actions은 사용자가 `./github/workflows` 디렉토리에 GitHub Action를 위한 yml파일을 넣게 되면 작동합니다.
-yml파일에 어떤 Runner를 사용할지 결정할 수 있는데, Ubuntu, Mac OS, Windows Server등 다양한 환경에서 사용이 가능합니다.
+yml파일에 어떤 Runner를 사용할지 결정할 수 있는데, Ubuntu, Mac OS, Windows Server등 다양한 환경을 선택할 수 있습니다.
 Runner가 선택되면 GitHub에서는 가상환경을 만들어 정해진 테스크를 수행합니다.
 이 때 사용되는 자원은 GitHub에서 제공하며 과금정책을 가지고 있습니다.
 
@@ -251,11 +251,10 @@ Ray Autoscaler는 Cluster의 자원상황을 고려하여 워커 노드의 개�
 
 
 MRX-Hosted Runner의 역할은 특정 Device내에서 Container로 Regression Test를 진행하는 것이 아닙니다. 
-MRX-Hosted Runner는 미리 정의된 컴퓨팅 자원 스펙에 해당하는 Ray Cluster를 만드는 것입니다 [[3]](#ref-2). 
+미리 정의된 컴퓨팅 자원 스펙에 해당하는 Ray Cluster를 만드는 것입니다 [[3]](#ref-2). 
 여기서 Ray Cluster의 역할은 Regression Test를 병렬적으로 진행하기 위한 목적으로 사용되고 작업이 끝나게 되면 Ray Cluster는 사라지게 됩니다. 
 참고로 [그림10]에서 구성한 Cluster와 Ray Cluster는 다른 역할을 합니다. 
 [그림10]은 자원자체를 묶는 작업을 의미한다면 Ray Cluster는 이미 묶인 자원을 활용하는 것입니다. 
-
 
 이제 Kubernetes 그리고 Ray Cluster를 활용하여 [그림11]과 같은 Pipeline을 구축하였습니다. 
 Repository에 의존성을 제거하였으며 Docker Image도 미리 만들어둔 Image를 활용하였습니다. 
@@ -319,7 +318,7 @@ MRX-Hosted-Runner는 Ray Cluster를 구성합니다.
 </figure>
 
 
-앞서, Regression Test가 없는 상황에서 Search Space는 [그림3]으로 표현될 수 있습니다.
+앞서 Regression Test가 없는 상황에서 Search Space는 [그림3]으로 표현될 수 있습니다.
 그렇다면 Regression Test를 진행한다면, Search Space는 어떻게 변할까요? 
 각각의 Feature 브랜치마다 Regression Test가 진행된다는 것을 가정해보면 [그림14]처럼 Search Space가 줄어듭니다. 
 [그래프1]에서 봤듯이, 탐색할 변화량과 디버깅 비용이 지수함수 관계라는 것을 고려해보면, 상당히 많은 비용이 절약될 수 있음을 알 수 있습니다.
