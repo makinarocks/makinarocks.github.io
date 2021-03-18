@@ -9,7 +9,7 @@ image: assets/images/2020-02-10-Regression-Test/13_.gif
 마키나락스는 AI 기술개발을 넘어서 AI 제품화과정으로 나아가고 있습니다. 
 제품화과정으로 나아가는 여정 속에서 재미있는 엔지니어링 이슈들이 생겼습니다.
 제품의 실체화에 가까워질수록 시장에서 발생하는 요구사항을 지속적으로 빠르게 반영해야 합니다.
-이를 위해 마키나락스에서는 Machine Learning Software의 신속하고 정확한 성능 검증을 필요로 하게 되었습니다.
+이를 위해 Machine Learning Software의 신속하고 정확한 성능 검증을 필요로 하게 되었습니다.
 유닛테스트 검증만으로 모델의 학습성능에 대한 검증이 어려우므로, 성능검증에 대한 다른 방법이 필요했습니다.
 
 이번 포스트에서는 Machine Learning Software에 대한 성능검증을 어떤 방식으로 진행하고 있는지 공유드리도록 하겠습니다.
@@ -17,8 +17,8 @@ image: assets/images/2020-02-10-Regression-Test/13_.gif
 
 ## Problem: Can't find the cause of the lower performance!
 
-우선 내부에서 AI Product를 개발하며 겪었던 문제에 대해서 공유드리도록 하겠습니다. 
-마키나락스에서는 GitHub를 통해 협업을 관리하고 있습니다. 
+우선 AI Product를 개발하며 겪었던 문제에 대해서 공유드리도록 하겠습니다. 
+GitHub를 통해 협업을 관리하고 있습니다. 
 개발자들은 작업이 어느 정도 완료되면 작업 중인 브랜치에서 Pull-Request를 날리게 됩니다. 
 유닛테스트로 코드가 제대로 작동하는지 검증합니다. 
 검증 후에 다른 개발자들이 해당 코드들을  Review하고 이상이 없으면 Merge 합니다.
@@ -35,7 +35,7 @@ image: assets/images/2020-02-10-Regression-Test/13_.gif
 예를 들어, 활성함수(activation function)로 ReLU를 사용했을때 특정 모델의 성능저하가 일어난 사건이 있었습니다. 
 이 경우 모델의 성능이 저하되었는데도 불구하고 각 모듈은 설계한대로 잘 동작했으므로 모든 테스트케이스는 문제 없이 통과했습니다.
 
-아래의 [그림2]는 실제로 마키나락스에서 겪었던 문제입니다. 여러 브랜치가 Merge된 상태에서 origin/master의 성능저하를 발견하였습니다. 
+아래의 [그림2]는 실제로 겪었던 문제입니다. 여러 브랜치가 Merge된 상태에서 origin/master의 성능저하를 발견하였습니다. 
 
 <figure class="image" style="align: center;">
 <p align="center">
