@@ -103,19 +103,18 @@ image: assets/images/2020-02-10-Regression-Test/13_.gif
 Regression Test Pipeline을 만들기 위해서 여러가지 시행착오를 겪었습니다. 
 겪었던 시행착오를 통해서 필요했던 **추상화 과정**에 대해서 설명드리겠습니다.
 
-우선 자동화 도구로 Jenkins를 활용하였습니다 [[1]](#ref-1). 
-Jenkins는 소프트웨어 개발 시 지속적으로 통합 서비스를 제공하는 툴입니다. 
-비교적 높은 자유도가 있었고 자동화 도구로 접근성이 좋다고 판단했습니다. 
+우선 자동화 도구로 GitHub Actions의 Self-Hosted Runner를 활용하였습니다 [[1]](#ref-1). 
+Self-Hosted Runner는 내부 자원으로 GitHub Actions의 기능들을 사용할 수 있도록 지원하는 도구입니다.
 
 ### Pipeline #1: Dependent on Repository
 
 첫 번째로 구현한 Pipeline은 아래 [그림6]에서 볼 수 있습니다. 
-Jenkins Container가 Regression Test 대상이 되는 Repository의 Requirements를 미리 가지고 있습니다. 
+MRX-Hosted Runner가 Regression Test 대상이 되는 Repository의 Requirements를 미리 가지고 있습니다. 
 학습에 필요한 데이터의 경우 원격 저장소에 저장해두고 요청 시 접근하여 사용합니다. 
 GitHub에서 테스트요청을 보내면 Regression Test를 진행하게 됩니다. 
 
 이런 구조는 한 Repository에 의존성을 가지게 된다는 문제를 가지고 있습니다.
-특정 Repository를 위한 Jenkins Container가 다른 Repository를 운영할 수 없습니다.
+특정 Repository를 위한 MRX-Hosted Runner가 다른 Repository를 운영할 수 없습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -127,7 +126,7 @@ GitHub에서 테스트요청을 보내면 Regression Test를 진행하게 됩니
 ### Pipeline #2: Independent on Repository, But Inefficient
 
 두 번째로 구현한 Pipeline은 아래 [그림7]에서 볼 수 있습니다. 
-Pipeline #1과 다르게 Jenkins Container가 Repository에 정의된 Dockerfile을 기반으로 Regression Test Container를 만듭니다. 
+Pipeline #1과 다르게 MRX-Hosted Runner가 Repository에 정의된 Dockerfile을 기반으로 Regression Test Container를 만듭니다. 
 이를 통해서 Repository에 의존성을 가지던 문제를 해결할 수 있었습니다. 
 하지만 Docker Image를 Build하는 작업은 상당히 오랜시간이 걸리기 때문에 비효율적이라는 문제가 있었습니다.
 
@@ -143,7 +142,7 @@ Pipeline #1과 다르게 Jenkins Container가 Repository에 정의된 Dockerfile
 
 첫 번째로 구현한 Pipeline은 아래 [그림8]에서 볼 수 있습니다. 
 Docker Image는 Requirements가 변경되었을 때만 Update가 필요했습니다. 
-따라서 미리 DockerImage를 만들어 두고 Jenkins Container가 이를 받아서 사용하도록 구조를 변경하였습니다. 
+따라서 미리 DockerImage를 만들어 두고 MRX-Hosted Runner가 이를 받아서 사용하도록 구조를 변경하였습니다. 
 Pipeline #2와 비교해봤을 때 효율적이었습니다.
 
 <figure class="image" style="align: center;">
@@ -159,7 +158,7 @@ Pipeline #2와 비교해봤을 때 효율적이었습니다.
 예를 들어 Regression Test에 사용하는 컴퓨터에서 다른 작업이 돌아가고 있다면 Regression Test가 아예 작동하지 못하거나 다른 작업을 망칠 수도 있습니다.
 [그림9]를 보면 3개의 Process가 모두 동일한 하나의 서버에 접속하여 사용하고 있는 모습을 볼 수 있습니다.
 붉은 색으로 표현된 것은 남은 Memory가 많지 않다는 것을 의미합니다.
-만약 Jenkins Container도 동일한 서버에서 작동하고 있다면 OOM(Out-of-Memory)가 발생하여 Regression Test가 정상적으로 작동하지 않을 수 있습니다.
+만약 MRX-Hosted Runner도 동일한 서버에서 작동하고 있다면 OOM(Out-of-Memory)가 발생하여 Regression Test가 정상적으로 작동하지 않을 수 있습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -227,8 +226,8 @@ Ray Cluster는 헤드 노드와 워커 노드로 구성됩니다.
 Ray Autoscaler는 Cluster의 자원상황을 고려하여 워커 노드의 개수를 동적으로 조절할 수 있습니다. [[3]](#ref-3)
 
 
-Jenkins Container의 역할은 특정 Device내에서 Container로 Regression Test를 진행하는 것이 아닙니다. 
-Jenkins Container는 미리 정의된 컴퓨팅 자원 스펙에 해당하는 Ray Cluster를 만드는 것입니다 [[3]](#ref-2). 
+MRX-Hosted Runner의 역할은 특정 Device내에서 Container로 Regression Test를 진행하는 것이 아닙니다. 
+MRX-Hosted Runner는 미리 정의된 컴퓨팅 자원 스펙에 해당하는 Ray Cluster를 만드는 것입니다 [[3]](#ref-2). 
 여기서 Ray Cluster의 역할은 Regression Test를 병렬적으로 진행하기 위한 목적으로 사용되고 작업이 끝나게 되면 Ray Cluster는 사라지게 됩니다. 
 참고로 [그림10]에서 구성한 Cluster와 Ray Cluster는 다른 역할을 합니다. 
 [그림10]은 자원자체를 묶는 작업을 의미한다면 Ray Cluster는 이미 묶인 자원을 활용하는 것입니다. 
@@ -242,63 +241,6 @@ Repository에 의존성을 제거하였으며 Docker Image도 미리 만들어�
 <p align="center">
   <img src="/assets/images/2020-02-10-Regression-Test/11.png"  width="60%">
   <figcaption style="text-align: center;">[그림11] - Pipeline #4 </figcaption>
-</p>
-</figure>
-
-
-## (Selected) Method: Self-Hosted Runner in GitHub Action
-
-Pipeline #1부터 #4까지 모두 Jenkins를 사용하고 있습니다. 
-하지만 Jenkins라는 툴에 익숙하지 않다보니 기술적인 이슈가 발생했을 때 대처하는데 쉽지 않았습니다. 
-특히 Jenkins에서 Kubernetes의 Application을 활용하려면 별도의 Plugin설치와 문법을 익혀야합니다. 
-조금 더 쉬운 방법이 없을까 고민이 들었습니다.
-
-아래의 예시는 Kubernetes에서 Pod을 운영하는 예제입니다. 
-아래의 문법은 Kubernetes와의 것과는 다릅니다. 
-그렇기 때문에, 사용하는 입장에서도 Kubernetes와 Jenkins에 대한 것을 모두 이해해야하니 부담이 되었습니다.
-
-```
-podTemplate(containers: [
-    containerTemplate(name: 'maven', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
-    containerTemplate(name: 'golang', image: 'golang:1.8.0', ttyEnabled: true, command: 'cat')
-  ]) {
-
-    node(POD_LABEL) {
-        stage('Get a Maven project') {
-            git 'https://github.com/jenkinsci/kubernetes-plugin.git'
-            container('maven') {
-                stage('Build a Maven project') {
-                    sh 'mvn -B clean install'
-                }
-            }
-        }
-
-        stage('Get a Golang project') {
-            git url: 'https://github.com/hashicorp/terraform.git'
-            container('golang') {
-                stage('Build a Go project') {
-                    sh """
-                    mkdir -p /go/src/github.com/hashicorp
-                    ln -s `pwd` /go/src/github.com/hashicorp/terraform
-                    cd /go/src/github.com/hashicorp/terraform && make core-dev
-                    """
-                }
-            }
-        }
-
-    }
-}
-```
-
-그러던 중 GitHub Action에서 Self-Hosted Runner라는 서비스를 제공하는 것을 발견했습니다 [[4]](#ref-4).
-Self-Hosted-Runner는 가지고 있는 자원을 통해서 Github Action 진행할 수 있었습니다.
-상대적으로 GitHub에서 관련내용에 대해서 문서를 제공하였고 문법도 직관적이라고 생각이 들었습니다.
-이런 특징들은 유지보수 관점에서 높은 점수를 줄 수 있었고 기존의 Jenkins의 역할을 GitHub Action으로 대체하기로 하였습니다.
-
-<figure class="image" style="align: center;">
-<p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/12.png"  width="60%">
-  <figcaption style="text-align: center;">[그림12] - Pipeline #5 </figcaption>
 </p>
 </figure>
 
@@ -367,7 +309,7 @@ Regression Test를 통해서 Search Space를 줄일 수 있었고 $2^\text{Reduc
 
 ## Reference
 
-<a name="ref-1">[1]</a>  [jenkins[websites], (2020, Feb, 10)](https://www.jenkins.io/)
+<a name="ref-1">[1]</a>  [About self-hosted runners[websites], (2020, Mar, 17)](https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners)
 
 <a name="ref-2">[2]</a>  [Kubernetes[websites], (2020, Feb, 10)](https://kubernetes.io/)
 
