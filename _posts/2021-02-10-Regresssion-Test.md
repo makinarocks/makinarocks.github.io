@@ -106,6 +106,30 @@ Regression Test Pipeline을 만들기 위해서 여러가지 시행착오를 겪
 우선 자동화 도구로 GitHub Actions의 Self-Hosted Runner를 활용하였습니다 [[1]](#ref-1). 
 Self-Hosted Runner는 내부 자원으로 GitHub Actions의 기능들을 사용할 수 있도록 지원하는 도구입니다.
 
+#### Remark: GitHub Actions and Self-Hosted Runner
+
+GitHub Actions는 자동화된 CI/CD 기능들을 제공하며 이를 커스터마이즈하여 활용할 수 있는 도구입니다.
+더 자세한 정보를 알고 싶으신 분들은 GitHub Actions의 Quickstart for GitHub Actions[[8]](#ref-8)을 참고하시기 바랍니다.
+
+GitHub Actions은 사용자가 `./github/workflows` 디렉토리에 GitHub Action를 위한 yml파일을 넣게 되면 작동합니다.
+yml파일에 어떤 Runner를 사용할지 결정할 수 있는데, Ubuntu, Mac OS, Windows Server등 다양한 환경에서 사용이 가능합니다.
+Runner가 선택되면 GitHub에서는 가상환경을 만들어 정해진 테스크를 수행합니다.
+이 때 사용되는 자원은 GitHub에서 제공하며 과금정책을 가지고 있습니다.
+
+Self-Hosted Runner는 내부 자원을 사용하여 가상환경을 만듭니다. [[4]](#ref-4)
+컴퓨팅 리소스가 많이 사용될 때 유용합니다. 
+특히 Regression Test는 GPU자원을 사용해야하기 때문에 매우 유용했습니다.
+
+이렇게 만들어진 Self-Hosted Runner는 아래와 같이 선택할 수 있습니다.
+
+```yml
+name: Regression_Test
+
+jobs:
+  regression_test:
+    runs-on: [self-hosted, ubuntu-18.04]
+```
+
 ### Pipeline #1: Dependent on Repository
 
 첫 번째로 구현한 Pipeline은 아래 [그림6]에서 볼 수 있습니다. 
@@ -249,7 +273,29 @@ Repository에 의존성을 제거하였으며 Docker Image도 미리 만들어�
 
 GitHub Action에서 Trigger Event Type에 대해서 정할 수 있습니다. 
 여러 논의 끝에, Workflow Dispatch라는 Type을 선택하였습니다. 
-이제 마우스 클릭으로 GitHub Web에서 Regression Test를 실행할 수 있습니다 [[5]](#ref-5).
+
+#### Remark: GitHub Actions Event Type
+
+GitHub Actions는 특정 이벤트에 대하여 정해진 테스크를 수행할 수 있습니다.
+예를 들어 Pull Request 이벤트가 발생할 때 테스크를 수행하고 싶다면 아래와 같이 작성하면 됩니다.
+
+```yml
+name: Regression_Test
+on:
+  pull_request:
+```
+Workflow Dispatch는 선택적으로 GitHub Action을 수행하고 싶을 때 사용합니다 [[5]](#ref-5).
+매 Pull Request 혹은 Push마다 Regression Test를 수행한다면 너무 많은 실험을 진행해야합니다.
+코드리뷰가 끝난 후에 Regression Test를 수행하기 위하여 Workflow Dispatch를 선택하였습니다.
+Workflow Dispatch를 사용하기 위해서는 아래와 같이 작성하면 됩니다.
+
+```yml
+name: Regression_Test
+on:
+  workflow_dispatch:
+```
+
+이제 마우스 클릭으로 GitHub Web에서 Regression Test를 실행할 수 있습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -258,7 +304,7 @@ GitHub Action에서 Trigger Event Type에 대해서 정할 수 있습니다.
 </p>
 </figure>
 
-Regression Test Pipeline의 모습을 [그림13]으로 도식화해봤습니다.
+Regression Test Pipeline의 모습을 [그림14]으로 도식화해봤습니다.
 GitHub에서 미리 설정한 Event Type에 해당하는 Event가 발생하면 MRX-Hosted-Runner에게 Regression Test를 요청합니다.
 MRX-Hosted-Runner는 Ray Cluster를 구성합니다.
 학습 및 실험을 진행할 때는 MLflow(중앙화된 실험기록 서비스)에 실험정보를 로깅하고 학습이 끝나면 이에 대한 정보를 GitHub에 전달합니다 [[7]](#ref-7).
@@ -322,3 +368,5 @@ Regression Test를 통해서 Search Space를 줄일 수 있었고 $2^\text{Reduc
 <a name="ref-6">[6]</a>  [What is Kubernetes[websites], (2020, Feb, 10)](https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/)
 
 <a name="ref-7">[7]</a>  [MLflow[websites], (2020, Feb, 10)](https://mlflow.org/)
+
+<a name="ref-8">[8]</a>  [Quickstart for GitHub Actions[websites], (2020, Mar, 17)](https://docs.github.com/en/actions/quickstart)
