@@ -276,7 +276,9 @@ Repository에 의존성을 제거하였으며 Docker Image도 미리 만들어�
 ## Are You Sure? Yes!
 
 GitHub Action에서 Trigger Event Type에 대해서 정할 수 있습니다. 
-여러 논의 끝에, Workflow Dispatch라는 Type을 선택하였습니다. 
+여러 논의 끝에, Workflow Dispatch라는 Type을 선택하였습니다.
+
+Workflow Dispatch를 활용하면 Regression Test를 원하는 순간에 쉽게 진행할 수 있었습니다.
 
 #### Remark: GitHub Actions Event Type
 
