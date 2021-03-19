@@ -68,7 +68,7 @@ GitHub를 통해 협업을 관리하고 있습니다.
 
 결국 수많은 디버깅 끝에 원인을 찾을 수 있었습니다. 
 그리고 원인들은 생각보다 사소한 변화였습니다. 
-일반적으로 생각해봤을 때 큰 문제를 야기할 것이라고 생각하기 어려운 부분이였습니다. 
+일반적으로 생각했을때 큰 문제를 야기할 것이라고 생각하기 어려운 부분이였습니다. 
 아마도 그렇기 때문에 뒤늦게 발견이 되었을 것이라고 생각합니다. 
 더욱이 이런 커밋들이 모두 유닛테스트를 통과했기 때문에 개발자 입장에서 무엇이 원인인지 파악하기 힘듭니다.
 
@@ -95,7 +95,7 @@ GitHub를 통해 협업을 관리하고 있습니다.
 
 
 그럼 "언제 Regression Test를 진행해야하는가?" 라는 의문이 들 수 있습니다.
-[그래프1]을 근거로 내부에서는 "As Soon As Possible"(가능한 빨리)라는 결론을 내리게 되었고 이를 위해서 쉽고 빠른 Regression Test Pipeline을 구성하였습니다.
+[그래프1]을 근거로 "As Soon As Possible"(가능한 빨리)라는 결론을 내리게 되었고 이를 위해서 쉽고 빠른 Regression Test Pipeline을 구성하였습니다.
 
 
 ## Trial and Errors
@@ -114,7 +114,8 @@ GitHub Actions는 자동화된 CI/CD 기능들을 제공하며 이를 커스터�
 GitHub Actions은 사용자가 `./github/workflows` 디렉토리에 GitHub Action를 위한 yml파일을 넣게 되면 작동합니다.
 yml파일에 어떤 Runner를 사용할지 결정할 수 있는데, Ubuntu, Mac OS, Windows Server등 다양한 환경을 선택할 수 있습니다.
 Runner가 선택되면 GitHub에서는 가상환경을 만들어 정해진 테스크를 수행합니다.
-이 때 사용되는 자원은 GitHub에서 제공하며 과금정책을 가지고 있습니다.
+이 때 사용되는 자원은 GitHub에서 제공합니다.
+사용량에 따른 과금정책을 가지고 있습니다.
 
 Self-Hosted Runner는 내부 자원을 사용하여 가상환경을 만듭니다. [[4]](#ref-4)
 컴퓨팅 리소스가 많이 사용될 때 유용합니다. 
@@ -133,7 +134,7 @@ jobs:
 ### Pipeline #1: Dependent on Repository
 
 첫 번째로 구현한 Pipeline은 아래 [그림6]에서 볼 수 있습니다. 
-MRX-Hosted Runner가 Regression Test 대상이 되는 Repository의 Requirements를 미리 가지고 있습니다. 
+MRX-Hosted Runner가 Regression Test 대상이 되는 Repository의 Requirements(필요환경)를 미리 가지고 있습니다. 
 학습에 필요한 데이터의 경우 원격 저장소에 저장해두고 요청 시 접근하여 사용합니다. 
 GitHub에서 테스트요청을 보내면 Regression Test를 진행하게 됩니다. 
 
@@ -303,7 +304,7 @@ on:
 </p>
 </figure>
 
-Regression Test Pipeline의 모습을 [그림14]으로 도식화해봤습니다.
+Regression Test Pipeline의 모습을 [그림14]으로 도식화했습니다.
 GitHub에서 미리 설정한 Event Type에 해당하는 Event가 발생하면 MRX-Hosted-Runner에게 Regression Test를 요청합니다.
 MRX-Hosted-Runner는 Ray Cluster를 구성합니다.
 학습 및 실험을 진행할 때는 MLflow(중앙화된 실험기록 서비스)에 실험정보를 로깅하고 학습이 끝나면 이에 대한 정보를 GitHub에 전달합니다 [[7]](#ref-7).
