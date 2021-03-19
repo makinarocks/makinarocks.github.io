@@ -338,6 +338,7 @@ MRX-Hosted-Runner는 Ray Cluster를 구성합니다.
 </figure>
 
 또한 Regression Test에서 정상작동한 브랜치에 대해서 **Are You Sure?** 라고 누가 묻는다면 이제는 자신있게 **Yes!**라고 할 수 있습니다.
+이런 변화는 PR에 대한 자신감을 키워주고 결과적으로 견고하면서 빠른 협업이 가능합니다.
 
 
 ## 마치며
