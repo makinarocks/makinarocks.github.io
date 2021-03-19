@@ -315,7 +315,7 @@ GitHub에서 미리 설정한 Event Type에 해당하는 Event가 발생하면 M
 MRX-Hosted-Runner는 Ray Cluster를 구성합니다.
 학습 및 실험을 진행할 때는 MLflow(중앙화된 실험기록 서비스)에 실험정보를 로깅하고 학습이 끝나면 이에 대한 정보를 GitHub에 전달합니다 [[7]](#ref-7).
 현재는 해당 PR에 Comment로 MLflow 실험링크를 달아주는 방식으로 사용중입니다.
-
+이를 통해서 팀 전체적으로 실험결과를 쉽게 확인할 수 있습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
