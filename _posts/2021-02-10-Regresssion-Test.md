@@ -246,8 +246,12 @@ Kubernetes의 도입으로 특정 노드에 직접 접근할 필요가 없어졌
 </p>
 </figure>
 
+Regression Test를 하는데 너무 많은 시간이 소요된다면 업무의 병목이 될 수 있습니다.
+Ray Cluster는 병렬로 실험을 진행하기 때문에 Regression Test에 걸리는 시간을 줄일 수 있습니다.
+
 Ray Cluster는 헤드 노드와 워커 노드로 구성됩니다. 
 헤드 노드에서는 작업들을 워커 노드에 분배하여 병렬로 테스크를 수행합니다. 
+Ray Cluster는 작업들을 병렬적으로 처리하여 Regression Test를 빠르게 진행할 수 있습니다.
 Ray Autoscaler는 Cluster의 자원상황을 고려하여 워커 노드의 개수를 동적으로 조절할 수 있습니다. [[3]](#ref-3)
 
 
