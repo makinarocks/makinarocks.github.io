@@ -336,7 +336,7 @@ MRX-Hosted-Runner는 Ray Cluster를 구성합니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/15.png"  width="80%">
+  <img src="/assets/images/2020-02-10-Regression-Test/16.png"  width="80%">
   <figcaption style="text-align: center;">[그림16] - Reduced Search Space </figcaption>
 </p>
 </figure>
