@@ -120,10 +120,10 @@ Runner가 선택되면 GitHub에서는 가상환경을 만들어 정해진 테�
 참고로 이 때의 컴퓨팅 자원은 GitHub에서 제공되는데 자원의 사용량에 따른 [과금정책](https://github.com/pricing)을 가지고 있습니다.
 
 Self-Hosted Runner는 내부 자원을 사용하여 가상환경을 만듭니다 [[4]](#ref-4).
-컴퓨팅 리소스가 많이 사용될 때 유용합니다. 
-특히 Regression Test는 GPU자원을 사용해야하기 때문에 매우 유용했습니다.
+Self-Hosted Runner는 의도한 작업이 컴퓨팅 리소스가 많이 사용될 때 유용합니다. 
+Regression Test는 Machine learning Software를 학습 및 테스트를 진행하므로 많은 GPU자원과 다른 컴퓨팅자원을 필요하기 때문에 내부자원을 사용하는 것이 효율적입니다.
 
-이렇게 만들어진 Self-Hosted Runner는 아래와 같이 선택할 수 있습니다.
+Self-Hosted Runner를 만들었다면 아래와 같이 선택할 수 있습니다.
 
 ```yml
 name: Regression_Test
