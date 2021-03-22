@@ -3,7 +3,7 @@ layout: post
 title: Regression Test, Are you sure?
 author: wontak ryu
 categories: [test]
-image: assets/images/2020-02-10-Regression-Test/13_.gif
+image: assets/images/2020-02-10-Regression-Test/thumbnail.gif
 ---
 
 마키나락스는 AI 기술개발을 넘어서 AI 제품화과정으로 나아가고 있습니다. 
@@ -223,8 +223,8 @@ Kubernetes를 사용한 목적은 내부의 컴퓨팅 자원을 추상화하기 
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/remark_1.png" alt="Kubernetes" width="60%">
-  <figcaption style="text-align: center;"> Containerization and Container Orchestration </figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/11.png" alt="Kubernetes" width="60%">
+  <figcaption style="text-align: center;"> [그림11] - Containerization and Container Orchestration </figcaption>
 </p>
 </figure>
 
@@ -245,8 +245,8 @@ Kubernetes의 도입으로 특정 노드에 직접 접근할 필요가 없어졌
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/remark_2.png" alt="Kubernetes" width="60%">
-  <figcaption style="text-align: center;"> Ray Cluster </figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/12.png" alt="Kubernetes" width="60%">
+  <figcaption style="text-align: center;"> [그림12] - Ray Cluster </figcaption>
 </p>
 </figure>
 
@@ -265,14 +265,14 @@ MRX-Hosted Runner의 역할은 특정 Device내에서 Container로 Regression Te
 참고로 [그림10]에서 구성한 Cluster와 Ray Cluster는 다른 역할을 합니다. 
 [그림10]은 자원자체를 묶는 작업을 의미한다면 Ray Cluster는 이미 묶인 자원을 활용하는 것입니다. 
 
-이제 Kubernetes 그리고 Ray Cluster를 활용하여 [그림11]과 같은 Pipeline을 구축하였습니다. 
+이제 Kubernetes 그리고 Ray Cluster를 활용하여 [그림13]과 같은 Pipeline을 구축하였습니다. 
 Repository에 의존성을 제거하였으며 Docker Image도 미리 만들어둔 Image를 활용하였습니다. 
 또한 Device에 대한 의존성을 제거하여 내부의 컴퓨팅 자원을 더욱 효율적으로 사용할 수 있었습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/11.png"  width="60%">
-  <figcaption style="text-align: center;">[그림11] - Pipeline #4 </figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/13.png"  width="60%">
+  <figcaption style="text-align: center;">[그림13] - Pipeline #4 </figcaption>
 </p>
 </figure>
 
@@ -309,12 +309,12 @@ on:
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/13.gif"  width="60%">
-  <figcaption style="text-align: center;">[그림13] - Click for Regression Test </figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/14.gif"  width="60%">
+  <figcaption style="text-align: center;">[그림14] - Click for Regression Test </figcaption>
 </p>
 </figure>
 
-Regression Test Pipeline의 모습을 [그림14]으로 도식화했습니다.
+Regression Test Pipeline의 모습을 [그림15]으로 도식화했습니다.
 GitHub에서 미리 설정한 Event Type에 해당하는 Event가 발생하면 MRX-Hosted-Runner에게 Regression Test를 요청합니다.
 MRX-Hosted-Runner는 Ray Cluster를 구성합니다.
 학습 및 실험을 진행할 때는 MLflow(중앙화된 실험기록 서비스)에 실험정보를 로깅하고 학습이 끝나면 이에 대한 정보를 GitHub에 전달합니다 [[7]](#ref-7).
@@ -323,21 +323,21 @@ MRX-Hosted-Runner는 Ray Cluster를 구성합니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/14.png"  width="80%">
-  <figcaption style="text-align: center;">[그림14] - Pipeline Overview </figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/15.png"  width="80%">
+  <figcaption style="text-align: center;">[그림15] - Pipeline Overview </figcaption>
 </p>
 </figure>
 
 
 앞서 Regression Test가 없는 상황에서 Search Space는 [그림3]으로 표현될 수 있습니다.
 그렇다면 Regression Test를 진행한다면, Search Space는 어떻게 변할까요? 
-각각의 Feature 브랜치마다 Regression Test가 진행된다는 것을 가정해보면 [그림14]처럼 Search Space가 줄어듭니다. 
+각각의 Feature 브랜치마다 Regression Test가 진행된다는 것을 가정해보면 [그림16]처럼 Search Space가 줄어듭니다. 
 [그래프1]에서 봤듯이, 탐색할 변화량과 디버깅 비용이 지수함수 관계라는 것을 고려해보면, 상당히 많은 비용이 절약될 수 있음을 알 수 있습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2020-02-10-Regression-Test/15.png"  width="80%">
-  <figcaption style="text-align: center;">[그림15] - Reduced Search Space </figcaption>
+  <figcaption style="text-align: center;">[그림16] - Reduced Search Space </figcaption>
 </p>
 </figure>
 
