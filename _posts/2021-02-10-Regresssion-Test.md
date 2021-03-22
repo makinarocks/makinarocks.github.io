@@ -30,7 +30,7 @@ GitHub를 통해 협업을 관리하고 있습니다.
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2020-02-10-Regression-Test/1.png"  width="60%">
-  <figcaption style="text-align: center;">[그림1] - Gitflow Workflow</figcaption>
+  <figcaption style="text-align: center;">[그림1] - Gitflow Workflow [1]</figcaption>
 </p>
 </figure>
 
