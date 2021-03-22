@@ -256,7 +256,7 @@ Ray Cluster는 병렬로 실험을 진행하기 때문에 Regression Test에 걸
 Ray Cluster는 헤드 노드와 워커 노드로 구성됩니다. 
 헤드 노드에서는 작업들을 워커 노드에 분배하여 병렬로 테스크를 수행합니다. 
 Ray Cluster는 작업들을 병렬적으로 처리하여 Regression Test를 빠르게 진행할 수 있습니다.
-Ray Autoscaler는 Cluster의 자원상황을 고려하여 워커 노드의 개수를 동적으로 조절할 수 있습니다. [[3]](#ref-3)
+Ray Autoscaler는 Cluster의 자원상황을 고려하여 워커 노드의 개수를 동적으로 조절할 수 있습니다 [[3]](#ref-3).
 
 
 MRX-Hosted Runner의 역할은 특정 Device내에서 Container로 Regression Test를 진행하는 것이 아닙니다. 
