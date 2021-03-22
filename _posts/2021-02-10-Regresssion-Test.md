@@ -267,7 +267,7 @@ MRX-Hosted Runner의 역할은 특정 Device내에서 Container로 Regression Te
 
 이제 Kubernetes 그리고 Ray Cluster를 활용하여 [그림11]과 같은 Pipeline을 구축하였습니다. 
 Repository에 의존성을 제거하였으며 Docker Image도 미리 만들어둔 Image를 활용하였습니다. 
-또한 Device에 대한 의존성을 제거하여 내부의 컴퓨팅 자원을 더욱 효율적으로 사용할 수 있습니다.
+또한 Device에 대한 의존성을 제거하여 내부의 컴퓨팅 자원을 더욱 효율적으로 사용할 수 있었습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
