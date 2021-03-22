@@ -43,7 +43,7 @@ GitHub를 통해 협업을 관리하고 있습니다.
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2020-02-10-Regression-Test/2.png"  width="60%">
-  <figcaption style="text-align: center;">[그림2] - Workflow at the Time of the Problem Situation</figcaption>
+  <figcaption style="text-align: center;">[그림2] - 문제상황 당시의 작업흐름</figcaption>
 </p>
 </figure>
 
