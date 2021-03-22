@@ -224,7 +224,7 @@ Kubernetes를 사용한 목적은 내부의 컴퓨팅 자원을 추상화하기 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2020-02-10-Regression-Test/11.png" alt="Kubernetes" width="60%">
-  <figcaption style="text-align: center;"> [그림11] - Containerization and Container Orchestration </figcaption>
+  <figcaption style="text-align: center;"> [그림11] - Containerization and Container Orchestration [6] </figcaption>
 </p>
 </figure>
 
@@ -246,7 +246,7 @@ Kubernetes의 도입으로 특정 노드에 직접 접근할 필요가 없어졌
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2020-02-10-Regression-Test/12.png" alt="Kubernetes" width="60%">
-  <figcaption style="text-align: center;"> [그림12] - Ray Cluster </figcaption>
+  <figcaption style="text-align: center;"> [그림12] - Ray Cluster [10]</figcaption>
 </p>
 </figure>
 
@@ -384,3 +384,4 @@ Regression Test를 통해서 Search Space를 줄일 수 있었고 $2^\text{Reduc
 
 <a name="ref-9">[9]</a>  [Adding Self-Hosted Runners[websites], (2020, Mar, 22)](https://docs.github.com/en/actions/hosting-your-own-runners/adding-self-hosted-runners)
 
+<a name="ref-10">[10]</a>  [Tips on Installing and Maintaining Ray Cluster[websites], (2020, Mar, 22)](https://medium.com/juniper-team/tips-on-installing-and-maintaining-ray-cluster-b5535743f97c)
