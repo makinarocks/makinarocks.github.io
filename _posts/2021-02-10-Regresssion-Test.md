@@ -18,11 +18,14 @@ image: assets/images/2020-02-10-Regression-Test/13_.gif
 ## Problem: Can't find the cause of the lower performance!
 
 우선 AI Product를 개발하며 겪었던 문제에 대해서 공유드리겠습니다. 
-GitHub를 통해 협업을 관리하고 있습니다. 
-개발자들은 작업이 어느 정도 완료되면 작업 중인 브랜치에서 Pull-Request를 날리게 됩니다. 
-유닛테스트로 코드가 제대로 작동하는지 검증합니다. 
-검증 후에 다른 개발자들이 해당 코드들을  Review하고 이상이 없으면 Merge 합니다.
+GitHub를 통해 협업을 관리하고 있습니다.
 
+개발자들은 작업을 완료하면 다음의 과정을 통해 코드를 병합(Merge)합니다.
+
+1. Pull-Request를 통해 작업내용을 푸쉬합니다.
+2. 유닛테스트로 코드를 검증합니다.
+3. 작업내용을 동료들이 리뷰합니다.
+4. 코드를 병합니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
