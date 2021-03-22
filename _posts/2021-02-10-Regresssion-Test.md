@@ -184,7 +184,7 @@ Pipeline #2와 비교해봤을 때 효율적이었습니다.
 ### Device Dependency
 
 하지만 Pipeline #1 ~ #3은 모두 공통적으로 한 컴퓨팅 자원에 의존적이라는 문제가 있습니다.
-예를 들어 Regression Test에 사용하는 컴퓨터에서 다른 작업이 돌아가고 있다면 Regression Test가 아예 작동하지 못하거나 다른 작업을 망칠 수도 있습니다.
+예를 들어 Regression Test에 사용하는 컴퓨터에서 어떤 작업을 수행하고 있다면 Regression Test의 요청이 수락되지 않거나 수행중이던 작업에 영향을 줄 수 있습니다.
 [그림9]를 보면 3개의 Process가 모두 동일한 하나의 서버에 접속하여 사용하고 있는 모습을 볼 수 있습니다.
 붉은 색으로 표현된 것은 남은 Memory가 많지 않다는 것을 의미합니다.
 만약 MRX-Hosted Runner도 동일한 서버에서 작동하고 있다면 OOM(Out-of-Memory)가 발생하여 Regression Test가 정상적으로 작동하지 않을 수 있습니다.
