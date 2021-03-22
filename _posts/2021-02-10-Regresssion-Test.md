@@ -123,6 +123,8 @@ Self-Hosted Runner는 내부 자원을 사용하여 가상환경을 만듭니다
 Self-Hosted Runner는 의도한 작업이 컴퓨팅 리소스가 많이 사용될 때 유용합니다. 
 Regression Test는 Machine learning Software를 학습 및 테스트를 진행하므로 많은 GPU자원과 다른 컴퓨팅자원을 필요하기 때문에 내부자원을 사용하는 것이 효율적입니다.
 
+Self-Hosted Runner를 만드는 법이 궁금하시다면 Adding self-hosted runners [[9]](#ref-9)를 참고하시기 바랍니다.
+
 Self-Hosted Runner를 만들었다면 아래와 같이 선택할 수 있습니다.
 
 ```yml
@@ -379,3 +381,5 @@ Regression Test를 통해서 Search Space를 줄일 수 있었고 $2^\text{Reduc
 <a name="ref-7">[7]</a>  [MLflow[websites], (2020, Feb, 10)](https://mlflow.org/)
 
 <a name="ref-8">[8]</a>  [Quickstart for GitHub Actions[websites], (2020, Mar, 17)](https://docs.github.com/en/actions/quickstart)
+
+<a name="ref-8">[9]</a>  [Adding Self-Hosted Runners[websites], (2020, Mar, 22)](https://docs.github.com/en/actions/hosting-your-own-runners/adding-self-hosted-runners)
