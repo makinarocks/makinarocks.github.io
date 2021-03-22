@@ -382,4 +382,5 @@ Regression Test를 통해서 Search Space를 줄일 수 있었고 $2^\text{Reduc
 
 <a name="ref-8">[8]</a>  [Quickstart for GitHub Actions[websites], (2020, Mar, 17)](https://docs.github.com/en/actions/quickstart)
 
-<a name="ref-8">[9]</a>  [Adding Self-Hosted Runners[websites], (2020, Mar, 22)](https://docs.github.com/en/actions/hosting-your-own-runners/adding-self-hosted-runners)
+<a name="ref-9">[9]</a>  [Adding Self-Hosted Runners[websites], (2020, Mar, 22)](https://docs.github.com/en/actions/hosting-your-own-runners/adding-self-hosted-runners)
+
