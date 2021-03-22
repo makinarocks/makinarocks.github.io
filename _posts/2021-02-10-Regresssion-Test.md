@@ -106,7 +106,7 @@ GitHub를 통해 협업을 관리하고 있습니다.
 Regression Test Pipeline을 만들기 위해서 여러가지 시행착오를 겪었습니다. 
 겪었던 시행착오를 통해서 필요했던 **추상화 과정**에 대해서 설명드리겠습니다.
 
-우선 자동화 도구로 GitHub Actions의 Self-Hosted Runner를 활용하였습니다 [[1]](#ref-1). 
+우선 자동화 도구로 GitHub Actions의 Self-Hosted Runner를 활용하였습니다 [[4]](#ref-4). 
 Self-Hosted Runner는 내부 자원으로 GitHub Actions의 기능들을 사용할 수 있도록 지원하는 도구입니다.
 
 #### Remark: GitHub Actions and Self-Hosted Runner
@@ -365,7 +365,7 @@ Regression Test를 통해서 Search Space를 줄일 수 있었고 $2^\text{Reduc
 
 ## Reference
 
-<a name="ref-1">[1]</a>  [About self-hosted runners[websites], (2020, Mar, 17)](https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners)
+<a name="ref-1">[1]</a>  [Gitflow Workflow[websites], (2020, Mar, 22)](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)
 
 <a name="ref-2">[2]</a>  [Kubernetes[websites], (2020, Feb, 10)](https://kubernetes.io/)
 
