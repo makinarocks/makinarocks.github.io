@@ -119,7 +119,7 @@ yml파일에 어떤 Runner를 사용할지 결정할 수 있는데, Ubuntu, Mac 
 Runner가 선택되면 GitHub에서는 가상환경을 만들어 정해진 테스크를 수행합니다.
 참고로 이 때의 컴퓨팅 자원은 GitHub에서 제공되는데 자원의 사용량에 따른 [과금정책](https://github.com/pricing)을 가지고 있습니다.
 
-Self-Hosted Runner는 내부 자원을 사용하여 가상환경을 만듭니다. [[4]](#ref-4)
+Self-Hosted Runner는 내부 자원을 사용하여 가상환경을 만듭니다 [[4]](#ref-4).
 컴퓨팅 리소스가 많이 사용될 때 유용합니다. 
 특히 Regression Test는 GPU자원을 사용해야하기 때문에 매우 유용했습니다.
 
