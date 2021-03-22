@@ -47,8 +47,8 @@ GitHub를 통해 협업을 관리하고 있습니다.
 </p>
 </figure>
 
-이런 문제가 발생했을 때, 디버깅 해야할 Search Space는 [그림3]과 같습니다.
-즉, 이전까지의 변화를 모두 살펴봐야 했습니다.
+이때 어느 커밋(Commit)이 성능 저하를 유발했는지 알 수 없었으므로 성능저하를 발견한 시점 이전의 변경사항을 모두 살펴봐야 했습니다.
+즉, 당시 디버깅 해야할 Search Space는 [그림3]과 같았습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
