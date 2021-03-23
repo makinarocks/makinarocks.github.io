@@ -47,27 +47,18 @@ GitHub를 통해 협업을 관리하고 있습니다.
 </p>
 </figure>
 
-이때 어느 커밋(Commit)이 성능 저하를 유발했는지 알 수 없었으므로 성능저하를 발견한 시점 이전의 변경사항을 모두 살펴봐야 했습니다.
-즉, 당시 디버깅 해야할 Search Space는 [그림3]과 같았습니다.
+이때 어느 병합(Merge)가 성능 저하를 유발했는지 알 수 없었으므로 성능저하를 발견한 시점 이전의 변경사항을 모두 살펴봐야 했습니다.
+즉, 당시 디버깅 해야할 커밋은 [그림3]에서 붉은색으로 음영처리된 부분이였습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2020-02-10-Regression-Test/3.png"  width="60%">
-  <figcaption style="text-align: center;">[그림3] - Search Space</figcaption>
+  <figcaption style="text-align: center;">[그림3] - 디버깅 대상의 커밋</figcaption>
 </p>
 </figure>
 
-이번 문제의 경우에는 성능저하를 일으키는 원인이 두 개의 커밋이였습니다. 
-성능저하가 복합적인 원인들에 의해서 발생하면 해결하는데 더 큰 어려움을 겪습니다. 
-두 개의 커밋을 모두 고치지 않으면 성능저하 이슈는 계속해서 발생하기 때문입니다.
-
-<figure class="image" style="align: center;">
-<p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/4.png"  width="60%">
-  <figcaption style="text-align: center;">[그림4] - Causes</figcaption>
-</p>
-</figure>
-
+이전 히스토리를 모두 살펴보는 작업은 매우 소모적입니다.
+게다가 기민하게 시장의 요구사항을 반영해야하는 제품화 작업과정에서 디버깅 작업은 팀에 부담을 줍니다.
 
 결국 수많은 디버깅 끝에 원인을 찾을 수 있었습니다. 
 그리고 원인들은 생각보다 사소한 변화였습니다. 
@@ -79,26 +70,9 @@ GitHub를 통해 협업을 관리하고 있습니다.
 
 여기서 Regression Test라고 정의한 것은 Machine Learning Software의 전체적인 학습 및 테스트를 진행하고 성능을 확인하는 작업을 의미합니다.
 
-변화량에 대해서 디버깅 비용을 그래프로 그려보면 [그래프1]이 나옵니다. 
-위에서 언급했듯이 복합적인 원인에 의해서 성능저하 이슈가 발생했을 경우 모든 변화의 조합에 대해서 실험 및 테스트를 진행해야합니다.
-
-<figure class="image" style="align: center;">
-<p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/5.png"  width="60%">
-  <figcaption style="text-align: center;">[그림5] - 경우의 수</figcaption>
-</p>
-</figure>
-<figure class="image" style="align: center;">
-<p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/graph1.png"  width="40%">
-  <figcaption style="text-align: center;">[그래프1] - 디버깅 비용</figcaption>
-</p>
-</figure>
-
-
-
-그럼 "언제 Regression Test를 진행해야하는가?" 라는 의문이 들 수 있습니다.
-[그래프1]을 근거로 "As Soon As Possible"(가능한 빨리)라는 결론을 내리게 되었고 이를 위해서 쉽고 빠른 Regression Test Pipeline을 구성하였습니다.
+문제는 빨리 발견할수록 해결하기 쉽습니다.
+문제를 빨리 발견하기 위해서 Regression Test를 "As Soon As Possible"(가능한 빨리)진행해야 합니다.
+이를 위해서 쉽고 빠른 Regression Test Pipeline을 구성하였습니다.
 
 
 ## Trial and Errors
@@ -123,7 +97,15 @@ Self-Hosted Runner는 내부 자원을 사용하여 가상환경을 만듭니다
 Self-Hosted Runner는 의도한 작업이 컴퓨팅 리소스가 많이 사용될 때 유용합니다. 
 Regression Test는 Machine learning Software를 학습 및 테스트를 진행하므로 많은 GPU자원과 다른 컴퓨팅자원을 필요하기 때문에 내부자원을 사용하는 것이 효율적입니다.
 
-Self-Hosted Runner를 만드는 법이 궁금하시다면 Adding self-hosted runners [[9]](#ref-9)를 참고하시기 바랍니다.
+Self-Hosted Runner는 다음 과정을 통해서 만들 수 있습니다.
+
+1. Repository에 Settings을 클릭합니다.
+2. 왼쪽 사이드바에서 Actions를 클릭합니다.
+3. "Self-hosted runners,"아래에 Add runner를 클릭합니다.
+4. 사용하고자 하는 컴퓨터환경을 선택하여 설치합니다.
+5. Actions에 들어가 Self-Hosted Runner가 동작하는지 확인합니다.
+
+더 자세한 정보가 궁금하시다면 Adding self-hosted runners [[9]](#ref-9)를 참고하시기 바랍니다.
 
 Self-Hosted Runner를 만들었다면 아래와 같이 선택할 수 있습니다.
 
@@ -137,7 +119,14 @@ jobs:
 
 ### Pipeline #1: Dependent on Repository
 
-첫 번째로 구현한 Pipeline은 아래 [그림6]에서 볼 수 있습니다. 
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2020-02-10-Regression-Test/4.png"  width="60%">
+  <figcaption style="text-align: center;">[그림4] - Pipeline #1</figcaption>
+</p>
+</figure>
+
+첫 번째로 구현한 Pipeline은 [그림4]에서 볼 수 있습니다. 
 MRX-Hosted Runner가 Regression Test 대상이 되는 Repository의 Requirements(필요환경)를 미리 가지고 있습니다. 
 학습에 필요한 데이터의 경우 원격 저장소에 저장해두고 요청 시 접근하여 사용합니다. 
 GitHub에서 테스트요청을 보내면 Regression Test를 진행하게 됩니다. 
@@ -145,61 +134,58 @@ GitHub에서 테스트요청을 보내면 Regression Test를 진행하게 됩니
 이런 구조는 한 Repository에 의존성을 가지게 된다는 문제를 가지고 있습니다.
 특정 Repository를 위한 MRX-Hosted Runner가 다른 Repository를 운영할 수 없습니다.
 
+### Pipeline #2: Independent on Repository, But Inefficient
+
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/6.png"  width="60%">
-  <figcaption style="text-align: center;">[그림6] - Pipeline #1</figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/5.png"  width="60%">
+  <figcaption style="text-align: center;">[그림5] - Pipeline #2</figcaption>
 </p>
 </figure>
 
-### Pipeline #2: Independent on Repository, But Inefficient
-
-두 번째로 구현한 Pipeline은 아래 [그림7]에서 볼 수 있습니다. 
+두 번째로 구현한 Pipeline은 [그림5]에서 볼 수 있습니다. 
 Pipeline #1과 다르게 MRX-Hosted Runner가 Repository에 정의된 Dockerfile을 기반으로 Regression Test Container를 만듭니다. 
 이를 통해서 Repository에 의존성을 가지던 문제를 해결할 수 있었습니다. 
 하지만 Docker Image를 Build하는 작업은 상당히 오랜시간이 걸리기 때문에 비효율적이라는 문제가 있었습니다.
 
-<figure class="image" style="align: center;">
-<p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/7.png"  width="60%">
-  <figcaption style="text-align: center;">[그림7] - Pipeline #2</figcaption>
-</p>
-</figure>
+
 
 
 ### Pipeline #3: InDependent on Repository, But!
 
-첫 번째로 구현한 Pipeline은 아래 [그림8]에서 볼 수 있습니다. 
+
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2020-02-10-Regression-Test/6.png"  width="60%">
+  <figcaption style="text-align: center;">[그림6] - Pipeline #3</figcaption>
+</p>
+</figure>
+
+첫 번째로 구현한 Pipeline은 [그림6]에서 볼 수 있습니다. 
 Docker Image는 Requirements가 변경되었을 때만 Update가 필요했습니다. 
 따라서 미리 DockerImage를 만들어 두고 MRX-Hosted Runner가 이를 받아서 사용하도록 구조를 변경하였습니다. 
 Pipeline #2와 비교해봤을 때 효율적이었습니다.
 
-<figure class="image" style="align: center;">
-<p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/8.png"  width="60%">
-  <figcaption style="text-align: center;">[그림8] - Pipeline #3</figcaption>
-</p>
-</figure>
 
 ### Device Dependency
 
 하지만 Pipeline #1 ~ #3은 모두 공통적으로 한 컴퓨팅 자원에 의존적이라는 문제가 있습니다.
 예를 들어 Regression Test에 사용하는 컴퓨터에서 어떤 작업을 수행하고 있다면 Regression Test의 요청이 수락되지 않거나 수행중이던 작업에 영향을 줄 수 있습니다.
-[그림9]를 보면 3개의 Process가 모두 동일한 하나의 서버에 접속하여 사용하고 있는 모습을 볼 수 있습니다.
+[그림7]를 보면 3개의 Process가 모두 동일한 하나의 서버에 접속하여 사용하고 있는 모습을 볼 수 있습니다.
 붉은 색으로 표현된 것은 남은 Memory가 많지 않다는 것을 의미합니다.
 만약 MRX-Hosted Runner도 동일한 서버에서 작동하고 있다면 OOM(Out-of-Memory)가 발생하여 Regression Test가 정상적으로 작동하지 않을 수 있습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/9.png"  width="60%">
-  <figcaption style="text-align: center;">[그림9] - Problem of Device Dependency</figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/7.png"  width="60%">
+  <figcaption style="text-align: center;">[그림7] - Problem of Device Dependency</figcaption>
 </p>
 </figure>
 
 또한 다른 MRX-Decktop2, 3를 보면 컴퓨팅 자원이 여유있다는 것을 알 수 있습니다. 
 자원을 효율적으로 사용하기 위해서 남은 자원에 효율적으로 접근하는 것이 필요했습니다. 
 이를 위해서는 Regression Test Pipeline이 특정 자원에 종속되지 않고 필요한 자원에 동적으로 접근하여야 합니다. 
-즉, 위의 [그림9] 예시처럼 Regression Test Pipeline이 특정 자원의 영향을 받는 것을 개선해야합니다.
+즉, 위의 [그림7] 예시처럼 Regression Test Pipeline이 특정 자원의 영향을 받는 것을 개선해야합니다.
 
 ### Pipeline #4: InDependent on Device
 
@@ -208,13 +194,13 @@ Kubernetes에 대해서 알고 싶으신 분들은 Kubernetes의 공식문서[[6
 
 Kubernetes를 사용한 목적은 내부의 컴퓨팅 자원을 추상화하기 위함입니다. 
 쉽게 풀어쓰면, **Kubernetes에 특정 Device를 요청하는 것이 아니라, 필요한 컴퓨팅 자원에 대해서 요청만 하면, 그에 맞는 자원할당을 받기 위해서입니다.** 
-[그림10]을 보면 여러가지 컴퓨팅 자원이 하나의 클러스터로 묶여있습니다. 
+[그림8]을 보면 여러가지 컴퓨팅 자원이 하나의 클러스터로 묶여있습니다. 
 이제 원하는 자원의 스펙을 적으면, 그에 맞는 자원이 할당될 것입니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/10.png"  width="60%">
-  <figcaption style="text-align: center;">[그림10] - Kubernetes in Makinarocks </figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/8.png"  width="60%">
+  <figcaption style="text-align: center;">[그림8] - Kubernetes in Makinarocks </figcaption>
 </p>
 </figure>
 
@@ -223,8 +209,8 @@ Kubernetes를 사용한 목적은 내부의 컴퓨팅 자원을 추상화하기 
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/11.png" alt="Kubernetes" width="60%">
-  <figcaption style="text-align: center;"> [그림11] - Containerization and Container Orchestration [6] </figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/9.png" alt="Kubernetes" width="60%">
+  <figcaption style="text-align: center;"> [그림9] - Containerization and Container Orchestration [6] </figcaption>
 </p>
 </figure>
 
@@ -245,8 +231,8 @@ Kubernetes의 도입으로 특정 노드에 직접 접근할 필요가 없어졌
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/12.png" alt="Kubernetes" width="60%">
-  <figcaption style="text-align: center;"> [그림12] - Ray Cluster [10]</figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/10.png" alt="Kubernetes" width="60%">
+  <figcaption style="text-align: center;"> [그림10] - Ray Cluster [10]</figcaption>
 </p>
 </figure>
 
@@ -265,16 +251,18 @@ MRX-Hosted Runner의 역할은 특정 Device내에서 Container로 Regression Te
 참고로 [그림10]에서 구성한 Cluster와 Ray Cluster는 다른 역할을 합니다. 
 [그림10]은 자원자체를 묶는 작업을 의미한다면 Ray Cluster는 이미 묶인 자원을 활용하는 것입니다. 
 
-이제 Kubernetes 그리고 Ray Cluster를 활용하여 [그림13]과 같은 Pipeline을 구축하였습니다. 
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2020-02-10-Regression-Test/11.png"  width="60%">
+  <figcaption style="text-align: center;">[그림11] - Pipeline #4 </figcaption>
+</p>
+</figure>
+
+
+이제 Kubernetes 그리고 Ray Cluster를 활용하여 [그림11]과 같은 Pipeline을 구축하였습니다. 
 Repository에 의존성을 제거하였으며 Docker Image도 미리 만들어둔 Image를 활용하였습니다. 
 또한 Device에 대한 의존성을 제거하여 내부의 컴퓨팅 자원을 더욱 효율적으로 사용할 수 있었습니다.
 
-<figure class="image" style="align: center;">
-<p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/13.png"  width="60%">
-  <figcaption style="text-align: center;">[그림13] - Pipeline #4 </figcaption>
-</p>
-</figure>
 
 
 ## Are You Sure? Yes!
@@ -295,7 +283,7 @@ on:
   pull_request:
 ```
 Workflow Dispatch는 선택적으로 GitHub Action을 수행하고 싶을 때 사용합니다 [[5]](#ref-5).
-Workflow Dispatch는 수동으로 GitHub Action을 수행할 수 있으며 [그림14]와 같이 GitHub UI를 통해서 쉽게 실행할 수 있습니다.
+Workflow Dispatch는 수동으로 GitHub Action을 수행할 수 있으며 [그림12]와 같이 GitHub UI를 통해서 쉽게 실행할 수 있습니다.
 매 Pull Request 혹은 Push마다 Regression Test를 수행한다면 너무 많은 실험을 진행해야합니다.
 코드리뷰가 끝난 후에 Regression Test를 수행하기 위하여 Workflow Dispatch를 선택하였습니다.
 Workflow Dispatch를 사용하기 위해서는 아래와 같이 작성하면 됩니다.
@@ -309,12 +297,12 @@ on: workflow_dispatch
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/14.gif"  width="60%">
-  <figcaption style="text-align: center;">[그림14] - Click for Regression Test </figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/12.gif"  width="60%">
+  <figcaption style="text-align: center;">[그림12] - Click for Regression Test </figcaption>
 </p>
 </figure>
 
-Regression Test Pipeline의 모습을 [그림15]으로 도식화했습니다.
+Regression Test Pipeline의 모습을 [그림13]으로 도식화했습니다.
 GitHub에서 미리 설정한 Event Type에 해당하는 Event가 발생하면 MRX-Hosted-Runner에게 Regression Test를 요청합니다.
 MRX-Hosted-Runner는 Ray Cluster를 구성합니다.
 학습 및 실험을 진행할 때는 MLflow(중앙화된 실험기록 서비스)에 실험정보를 로깅하고 학습이 끝나면 이에 대한 정보를 GitHub에 전달합니다 [[7]](#ref-7).
@@ -323,13 +311,13 @@ MRX-Hosted-Runner는 Ray Cluster를 구성합니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/15.png"  width="80%">
-  <figcaption style="text-align: center;">[그림15] - Pipeline Overview </figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/13.png"  width="80%">
+  <figcaption style="text-align: center;">[그림13] - Pipeline Overview </figcaption>
 </p>
 </figure>
 
 
-앞서 Regression Test가 없는 상황에서 Search Space는 [그림3]으로 표현될 수 있습니다.
+<!-- 앞서 Regression Test가 없는 상황에서 Search Space는 [그림3]으로 표현될 수 있습니다.
 그렇다면 Regression Test를 진행한다면, Search Space는 어떻게 변할까요? 
 각각의 Feature 브랜치마다 Regression Test가 진행된다는 것을 가정해보면 [그림16]처럼 Search Space가 줄어듭니다. 
 [그래프1]에서 봤듯이, 탐색할 변화량과 디버깅 비용이 지수함수 관계라는 것을 고려해보면, 상당히 많은 비용이 절약될 수 있음을 알 수 있습니다.
@@ -339,9 +327,9 @@ MRX-Hosted-Runner는 Ray Cluster를 구성합니다.
   <img src="/assets/images/2020-02-10-Regression-Test/16.png"  width="80%">
   <figcaption style="text-align: center;">[그림16] - Reduced Search Space </figcaption>
 </p>
-</figure>
+</figure> -->
 
-또한 Regression Test에서 정상작동한 브랜치에 대해서 **Are You Sure?** 라고 누가 묻는다면 이제는 자신있게 **Yes!**라고 할 수 있습니다.
+Regression Test에서 정상작동한 브랜치에 대해서 **Are You Sure?** 라고 누가 묻는다면 이제는 자신있게 **Yes!**라고 할 수 있습니다.
 이런 변화는 PR에 대한 자신감을 키워주고 결과적으로 견고하면서 빠른 협업이 가능합니다.
 
 
@@ -358,7 +346,7 @@ Repository에 독립적으로 작동할 수 있어야 했습니다.
 또한 Machine Learning Software(AI)는 많은 컴퓨팅 자원을 요구하기 때문에 효율적인 자원사용이 필요했습니다. 
 이를 위해서 Kubernetes를 활용하여 컴퓨팅 자원을 가상화하였습니다. 
 
-Regression Test를 통해서 Search Space를 줄일 수 있었고 $2^\text{ReducedSearchSpace}$ 만큼의 디버깅 비용을 줄일 수 있었습니다.
+Regression Test를 통해서 문제를 빠르게 발견할 수 있었습니다.
 그리고 클릭 한 번으로 실험을 진행할 수 있다는 것도 굉장히 매력적인 일이였습니다.
 
 이번 포스트를 통해서 비슷한 문제를 고민하는 분들께 작은 도움이 되었으면 좋겠습니다.
@@ -385,3 +373,6 @@ Regression Test를 통해서 Search Space를 줄일 수 있었고 $2^\text{Reduc
 <a name="ref-9">[9]</a>  [Adding Self-Hosted Runners[websites], (2020, Mar, 22)](https://docs.github.com/en/actions/hosting-your-own-runners/adding-self-hosted-runners)
 
 <a name="ref-10">[10]</a>  [Tips on Installing and Maintaining Ray Cluster[websites], (2020, Mar, 22)](https://medium.com/juniper-team/tips-on-installing-and-maintaining-ray-cluster-b5535743f97c)
+
+<a name="ref-11">[11]</a>  [Continuous Integration[websites], (2020, Mar, 22)](https://www.martinfowler.com/articles/continuousIntegration.html)
+
