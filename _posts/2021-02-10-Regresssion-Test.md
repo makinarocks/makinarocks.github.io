@@ -271,6 +271,7 @@ GitHub Action에서 Trigger Event Type에 대해서 정할 수 있습니다.
 여러 논의 끝에, Workflow Dispatch라는 Type을 선택하였습니다.
 
 Workflow Dispatch를 활용하면 Regression Test를 원하는 순간에 쉽게 진행할 수 있었습니다.
+또한 Regression Test가 진행되지 않았을 경우 병합되는 것을 방지하기 위해 GitHub Branch Protection Rule를 설정하였습니다.
 
 #### Remark: GitHub Actions Event Type
 
@@ -316,18 +317,21 @@ MRX-Hosted-Runner는 Ray Cluster를 구성합니다.
 </p>
 </figure>
 
+#### Remark: GitHub Branch Protection Rule
 
-<!-- 앞서 Regression Test가 없는 상황에서 Search Space는 [그림3]으로 표현될 수 있습니다.
-그렇다면 Regression Test를 진행한다면, Search Space는 어떻게 변할까요? 
-각각의 Feature 브랜치마다 Regression Test가 진행된다는 것을 가정해보면 [그림16]처럼 Search Space가 줄어듭니다. 
-[그래프1]에서 봤듯이, 탐색할 변화량과 디버깅 비용이 지수함수 관계라는 것을 고려해보면, 상당히 많은 비용이 절약될 수 있음을 알 수 있습니다.
+GitHub에서는 특정 브랜치에 병합하기 위해서 필요한 상태확인(Status Check)을 지정할 수 있습니다.
+Regression Test가 진행되지 않은 경우 병합을 못하도록 설정할 수 있습니다.
 
-<figure class="image" style="align: center;">
-<p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/16.png"  width="80%">
-  <figcaption style="text-align: center;">[그림16] - Reduced Search Space </figcaption>
-</p>
-</figure> -->
+이는 다음과 같은 과정을 통해 설정할 수 있습니다.
+
+1. Repository에 Settings을 클릭합니다.
+2. 왼쪽 사이드바에 Branches를 클릭합니다.
+3. Branch protection rules아래의 add rule을 클릭합니다.
+4. Protect matching branches아래의 Require status checks to pass before merging을 클릭합니다.
+5. Regression Test를 선택합니다.
+
+
+
 
 Regression Test에서 정상작동한 브랜치에 대해서 **Are You Sure?** 라고 누가 묻는다면 이제는 자신있게 **Yes!**라고 할 수 있습니다.
 이런 변화는 PR에 대한 자신감을 키워주고 결과적으로 견고하면서 빠른 협업이 가능합니다.
