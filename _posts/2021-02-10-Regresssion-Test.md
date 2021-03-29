@@ -58,7 +58,7 @@ GitHub를 통해 협업을 관리하고 있습니다.
 </figure>
 
 이전 히스토리를 모두 살펴보는 작업은 매우 소모적입니다.
-게다가 기민하게 시장의 요구사항을 반영해야하는 제품화 작업과정에서 디버깅 작업은 팀에 부담을 줍니다.
+게다가 기민하게 시장의 요구사항을 반영해야하는 상황에서 디버깅 작업은 팀에 부담을 줍니다.
 
 결국 수많은 디버깅 끝에 원인을 찾을 수 있었습니다. 
 그리고 원인들은 생각보다 사소한 변화였습니다. 
@@ -267,11 +267,19 @@ Repository에 의존성을 제거하였으며 Docker Image도 미리 만들어�
 
 ## Are You Sure? Yes!
 
-GitHub Action에서 Trigger Event Type에 대해서 정할 수 있습니다. 
-여러 논의 끝에, Workflow Dispatch라는 Type을 선택하였습니다.
+GitHub Action에서 Trigger Event Type에 대해서 정할 수 있습니다.
+여러 논의 끝에 Pull Request가 Approve될 때와 선택적으로 테스트를 진행하였습니다.
+이를 위해서 GitHub Actions의 Pull Request Review와 Workflow Dispatch Event를 사용하였습니다.
+또한 Regression Test가 최신 브랜치기준으로 실행하는 것을 강제하기 위해서 Require branches to be up to date before merging 옵션을 선택하였습니다.
 
-Workflow Dispatch를 활용하면 Regression Test를 원하는 순간에 쉽게 진행할 수 있었습니다.
-또한 Regression Test가 진행되지 않았을 경우 병합되는 것을 방지하기 위해 GitHub Branch Protection Rule를 설정하였습니다.
+개발자들이 코드를 병합하는 과정은 다음과 같이 변경되었습니다.
+
+1. Pull-Request를 통해 작업내용을 푸쉬합니다.
+2. 유닛테스트로 코드를 검증합니다.
+3. **(Optional: Workflow Dispatch) PR내용에 따라 Regression Test로 성능을 검증합니다.**
+4. 작업내용을 동료들이 리뷰합니다.
+5. **(Automatically: Pull Request Review) Regression Test로 성능을 검증합니다.**
+6. 코드를 병합니다.
 
 #### Remark: GitHub Actions Event Type
 
@@ -283,16 +291,14 @@ name: Regression_Test
 on:
   pull_request:
 ```
+매 Pull Request 혹은 Push마다 Regression Test를 수행한다면 너무 많은 실험을 진행해야합니다.
+
+이런 문제를 해결하기 위해서 새로운 유형의 트리거 이벤트가 필요했습니다. 
+
 Workflow Dispatch는 선택적으로 GitHub Action을 수행하고 싶을 때 사용합니다 [[5]](#ref-5).
 Workflow Dispatch는 수동으로 GitHub Action을 수행할 수 있으며 [그림12]와 같이 GitHub UI를 통해서 쉽게 실행할 수 있습니다.
 매 Pull Request 혹은 Push마다 Regression Test를 수행한다면 너무 많은 실험을 진행해야합니다.
 코드리뷰가 끝난 후에 Regression Test를 수행하기 위하여 Workflow Dispatch를 선택하였습니다.
-Workflow Dispatch를 사용하기 위해서는 아래와 같이 작성하면 됩니다.
-
-```yml
-name: Regression_Test
-on: workflow_dispatch
-```
 
 이제 마우스 클릭으로 GitHub Web에서 Regression Test를 실행할 수 있습니다.
 
@@ -302,6 +308,21 @@ on: workflow_dispatch
   <figcaption style="text-align: center;">[그림12] - Click for Regression Test </figcaption>
 </p>
 </figure>
+
+또한 Pull Request에 대한 Approve 이벤트 발생시 자동으로 실행시켜주기 위해 Pull Request Review 이벤트를 사용했습니다.
+
+Workflow Dispatch와 Pull Request Review 트리거 이벤트를 사용하고 싶다면, 다음과 같이 작성하면 됩니다.
+
+```yml
+on:
+  pull_request_review:
+    types: [submitted]
+  workflow_dispatch:
+
+jobs:
+  Regression_Test:
+    if: (github.event.review.state == 'approved' || github.event_name == 'workflow_dispatch')
+```
 
 Regression Test Pipeline의 모습을 [그림13]으로 도식화했습니다.
 GitHub에서 미리 설정한 Event Type에 해당하는 Event가 발생하면 MRX-Hosted-Runner에게 Regression Test를 요청합니다.
@@ -328,9 +349,8 @@ Regression Test가 진행되지 않은 경우 병합을 못하도록 설정할 �
 2. 왼쪽 사이드바에 Branches를 클릭합니다.
 3. Branch protection rules아래의 add rule을 클릭합니다.
 4. Protect matching branches아래의 Require status checks to pass before merging을 클릭합니다.
-5. Regression Test를 선택합니다.
-
-
+5. Require branches to be up to date before merging을 클릭합니다.
+6. Regression Test를 선택합니다.
 
 
 Regression Test에서 정상작동한 브랜치에 대해서 **Are You Sure?** 라고 누가 묻는다면 이제는 자신있게 **Yes!**라고 할 수 있습니다.
