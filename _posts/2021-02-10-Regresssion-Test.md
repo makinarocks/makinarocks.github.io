@@ -64,7 +64,7 @@ GitHub를 통해 협업을 관리하고 있습니다.
 그리고 원인들은 생각보다 사소한 변화였습니다. 
 일반적으로 생각했을때 큰 문제를 야기할 것이라고 생각하기 어려운 부분이였습니다. 
 아마도 그렇기 때문에 뒤늦게 발견이 되었을 것이라고 생각합니다. 
-더욱이 이런 커밋들이 모두 유닛테스트를 통과했기 때문에 개발자 입장에서 무엇이 원인인지 파악하기 힘듭니다.
+더욱이 이런 커밋들이 모두 유닛테스트를 통과했기 때문에 개발자 입장에서 무엇이 원인인지 파악하기 힘들었습니다.
 
 이런 경험을 한 후에 **Are you Sure?** (이 코드 문제가 없을까요?)라는 질문에 답하기 위해서는 사실상 작은 변화더라도 **Regression Test**를 진행해야 하는 것을 깨달았습니다. 
 
@@ -399,4 +399,3 @@ Regression Test를 통해서 문제를 빠르게 발견할 수 있었습니다.
 <a name="ref-10">[10]</a>  [Tips on Installing and Maintaining Ray Cluster[websites], (2020, Mar, 22)](https://medium.com/juniper-team/tips-on-installing-and-maintaining-ray-cluster-b5535743f97c)
 
 <a name="ref-11">[11]</a>  [Continuous Integration[websites], (2020, Mar, 22)](https://www.martinfowler.com/articles/continuousIntegration.html)
-
