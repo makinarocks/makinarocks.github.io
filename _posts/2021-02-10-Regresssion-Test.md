@@ -85,7 +85,9 @@ Self-Hosted Runner는 내부 자원으로 GitHub Actions의 기능들을 사용�
 
 #### Remark: GitHub Actions and Self-Hosted Runner
 
-GitHub Actions는 자동화된 CI/CD 기능들을 제공하며 이를 커스터마이즈하여 활용할 수 있는 도구입니다.
+GitHub Actions는 Repository에서 개발 워크플로우를 자동화, 커스터마이즈 그리고 실행을 할 수 있는 도구입니다.
+CI/CD를 포함한 다양한 워크플로우를 구성할 수 있습니다.
+
 더 자세한 정보를 알고 싶으신 분들은 GitHub Actions의 Quickstart for GitHub Actions[[8]](#ref-8)을 참고하시기 바랍니다.
 
 GitHub Actions는 사용자가 `./github/workflows` 디렉토리에 GitHub Action를 위한 yml파일을 넣게 되면 작동합니다.
