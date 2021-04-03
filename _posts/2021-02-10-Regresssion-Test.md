@@ -78,7 +78,7 @@ GitHub를 통해 협업을 관리하고 있습니다.
 ## Trial and Errors
 
 Regression Test Pipeline을 만들기 위해서 여러가지 시행착오를 겪었습니다. 
-겪었던 시행착오를 통해서 필요했던 **추상화 과정**에 대해서 설명드리겠습니다.
+앞으로 소개할 과정들은 Pipeline 구축시 다른 요소에 의존성이 있던 부분을 제거하거나 효율화하는 내용입니다.
 
 우선 자동화 도구로 GitHub Actions의 Self-Hosted Runner를 활용하였습니다 [[4]](#ref-4). 
 Self-Hosted Runner는 내부 자원으로 GitHub Actions의 기능들을 사용할 수 있도록 지원하는 도구입니다.
