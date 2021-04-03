@@ -71,7 +71,7 @@ GitHub를 통해 협업을 관리하고 있습니다.
 여기서 Regression Test라고 정의한 것은 Machine Learning Software의 전체적인 학습 및 테스트를 진행하고 성능을 확인하는 작업을 의미합니다.
 
 문제는 빨리 발견할수록 해결하기 쉽습니다.
-문제를 빨리 발견하기 위해서 Regression Test를 "As Soon As Possible"(가능한 빨리)진행해야 합니다.
+문제를 빨리 발견하기 위해서 Regression Test를 "As Soon As Possible"(가능한 빨리) 진행해야 합니다.
 이를 위해서 쉽고 빠른 Regression Test Pipeline을 구성하였습니다.
 
 
