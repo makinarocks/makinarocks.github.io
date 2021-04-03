@@ -365,17 +365,15 @@ Regression Test에서 정상작동한 브랜치에 대해서 **Are You Sure?** �
 
 이번 포스팅에서는 Machine Learning Software의 Regression Test에 대해서 다뤘습니다. 
 
-개발을 하다보면 의도치 않은 부작용들이 발생하게 되며 이런 부작용은 발견하기 어렵습니다. 
-이런 부채들이 쌓인 후 디버깅하게 되면 생각보다 훨씬 큰 비용을 치뤄야 합니다. 
-이런 문제를 보다 효과적으로 대처하기 위해서 Regression Test를 제안하게 되었습니다.
+코드변경으로 인해서 Machine Learning Software의 성능에 부정적 영향을 줄 수 있습니다.
+하지만 유닛테스트만으로 Machine Learning Software의 성능을 검증할 수 없다는 문제가 있습니다.
 
-Regression Test Pipeline을 구성하기 위해서 여러가지 추상화과정이 필요했습니다. 
-Repository에 독립적으로 작동할 수 있어야 했습니다. 
-또한 Machine Learning Software(AI)는 많은 컴퓨팅 자원을 요구하기 때문에 효율적인 자원사용이 필요했습니다. 
-이를 위해서 Kubernetes를 활용하여 컴퓨팅 자원을 가상화하였습니다. 
+문제를 해결하기 위해서 Kubernetes기반의 Regression Test Pipeline을 구축하였습니다.
+Repository에 독립적으로 실행할 수 있으며 많은 컴퓨팅 자원을 효율적으로 사용할 수 있습니다.
+
 
 Regression Test Pipeline의 도입을 통해 코드변경에서 발생하는 문제를 빠르게 발견할 수 있었습니다.
-또한 특정시점에 실험을 자동으로 수행하하거나 클릭 한 번으로 실험을 진행할 수 있다는 것도 굉장히 매력적인 일이였습니다.
+이런 변화는 코드변경에 대한 자신감을 키워주었고 나아가 견고하면서 빠른 협업을 가능하게 했습니다.
 
 이번 포스트를 통해서 비슷한 문제를 고민하는 분들께 작은 도움이 되었으면 좋겠습니다.
 
