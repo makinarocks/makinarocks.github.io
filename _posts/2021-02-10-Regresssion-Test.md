@@ -72,7 +72,7 @@ GitHub를 통해 협업을 관리하고 있습니다.
 
 문제는 빨리 발견할수록 해결하기 쉽습니다.
 문제를 빨리 발견하기 위해서 Regression Test를 "As Soon As Possible"(가능한 빨리) 진행해야 합니다.
-이를 위해서 쉽고 빠른 Regression Test Pipeline을 구성하였습니다.
+이를 위해서 쉽고 빠르게 Regression Test를 할 수 있도록 Regression Test Pipeline을 구성하였습니다.
 
 
 ## Trial and Errors
