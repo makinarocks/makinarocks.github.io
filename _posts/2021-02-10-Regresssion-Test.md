@@ -88,7 +88,7 @@ Self-Hosted Runner는 내부 자원으로 GitHub Actions의 기능들을 사용�
 GitHub Actions는 자동화된 CI/CD 기능들을 제공하며 이를 커스터마이즈하여 활용할 수 있는 도구입니다.
 더 자세한 정보를 알고 싶으신 분들은 GitHub Actions의 Quickstart for GitHub Actions[[8]](#ref-8)을 참고하시기 바랍니다.
 
-GitHub Actions은 사용자가 `./github/workflows` 디렉토리에 GitHub Action를 위한 yml파일을 넣게 되면 작동합니다.
+GitHub Actions는 사용자가 `./github/workflows` 디렉토리에 GitHub Action를 위한 yml파일을 넣게 되면 작동합니다.
 yml파일에 어떤 Runner를 사용할지 결정할 수 있는데, Ubuntu, Mac OS, Windows Server등 다양한 환경을 선택할 수 있습니다.
 Runner가 선택되면 GitHub에서는 가상환경을 만들어 정해진 테스크를 수행합니다.
 참고로 이 때의 컴퓨팅 자원은 GitHub에서 제공되는데 자원의 사용량에 따른 [과금정책](https://github.com/pricing)을 가지고 있습니다.
