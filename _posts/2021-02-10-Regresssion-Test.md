@@ -250,8 +250,8 @@ Ray Autoscaler는 Cluster의 자원상황을 고려하여 워커 노드의 개�
 MRX-Hosted Runner의 역할은 특정 Device내에서 Container로 Regression Test를 진행하는 것이 아닙니다. 
 미리 정의된 컴퓨팅 자원 스펙에 해당하는 Ray Cluster를 만드는 것입니다 [[3]](#ref-2). 
 여기서 Ray Cluster의 역할은 Regression Test를 병렬적으로 진행하기 위한 목적으로 사용되고 작업이 끝나게 되면 Ray Cluster는 사라지게 됩니다. 
-참고로 [그림10]에서 구성한 Cluster와 Ray Cluster는 다른 역할을 합니다. 
-[그림10]은 자원자체를 묶는 작업을 의미한다면 Ray Cluster는 이미 묶인 자원을 활용하는 것입니다. 
+참고로 [그림8]에서 구성한 Cluster와 Ray Cluster는 다른 역할을 합니다. 
+[그림8]은 자원자체를 묶는 작업을 의미한다면 Ray Cluster는 이미 묶인 자원을 활용하는 것입니다. 
 
 <figure class="image" style="align: center;">
 <p align="center">
