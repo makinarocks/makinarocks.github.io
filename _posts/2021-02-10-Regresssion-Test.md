@@ -292,12 +292,14 @@ on:
   pull_request:
 ```
 매 Pull Request 혹은 Push마다 Regression Test를 수행한다면 너무 많은 실험을 진행해야합니다.
+Regression Test는 유닛테스트보다 긴 시간이 소요되며 컴퓨팅 자원도 많이 사용합니다.
+따라서 너무 많은 Regression Test는 팀에 부담을 줄 수 있습니다.
 
 이런 문제를 해결하기 위해서 새로운 유형의 트리거 이벤트가 필요했습니다. 
 
 Workflow Dispatch는 선택적으로 GitHub Action을 수행하고 싶을 때 사용합니다 [[5]](#ref-5).
 Workflow Dispatch는 수동으로 GitHub Action을 수행할 수 있으며 [그림12]와 같이 GitHub UI를 통해서 쉽게 실행할 수 있습니다.
-매 Pull Request 혹은 Push마다 Regression Test를 수행한다면 너무 많은 실험을 진행해야합니다.
+
 코드리뷰가 끝난 후에 Regression Test를 수행하기 위하여 Workflow Dispatch를 선택하였습니다.
 
 이제 마우스 클릭으로 GitHub Web에서 Regression Test를 실행할 수 있습니다.
