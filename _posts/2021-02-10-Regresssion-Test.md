@@ -162,11 +162,12 @@ Machine Learning Software의 경우 사용하는 라이브러리의 용량이 �
 </p>
 </figure>
 
-첫 번째로 구현한 Pipeline은 [그림7]에서 볼 수 있습니다. 
+세 번째로 구현한 Pipeline은 [그림7]에서 볼 수 있습니다. 
 Docker Image는 Requirements(필요한 라이브러리)가 변경되었을 때만 Update가 필요했습니다. 
 Requirements는 상대적으로 변화가 적었습니다.
 따라서 미리 Docker Image를 만들어 두고 MRX-Hosted Runner가 이를 받아서 사용하도록 구조를 변경하였습니다. 
-Pipeline #2와 비교해봤을 때 Docker Image를 중복하여 Build하는 과정이 없어졌습니다.
+Pipeline #2의 경우 테스트 요청마다 Docker Image를 빌드해야합니다.
+반면에, Pipeline #3는 테스트 요청마다 미리 만들어둔 Docker Image를 Pull하여 사용합니다.
 
 
 ### Device Dependency
