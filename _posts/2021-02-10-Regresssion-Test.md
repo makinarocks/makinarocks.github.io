@@ -347,7 +347,7 @@ MRX-Hosted-Runner는 Ray Cluster를 구성합니다.
 GitHub에서는 특정 브랜치에 병합하기 위해서 필요한 상태확인(Status Check)을 지정할 수 있습니다.
 이를 활용하여 Regression Test가 진행되지 않은 경우 병합을 못하도록 설정할 수 있습니다.
 
-GitHub Branch Protection Rule은 다음과 같은 과정을 통해 설정할 수 있습니다.
+GitHub Branch Protection Rule은 다음과 같은 과정을 통해 설정할 수 있습니다 [[12]](#ref-12).
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -402,3 +402,5 @@ Regression Test Pipeline의 도입을 통해 코드변경에서 발생하는 문
 <a name="ref-10">[10]</a>  [Tips on Installing and Maintaining Ray Cluster[websites], (2020, Mar, 22)](https://medium.com/juniper-team/tips-on-installing-and-maintaining-ray-cluster-b5535743f97c)
 
 <a name="ref-11">[11]</a>  [Continuous Integration[websites], (2020, Mar, 22)](https://www.martinfowler.com/articles/continuousIntegration.html)
+
+<a name="ref-12">[12]</a>  [Managing a branch protection rule[websites], (2021, Apr, 6)](https://docs.github.com/en/github/administering-a-repository/managing-a-branch-protection-rule)
