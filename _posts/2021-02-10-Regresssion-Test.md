@@ -148,7 +148,6 @@ GitHub에서 테스트요청을 보내면 Regression Test를 진행하게 됩니
 두 번째로 구현한 Pipeline은 [그림6]에서 볼 수 있습니다. 
 Pipeline #1과 다르게 MRX-Hosted Runner가 Repository에 정의된 Dockerfile을 기반으로 Regression Test Container를 만듭니다. 
 이를 통해서 Repository에 의존성을 가지던 문제를 해결할 수 있었습니다. 
-이를 통해서 Repository에 의존성을 가지던 문제를 해결할 수 있었습니다. 
 하지만 Docker Image를 Build하는 작업은 상당히 오랜시간이 걸리며 필요한 라이브러리가 변하지 않을때도 중복적으로 Docker Image를 빌드해야합니다.
 Machine Learning Software의 경우 사용하는 라이브러리의 용량이 큰 것을 고려해보면 이는 상당히 비효율적입니다.
 
