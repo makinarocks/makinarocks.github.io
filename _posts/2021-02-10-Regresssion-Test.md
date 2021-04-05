@@ -381,26 +381,26 @@ Regression Test Pipeline의 도입을 통해 코드변경에서 발생하는 문
 
 ## Reference
 
-<a name="ref-1">[1]</a>  [Gitflow Workflow[websites], (2020, Mar, 22)](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)
+<a name="ref-1">[1]</a>  [Gitflow Workflow[websites], (2021, Mar, 22)](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)
 
-<a name="ref-2">[2]</a>  [Kubernetes[websites], (2020, Feb, 10)](https://kubernetes.io/)
+<a name="ref-2">[2]</a>  [Kubernetes[websites], (2021, Feb, 10)](https://kubernetes.io/)
 
-<a name="ref-3">[3]</a>  [Ray cluster[websites], (2020, Feb, 10)](https://docs.ray.io/en/master/cluster/index.html)
+<a name="ref-3">[3]</a>  [Ray cluster[websites], (2021, Feb, 10)](https://docs.ray.io/en/master/cluster/index.html)
 
-<a name="ref-4">[4]</a>  [About Self Hosted Runners[websites], (2020, Feb, 10)](https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners)
+<a name="ref-4">[4]</a>  [About Self Hosted Runners[websites], (2021, Feb, 10)](https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners)
 
-<a name="ref-5">[5]</a>  [Workflow Dispatch[websites], (2020, Feb, 10)](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#workflow_dispatch)
+<a name="ref-5">[5]</a>  [Workflow Dispatch[websites], (2021, Feb, 10)](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#workflow_dispatch)
 
-<a name="ref-6">[6]</a>  [What is Kubernetes[websites], (2020, Feb, 10)](https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/)
+<a name="ref-6">[6]</a>  [What is Kubernetes[websites], (2021, Feb, 10)](https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/)
 
-<a name="ref-7">[7]</a>  [MLflow[websites], (2020, Feb, 10)](https://mlflow.org/)
+<a name="ref-7">[7]</a>  [MLflow[websites], (2021, Feb, 10)](https://mlflow.org/)
 
-<a name="ref-8">[8]</a>  [Quickstart for GitHub Actions[websites], (2020, Mar, 17)](https://docs.github.com/en/actions/quickstart)
+<a name="ref-8">[8]</a>  [Quickstart for GitHub Actions[websites], (2021, Mar, 17)](https://docs.github.com/en/actions/quickstart)
 
-<a name="ref-9">[9]</a>  [Adding Self-Hosted Runners[websites], (2020, Mar, 22)](https://docs.github.com/en/actions/hosting-your-own-runners/adding-self-hosted-runners)
+<a name="ref-9">[9]</a>  [Adding Self-Hosted Runners[websites], (2021, Mar, 22)](https://docs.github.com/en/actions/hosting-your-own-runners/adding-self-hosted-runners)
 
 <a name="ref-10">[10]</a>  [Tips on Installing and Maintaining Ray Cluster[websites], (2020, Mar, 22)](https://medium.com/juniper-team/tips-on-installing-and-maintaining-ray-cluster-b5535743f97c)
 
-<a name="ref-11">[11]</a>  [Continuous Integration[websites], (2020, Mar, 22)](https://www.martinfowler.com/articles/continuousIntegration.html)
+<a name="ref-11">[11]</a>  [Continuous Integration[websites], (2021, Mar, 22)](https://www.martinfowler.com/articles/continuousIntegration.html)
 
 <a name="ref-12">[12]</a>  [Managing a branch protection rule[websites], (2021, Apr, 6)](https://docs.github.com/en/github/administering-a-repository/managing-a-branch-protection-rule)
