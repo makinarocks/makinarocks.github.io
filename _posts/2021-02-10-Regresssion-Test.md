@@ -345,16 +345,17 @@ MRX-Hosted-Runner는 Ray Cluster를 구성합니다.
 #### Remark: GitHub Branch Protection Rule
 
 GitHub에서는 특정 브랜치에 병합하기 위해서 필요한 상태확인(Status Check)을 지정할 수 있습니다.
-Regression Test가 진행되지 않은 경우 병합을 못하도록 설정할 수 있습니다.
+이를 활용하여 Regression Test가 진행되지 않은 경우 병합을 못하도록 설정할 수 있습니다.
 
 이는 다음과 같은 과정을 통해 설정할 수 있습니다.
 
-1. Repository에 Settings을 클릭합니다.
-2. 왼쪽 사이드바에 Branches를 클릭합니다.
-3. Branch protection rules아래의 add rule을 클릭합니다.
-4. Protect matching branches아래의 Require status checks to pass before merging을 클릭합니다.
-5. Require branches to be up to date before merging을 클릭합니다.
-6. Regression Test를 선택합니다.
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2020-02-10-Regression-Test/14.png"  width="100%">
+  <figcaption style="text-align: center;">[그림14] - GitHub Branch Protection Rule 설정방법 </figcaption>
+</p>
+</figure>
+
 
 
 Regression Test에서 정상작동한 브랜치에 대해서 **Are You Sure?** 라고 누가 묻는다면 이제는 자신있게 **Yes!**라고 할 수 있습니다.
