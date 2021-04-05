@@ -272,7 +272,7 @@ Repository에 의존성을 제거하였으며 Docker Image도 미리 만들어�
 GitHub Action에서 Trigger Event Type에 대해서 정할 수 있습니다.
 여러 논의 끝에 Pull Request의 리뷰가 완료되었을 때 테스트가 수행되거나 또는 필요시 테스트 수행을 요청할 수 있도록 설정하였습니다.
 이를 위해서 GitHub Actions의 Pull Request Review와 Workflow Dispatch Event를 사용하였습니다.
-또한 Regression Test가 최신 브랜치기준으로 실행하는 것을 강제하기 위해서 Require branches to be up to date before merging 옵션을 선택하였습니다.
+또한 Regression Test가 최신 브랜치기준으로 실행하는 것을 강제하기 위해서 'Require branches to be up to date before merging' 옵션을 선택하였습니다.
 
 개발자들이 코드를 병합하는 과정은 다음과 같이 변경되었습니다.
 
