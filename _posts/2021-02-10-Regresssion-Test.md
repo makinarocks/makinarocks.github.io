@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Regression Test, Are you sure?
+title: Kubernetes기반의 Regression Test Pipeline을 구축하기
 author: wontak ryu
 categories: [test]
 image: assets/images/2020-02-10-Regression-Test/thumbnail.gif
