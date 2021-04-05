@@ -163,7 +163,7 @@ Pipeline #1과 다르게 MRX-Hosted Runner가 Repository에 정의된 Dockerfile
 </p>
 </figure>
 
-첫 번째로 구현한 Pipeline은 [그림7]에서 볼 수 있습니다. 
+세 번째로 구현한 Pipeline은 [그림7]에서 볼 수 있습니다. 
 Docker Image는 Requirements가 변경되었을 때만 Update가 필요했습니다. 
 따라서 미리 DockerImage를 만들어 두고 MRX-Hosted Runner가 이를 받아서 사용하도록 구조를 변경하였습니다. 
 Pipeline #2와 비교해봤을 때 효율적이었습니다.
