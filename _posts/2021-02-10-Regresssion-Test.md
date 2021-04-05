@@ -100,11 +100,12 @@ Regression Test는 Machine learning Software를 학습 및 테스트를 진행�
 
 Self-Hosted Runner는 다음 과정을 통해서 만들 수 있습니다.
 
-1. Repository에 Settings을 클릭합니다.
-2. 왼쪽 사이드바에서 Actions를 클릭합니다.
-3. "Self-hosted runners,"아래에 Add runner를 클릭합니다.
-4. 사용하고자 하는 컴퓨터환경을 선택하여 설치합니다.
-5. Actions에 들어가 Self-Hosted Runner가 동작하는지 확인합니다.
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2020-02-10-Regression-Test/4.png"  width="60%">
+  <figcaption style="text-align: center;">[그림4] - Self-Hosted Runner 설정방법 [13]</figcaption>
+</p>
+</figure>
 
 더 자세한 정보가 궁금하시다면 Adding self-hosted runners [[9]](#ref-9)를 참고하시기 바랍니다.
 
