@@ -403,6 +403,6 @@ Regression Test Pipeline의 도입을 통해 코드변경에서 발생하는 문
 
 <a name="ref-11">[11]</a>  [Continuous Integration[websites], (2021, Mar, 22)](https://www.martinfowler.com/articles/continuousIntegration.html)
 
-<a name="ref-12">[12]</a>  [Managing a branch protection rule[websites], (2021, Apr, 6)](https://docs.github.com/en/github/administering-a-repository/managing-a-branch-protection-rule)
+<a name="ref-12">[12]</a>  [Managing a branch protection rule[websites], (2021, Apr, 5)](https://docs.github.com/en/github/administering-a-repository/managing-a-branch-protection-rule)
 
-<a name="ref-13">[13]</a>  [Adding self-hosted runners[websites], (2021, Apr, 6)](https://docs.github.com/en/actions/hosting-your-own-runners/adding-self-hosted-runners)
+<a name="ref-13">[13]</a>  [Adding self-hosted runners[websites], (2021, Apr, 5)](https://docs.github.com/en/actions/hosting-your-own-runners/adding-self-hosted-runners)
