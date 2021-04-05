@@ -116,7 +116,7 @@ name: Regression_Test
 
 jobs:
   regression_test:
-    runs-on: [self-hosted, ubuntu-18.04]
+    runs-on: [self-hosted]
 ```
 
 ### Pipeline #1: Dependent on Repository
