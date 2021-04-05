@@ -34,7 +34,7 @@ image: assets/images/2020-02-10-Regression-Test/thumbnail.gif
 </figure>
 
 하지만 유닛테스트 만으로는 모델의 성능저하를 일으키는 변경사항을 알아챌 수 없다는 문제가 있었습니다. 
-예를 들어, 활성함수(Activation Function)로 ReLU를 사용했을때 특정 모델의 성능저하가 일어난 사건이 있었습니다. 
+예를 들어, Leaky ReLU로 사용하던 활성함수(Activation Function)를 ReLU로 변경했을때 치명적인 성능저하가 일어난 사건이 있었습니다. 
 이 경우 모델의 성능이 저하되었는데도 불구하고 각 모듈은 설계한대로 잘 동작했으므로 모든 테스트케이스는 문제 없이 통과했습니다.
 
 아래의 [그림2]는 실제로 겪었던 문제입니다. 여러 브랜치가 Merge된 상태에서 origin/master의 성능저하를 발견하였습니다. 
