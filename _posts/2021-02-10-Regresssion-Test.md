@@ -34,7 +34,7 @@ image: assets/images/2020-02-10-Regression-Test/thumbnail.gif
 </figure>
 
 하지만 유닛테스트 만으로는 모델의 성능저하를 일으키는 변경사항을 알아챌 수 없다는 문제가 있었습니다. 
-예를 들어, 활성함수(activation function)로 ReLU를 사용했을때 특정 모델의 성능저하가 일어난 사건이 있었습니다. 
+예를 들어, 활성함수(Activation Function)로 ReLU를 사용했을때 특정 모델의 성능저하가 일어난 사건이 있었습니다. 
 이 경우 모델의 성능이 저하되었는데도 불구하고 각 모듈은 설계한대로 잘 동작했으므로 모든 테스트케이스는 문제 없이 통과했습니다.
 
 아래의 [그림2]는 실제로 겪었던 문제입니다. 여러 브랜치가 Merge된 상태에서 origin/master의 성능저하를 발견하였습니다. 
@@ -273,7 +273,7 @@ Repository에 의존성을 제거하였으며 Docker Image도 미리 만들어�
 GitHub Action에서 Trigger Event Type에 대해서 정할 수 있습니다.
 여러 논의 끝에 Pull Request의 리뷰가 완료되었을 때 테스트가 수행되거나 또는 필요시 테스트 수행을 요청할 수 있도록 설정하였습니다.
 이를 위해서 GitHub Actions의 Pull Request Review와 Workflow Dispatch Event를 사용하였습니다.
-또한 Regression Test가 최신 브랜치기준으로 실행하는 것을 강제하기 위해서 Require branches to be up to date before merging 옵션을 선택하였습니다.
+또한 Regression Test가 최신 브랜치기준으로 실행하는 것을 강제하기 위해서 'Require branches to be up to date before merging' 옵션을 선택하였습니다.
 
 개발자들이 코드를 병합하는 과정은 다음과 같이 변경되었습니다.
 
