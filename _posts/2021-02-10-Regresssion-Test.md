@@ -123,12 +123,12 @@ jobs:
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/4.png"  width="60%">
-  <figcaption style="text-align: center;">[그림4] - Pipeline #1</figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/5.png"  width="60%">
+  <figcaption style="text-align: center;">[그림5] - Pipeline #1</figcaption>
 </p>
 </figure>
 
-첫 번째로 구현한 Pipeline은 [그림4]에서 볼 수 있습니다. 
+첫 번째로 구현한 Pipeline은 [그림5]에서 볼 수 있습니다. 
 MRX-Hosted Runner가 Regression Test 대상이 되는 Repository의 Requirements(필요환경)를 미리 가지고 있습니다. 
 학습에 필요한 데이터의 경우 원격 저장소에 저장해두고 요청 시 접근하여 사용합니다. 
 GitHub에서 테스트요청을 보내면 Regression Test를 진행하게 됩니다. 
@@ -140,12 +140,12 @@ GitHub에서 테스트요청을 보내면 Regression Test를 진행하게 됩니
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/5.png"  width="60%">
-  <figcaption style="text-align: center;">[그림5] - Pipeline #2</figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/6.png"  width="60%">
+  <figcaption style="text-align: center;">[그림6] - Pipeline #2</figcaption>
 </p>
 </figure>
 
-두 번째로 구현한 Pipeline은 [그림5]에서 볼 수 있습니다. 
+두 번째로 구현한 Pipeline은 [그림6]에서 볼 수 있습니다. 
 Pipeline #1과 다르게 MRX-Hosted Runner가 Repository에 정의된 Dockerfile을 기반으로 Regression Test Container를 만듭니다. 
 이를 통해서 Repository에 의존성을 가지던 문제를 해결할 수 있었습니다. 
 하지만 Docker Image를 Build하는 작업은 상당히 오랜시간이 걸리기 때문에 비효율적이라는 문제가 있었습니다.
@@ -158,12 +158,12 @@ Pipeline #1과 다르게 MRX-Hosted Runner가 Repository에 정의된 Dockerfile
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/6.png"  width="60%">
-  <figcaption style="text-align: center;">[그림6] - Pipeline #3</figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/7.png"  width="60%">
+  <figcaption style="text-align: center;">[그림7] - Pipeline #3</figcaption>
 </p>
 </figure>
 
-첫 번째로 구현한 Pipeline은 [그림6]에서 볼 수 있습니다. 
+첫 번째로 구현한 Pipeline은 [그림7]에서 볼 수 있습니다. 
 Docker Image는 Requirements가 변경되었을 때만 Update가 필요했습니다. 
 따라서 미리 DockerImage를 만들어 두고 MRX-Hosted Runner가 이를 받아서 사용하도록 구조를 변경하였습니다. 
 Pipeline #2와 비교해봤을 때 효율적이었습니다.
@@ -173,21 +173,21 @@ Pipeline #2와 비교해봤을 때 효율적이었습니다.
 
 하지만 Pipeline #1 ~ #3은 모두 공통적으로 한 컴퓨팅 자원에 의존적이라는 문제가 있습니다.
 예를 들어 Regression Test에 사용하는 컴퓨터에서 어떤 작업을 수행하고 있다면 Regression Test의 요청이 수락되지 않거나 수행중이던 작업에 영향을 줄 수 있습니다.
-[그림7]를 보면 3개의 Process가 모두 동일한 하나의 서버에 접속하여 사용하고 있는 모습을 볼 수 있습니다.
+[그림8]를 보면 3개의 Process가 모두 동일한 하나의 서버에 접속하여 사용하고 있는 모습을 볼 수 있습니다.
 붉은 색으로 표현된 것은 남은 Memory가 많지 않다는 것을 의미합니다.
 만약 MRX-Hosted Runner도 동일한 서버에서 작동하고 있다면 OOM(Out-of-Memory)가 발생하여 Regression Test가 정상적으로 작동하지 않을 수 있습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/7.png"  width="60%">
-  <figcaption style="text-align: center;">[그림7] - Problem of Device Dependency</figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/8.png"  width="60%">
+  <figcaption style="text-align: center;">[그림8] - Problem of Device Dependency</figcaption>
 </p>
 </figure>
 
 또한 다른 MRX-Decktop2, 3를 보면 컴퓨팅 자원이 여유있다는 것을 알 수 있습니다. 
 자원을 효율적으로 사용하기 위해서 남은 자원에 효율적으로 접근하는 것이 필요했습니다. 
 이를 위해서는 Regression Test Pipeline이 특정 자원에 종속되지 않고 필요한 자원에 동적으로 접근하여야 합니다. 
-즉, 위의 [그림7] 예시처럼 Regression Test Pipeline이 특정 자원의 영향을 받는 것을 개선해야합니다.
+즉, 위의 [그림8] 예시처럼 Regression Test Pipeline이 특정 자원의 영향을 받는 것을 개선해야합니다.
 
 ### Pipeline #4: InDependent on Device
 
@@ -196,13 +196,13 @@ Kubernetes에 대해서 알고 싶으신 분들은 Kubernetes의 공식문서[[6
 
 Kubernetes를 사용한 목적은 내부의 컴퓨팅 자원을 추상화하기 위함입니다. 
 쉽게 풀어쓰면, **Kubernetes에 특정 Device를 요청하는 것이 아니라, 필요한 컴퓨팅 자원에 대해서 요청만 하면, 그에 맞는 자원할당을 받기 위해서입니다.** 
-[그림8]을 보면 여러가지 컴퓨팅 자원이 하나의 클러스터로 묶여있습니다. 
+[그림9]을 보면 여러가지 컴퓨팅 자원이 하나의 클러스터로 묶여있습니다. 
 이제 원하는 자원의 스펙을 적으면, 그에 맞는 자원이 할당될 것입니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/8.png"  width="60%">
-  <figcaption style="text-align: center;">[그림8] - Kubernetes in Makinarocks </figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/9.png"  width="60%">
+  <figcaption style="text-align: center;">[그림9] - Kubernetes in Makinarocks </figcaption>
 </p>
 </figure>
 
@@ -211,8 +211,8 @@ Kubernetes를 사용한 목적은 내부의 컴퓨팅 자원을 추상화하기 
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/9.png" alt="Kubernetes" width="60%">
-  <figcaption style="text-align: center;"> [그림9] - Containerization and Container Orchestration [6] </figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/10.png" alt="Kubernetes" width="60%">
+  <figcaption style="text-align: center;"> [그림10] - Containerization and Container Orchestration [6] </figcaption>
 </p>
 </figure>
 
@@ -233,8 +233,8 @@ Kubernetes의 도입으로 특정 노드에 직접 접근할 필요가 없어졌
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/10.png" alt="Kubernetes" width="60%">
-  <figcaption style="text-align: center;"> [그림10] - Ray Cluster [10]</figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/11.png" alt="Kubernetes" width="60%">
+  <figcaption style="text-align: center;"> [그림11] - Ray Cluster [10]</figcaption>
 </p>
 </figure>
 
@@ -250,18 +250,18 @@ Ray Autoscaler는 Cluster의 자원상황을 고려하여 워커 노드의 개�
 MRX-Hosted Runner의 역할은 특정 Device내에서 Container로 Regression Test를 진행하는 것이 아닙니다. 
 미리 정의된 컴퓨팅 자원 스펙에 해당하는 Ray Cluster를 만드는 것입니다 [[3]](#ref-2). 
 여기서 Ray Cluster의 역할은 Regression Test를 병렬적으로 진행하기 위한 목적으로 사용되고 작업이 끝나게 되면 Ray Cluster는 사라지게 됩니다. 
-참고로 [그림8]에서 구성한 Cluster와 Ray Cluster는 다른 역할을 합니다. 
-[그림8]은 자원자체를 묶는 작업을 의미한다면 Ray Cluster는 이미 묶인 자원을 활용하는 것입니다. 
+참고로 [그림9]에서 구성한 Cluster와 Ray Cluster는 다른 역할을 합니다. 
+[그림9]은 자원자체를 묶는 작업을 의미한다면 Ray Cluster는 이미 묶인 자원을 활용하는 것입니다. 
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/11.png"  width="60%">
-  <figcaption style="text-align: center;">[그림11] - Pipeline #4 </figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/12.png"  width="60%">
+  <figcaption style="text-align: center;">[그림12] - Pipeline #4 </figcaption>
 </p>
 </figure>
 
 
-이제 Kubernetes 그리고 Ray Cluster를 활용하여 [그림11]과 같은 Pipeline을 구축하였습니다. 
+이제 Kubernetes 그리고 Ray Cluster를 활용하여 [그림12]과 같은 Pipeline을 구축하였습니다. 
 Repository에 의존성을 제거하였으며 Docker Image도 미리 만들어둔 Image를 활용하였습니다. 
 또한 Device에 대한 의존성을 제거하여 내부의 컴퓨팅 자원을 더욱 효율적으로 사용할 수 있었습니다.
 
@@ -300,7 +300,7 @@ Regression Test는 유닛테스트보다 긴 시간이 소요되며 컴퓨팅 �
 이런 문제를 해결하기 위해서 새로운 유형의 트리거 이벤트가 필요했습니다. 
 
 Workflow Dispatch는 선택적으로 GitHub Action을 수행하고 싶을 때 사용합니다 [[5]](#ref-5).
-Workflow Dispatch는 수동으로 GitHub Action을 수행할 수 있으며 [그림12]와 같이 GitHub UI를 통해서 쉽게 실행할 수 있습니다.
+Workflow Dispatch는 수동으로 GitHub Action을 수행할 수 있으며 [그림13]와 같이 GitHub UI를 통해서 쉽게 실행할 수 있습니다.
 
 코드리뷰가 끝난 후에 Regression Test를 수행하기 위하여 Workflow Dispatch를 선택하였습니다.
 
@@ -308,8 +308,8 @@ Workflow Dispatch는 수동으로 GitHub Action을 수행할 수 있으며 [그�
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/12.gif"  width="60%">
-  <figcaption style="text-align: center;">[그림12] - Click for Regression Test </figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/13.gif"  width="60%">
+  <figcaption style="text-align: center;">[그림13] - Click for Regression Test </figcaption>
 </p>
 </figure>
 
@@ -328,7 +328,7 @@ jobs:
     if: (github.event.review.state == 'approved' || github.event_name == 'workflow_dispatch')
 ```
 
-Regression Test Pipeline의 모습을 [그림13]으로 도식화했습니다.
+Regression Test Pipeline의 모습을 [그림14]으로 도식화했습니다.
 GitHub에서 미리 설정한 Event Type에 해당하는 Event가 발생하면 MRX-Hosted-Runner에게 Regression Test를 요청합니다.
 MRX-Hosted-Runner는 Ray Cluster를 구성합니다.
 학습 및 실험을 진행할 때는 중앙화된 실험기록 서비스에 실험정보를 로깅하고 학습이 끝나면 이에 대한 정보를 GitHub에 전달합니다 [[7]](#ref-7).
@@ -337,8 +337,8 @@ MRX-Hosted-Runner는 Ray Cluster를 구성합니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/13.png"  width="80%">
-  <figcaption style="text-align: center;">[그림13] - Pipeline Overview </figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/14.png"  width="80%">
+  <figcaption style="text-align: center;">[그림14] - Pipeline Overview </figcaption>
 </p>
 </figure>
 
@@ -351,8 +351,8 @@ GitHub Branch Protection Rule은 다음과 같은 과정을 통해 설정할 수
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2020-02-10-Regression-Test/14.png"  width="100%">
-  <figcaption style="text-align: center;">[그림14] - GitHub Branch Protection Rule 설정방법 </figcaption>
+  <img src="/assets/images/2020-02-10-Regression-Test/15.png"  width="100%">
+  <figcaption style="text-align: center;">[그림15] - GitHub Branch Protection Rule 설정방법 [12]</figcaption>
 </p>
 </figure>
 
@@ -404,3 +404,5 @@ Regression Test Pipeline의 도입을 통해 코드변경에서 발생하는 문
 <a name="ref-11">[11]</a>  [Continuous Integration[websites], (2021, Mar, 22)](https://www.martinfowler.com/articles/continuousIntegration.html)
 
 <a name="ref-12">[12]</a>  [Managing a branch protection rule[websites], (2021, Apr, 6)](https://docs.github.com/en/github/administering-a-repository/managing-a-branch-protection-rule)
+
+<a name="ref-13">[13]</a>  [Adding self-hosted runners[websites], (2021, Apr, 6)](https://docs.github.com/en/actions/hosting-your-own-runners/adding-self-hosted-runners)
