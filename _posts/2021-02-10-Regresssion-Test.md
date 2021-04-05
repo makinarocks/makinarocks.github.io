@@ -18,7 +18,6 @@ image: assets/images/2020-02-10-Regression-Test/thumbnail.gif
 ## Problem: Can't find the cause of the lower performance!
 
 우선 AI Product를 개발하며 겪었던 문제에 대해서 공유드리겠습니다. 
-GitHub를 통해 협업을 관리하고 있습니다.
 
 개발자들은 작업을 완료하면 다음의 과정을 통해 코드를 병합(Merge)합니다.
 
