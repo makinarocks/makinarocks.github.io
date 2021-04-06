@@ -254,7 +254,7 @@ class ColumnAligner():
 ### Unit Test Preprocessing
 
 하지만 전처리 코드에 오류가 있다면 유효성이 보장되지 않을 것입니다.
-해당 클래스 구현 코드에 대해 Unit Test를 추가해준다면, 코드의 안정성 보장을 통해 데이터의 안정성 보장까지 가능합니다.
+해당 클래스에 대한 Unit Test를 추가해준다면 데이터의 안정성을 보장할 수 있습니다.
 
 ```python
 def test_column_aligner():
