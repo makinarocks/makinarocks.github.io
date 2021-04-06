@@ -33,7 +33,7 @@ image: assets/images/2021-02-21-data_is_tested/total.gif
         <figure class="image" style="align: center;">
             <p align="center">
                 <img src="/assets/images/2021-02-21-data_is_tested/valid.gif" alt="valid-data" width="120%">
-                <figcaption style="text-align: center;">Input Valid Data</figcaption>
+                <figcaption style="text-align: center;">[그림1] Input Valid Data</figcaption>
             </p>
         </figure>
     </div>
@@ -41,7 +41,7 @@ image: assets/images/2021-02-21-data_is_tested/total.gif
         <figure class="image" style="align: center;">
             <p align="center">
                 <img src="/assets/images/2021-02-21-data_is_tested/invalid.gif" alt="invalid-data" width="120%">
-                <figcaption style="text-align: center;">Input Invalid Data</figcaption>
+                <figcaption style="text-align: center;">[그림2] Input Invalid Data</figcaption>
             </p>
         </figure>
     </div>
@@ -54,7 +54,7 @@ Input Sample Test 란 입력으로 받은 데이터의 각 Sample(Row)의 유효
 <figure class="image" style="align: center;">
     <p align="center">
         <img src="/assets/images/2021-02-21-data_is_tested/sample.png" alt="" width="50%">
-        <!-- <figcaption style="text-align: center;">Sample</figcaption> -->
+        <figcaption style="text-align: center;">[그림3] Sample</figcaption>
     </p>
 </figure>
 
@@ -67,7 +67,7 @@ def make_feature_c(feature_a, feature_b):
 <figure class="image" style="align: center;">
     <p align="center">
         <img src="/assets/images/2021-02-21-data_is_tested/make-feature-c.png" alt="" width="50%">
-        <!-- <figcaption style="text-align: center;"></figcaption> -->
+        <figcaption style="text-align: center;">[그림4] make_feature_c</figcaption>
     </p>
 </figure>
 
@@ -103,7 +103,7 @@ def test_make_feature_c():
         <figure class="image" style="align: center;">
             <p align="center">
                 <img src="/assets/images/2021-02-21-data_is_tested/test-normal-case.png" alt="" width="120%">
-                <figcaption style="text-align: center;">Test Normal Case</figcaption>
+                <figcaption style="text-align: center;">[그림5] Test Normal Case</figcaption>
             </p>
         </figure>
     </div>
@@ -111,7 +111,7 @@ def test_make_feature_c():
         <figure class="image" style="align: center;">
             <p align="center">
                 <img src="/assets/images/2021-02-21-data_is_tested/test-input-sample.png" alt="" width="120%">
-                <figcaption style="text-align: center;">Test Input Sample</figcaption>
+                <figcaption style="text-align: center;">[그림6] Test Input Sample</figcaption>
             </p>
         </figure>
     </div>
@@ -210,7 +210,7 @@ def json_schema_validator(datapoints, sample_ratio=0.1):
 <figure class="image" style="align: center;">
     <p align="center">
         <img src="/assets/images/2021-02-21-data_is_tested/feature.png" alt="" width="50%">
-        <!-- <figcaption style="text-align: center;">Feature</figcaption> -->
+        <figcaption style="text-align: center;">[그림7] Feature</figcaption>
     </p>
 </figure>
 
@@ -323,7 +323,7 @@ def test_column_aligner():
 <figure class="image" style="align: center;">
     <p align="center">
         <img src="/assets/images/2021-02-21-data_is_tested/dataset.png" alt="" width="50%">
-        <!-- <figcaption style="text-align: center;">Dataset</figcaption> -->
+        <figcaption style="text-align: center;">[그림8] Dataset</figcaption>
     </p>
 </figure>
 
@@ -336,9 +336,9 @@ Validation Dataset은 학습에 사용되지 않은 데이터로서 주로 모�
 그런데 Validation Dataset이 모델을 평가하는데 적절하지 않은 데이터 셋이었다면 어떻게 될까요?
 모델에 대한 평가도 왜곡되고, 이상탐지 시스템에서 중요한 Threshold 값 또한 잘못 계산될 수 있습니다. 
 
-시계열 데이터는 [그림1]과 같이 데이터 중 가장 오래된 데이터부터 Train Set으로, 나머지 뒷 부분을 Validation Dataset으로 사용합니다.
+시계열 데이터는 [그림9]과 같이 데이터 중 가장 오래된 데이터부터 Train Set으로, 나머지 뒷 부분을 Validation Dataset으로 사용합니다.
 월요일 부터 일요일까지 일주일 데이터를 이용해 모델을 학습하는 상황을 예를 들어보겠습니다.
-Train Set : Validation Dataset 비율을 5 : 2로 할 경우, 월요일부터 금요일까지 데이터를 Train Set으로, 토요일과 일요일 데이터를 Validation Dataset으로 사용하게 됩니다.[그림2]
+Train Set : Validation Dataset 비율을 5 : 2로 할 경우, [그림10]과 같이 월요일부터 금요일까지 데이터를 Train Set으로, 토요일과 일요일 데이터를 Validation Dataset으로 사용하게 됩니다.
 
 그런데 일요일이 현장 휴일이라면 월요일 ~ 토요일과 다른 분포의 데이터를 갖게 될 것 입니다. 
 이런 경우 토요일과 일요일로 구성된 Validation Dataset은 적절하지 않다고 할 수 있습니다.
@@ -346,14 +346,14 @@ Train Set : Validation Dataset 비율을 5 : 2로 할 경우, 월요일부터 �
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-21-data_is_tested/train_valid.png" alt="train-valid" width="120%">
-  <figcaption style="text-align: center;">[그림1] - Train / Validation split</figcaption>
+  <figcaption style="text-align: center;">[그림9] - Train / Validation split</figcaption>
 </p>
 </figure>
 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-21-data_is_tested/week_train_valid.png" alt="train-valid-a-week" width="120%">
-  <figcaption style="text-align: center;">[그림2] - Train / Validation split - A week</figcaption>
+  <figcaption style="text-align: center;">[그림10] - Train / Validation split - A week</figcaption>
 </p>
 </figure>
 
@@ -395,7 +395,7 @@ def check_validation_set(scores):
         <figure class="image" style="align: center;">
             <p align="center">
                 <img src="/assets/images/2021-02-21-data_is_tested/valid_auroc.png" alt="" width="120%">
-                <figcaption style="text-align: center;">Valid Case</figcaption>
+                <figcaption style="text-align: center;">[그림11] Valid Case</figcaption>
             </p>
         </figure>
     </div>
@@ -403,7 +403,7 @@ def check_validation_set(scores):
         <figure class="image" style="align: center;">
             <p align="center">
                 <img src="/assets/images/2021-02-21-data_is_tested/invalid_auroc.png" alt="" width="120%">
-                <figcaption style="text-align: center;">Invalid Case</figcaption>
+                <figcaption style="text-align: center;">[그림12] Invalid Case</figcaption>
             </p>
         </figure>
     </div>
