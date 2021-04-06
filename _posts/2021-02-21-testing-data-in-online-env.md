@@ -9,7 +9,7 @@ image: assets/images/2021-02-21-data_is_tested/total.gif
 마키나락스가 이상탐지 시스템을 적용하고자 하는 제조 생산 현장은 제품 및 공정의 변화가 잦은 곳이 많습니다.
 공정이 변화하면 데이터 분포가 달라지기 때문에, 사전에 학습된 모델이 적용하려는 시점에는 정상 작동하기 어렵습니다.
 이런 문제를 해결하기 위해 온라인 환경에서 학습과 추론이 동시에 가능한 코드 형태로 모델을 배포합니다.
-온라인 환경에서 사용되는 모델은 배포된 코드와 함께 현장에서 수집한 학습 데이터로 완성됩니다.[[1]](#ref-1)
+온라인 환경에서 사용되는 모델은 배포된 코드와 함께 현장에서 수집한 학습 데이터로 완성됩니다 [[1]](#ref-1).
 
 온라인 환경에서 모델이 안정적으로 학습되고 추론하기 위해서는 코드뿐만 아니라 데이터에 대해서 유효성 테스트가 필요합니다.
 앞선 포스트에서 코드의 안정성을 보장하기 위한 Software Test와 Regression Test에 대해서 소개해 드렸습니다.
@@ -118,7 +118,7 @@ def test_make_feature_c():
 </div>
 
 
-**Json Schema**를 활용해 약속한 대로 데이터가 들어오는지 확인할 수 있습니다. Json Schema란 `JSON`형식으로 작성된 다른 데이터의 구조를 설명하는 하나의 데이터 자체입니다.[[2]](#ref-2) 의도하는 데이터의 형식을 표현하고, 새로 들어오는 데이터가 Schema에 맞는지 검증합니다.
+**Json Schema**를 활용해 약속한 대로 데이터가 들어오는지 확인할 수 있습니다. Json Schema란 `JSON`형식으로 작성된 다른 데이터의 구조를 설명하는 하나의 데이터 자체입니다 [[2]](#ref-2). 의도하는 데이터의 형식을 표현하고, 새로 들어오는 데이터가 Schema에 맞는지 검증합니다.
 
 ### Json Schema
 
@@ -140,7 +140,7 @@ Json Schema를 주요 요소를 소개해 드리겠습니다.
 
 앞의 예시에 적용할 수 있는 Json Schema를 보여드리겠습니다.
 
-현재 마키나락스에서 구현한 모델의 입력 데이터는 대부분 Feature 이름과 값이 맵핑되어 있는 Python `dict` 자료형 입니다. 여기서 `dict`는 JSON 형식 중 "object"와 유사하므로 type Field의 값은 object로 했습니다. 데이터는 `Feature A`와 `Feature B`를 필수로 가져야하므로 required Field에 추가했습니다. 마지막으로 두 feature 모두 수치형 데이터이어야 하므로 아래와 같이 properties Field를 작성했습니다. (추가 사용법은 Json Schema[[2]](#ref-2) 참고)
+현재 마키나락스에서 구현한 모델의 입력 데이터는 Feature 이름과 값이 맵핑되어 있는 Python `dict` 자료형 입니다. 여기서 `dict`는 JSON 형식 중 "object"와 유사하므로 type Field의 값은 object로 했습니다. 데이터는 `Feature A`와 `Feature B`를 필수로 가져야하므로 required Field에 추가했습니다. 마지막으로 두 Feature 모두 Numeric 데이터를 가져 아래와 같이 properties Field를 작성했습니다. (추가 사용법은 Json Schema[[2]](#ref-2) 참고)
 
 ```json
 {
@@ -170,10 +170,10 @@ Json Schema를 주요 요소를 소개해 드리겠습니다.
 }
 
 >>> data = {"feature A" : 3., "feature B" : 4.}
->>> print(validate(instance=data, schema=schema))
+>>> validate(instance=data, schema=schema)
 
 >>> data = {"feature A" : False, "feature B" : 4.}
->>> print(validate(instance=data, schema=schema))
+>>> validate(instance=data, schema=schema)
 ValidationError: False is not of type 'number'
 
 Failed validating 'type' in schema['properties']['feature A']:
@@ -200,11 +200,7 @@ def json_schema_validator(datapoints, sample_ratio=0.1):
     sample_indices = random.sample(range(n_total), n_samples)
     for sample_index in sample_indices:
         sample = datapoints[sample_index]
-        try:
-            validate(instance=sample, schema=schema)
-        except jsonschema.exceptions.ValidationError as ve:
-            return False
-    return True
+        validate(instance=sample, schema=schema)
 ```
 
 ## Input Feature Test
@@ -225,20 +221,44 @@ def json_schema_validator(datapoints, sample_ratio=0.1):
 이런 경우 결과의 오류를 확인하는 것은 거의 불가능하다고 볼 수 있습니다. 
 이러한 오류를 방지하기 위해서는 Input Feature의 순서에 대한 테스트를 해야합니다.
 
-만약 `pandas.DataFrame` 형태라면 Feature의 순서를 고정하는 것으로 해결 할 수 있습니다. 
+데이터가 `pandas.DataFrame` 형태라면 Feature의 순서를 고정하는 것으로 해결 할 수 있습니다. 
 전처리 과정 중 아래와 같은 클래스를 이용해 Feature의 순서를 고정할 수 있습니다.
 
 ```python
 import pandas as pd
 
 class ColumnAligner():
+    """
+    Arrange columns of DataFrame in the same order.
+    """
     def __init__(self):
         self.column_alignment = None
 
     def fit(self, df: pd.DataFrame):
+        """
+        Store order of columns.
+
+        Parameters
+        ----------
+        df : pandas.DataFrame
+            The standard data for columns order.
+        """
         self.column_alignment = df.columns.tolist()
 
     def transform(self, df: pd.DataFrame):
+        """
+        Rearrange columns by stored order.
+
+        Parameters
+        ----------
+        df : pandas.DataFrame
+            The data that should be arranged. 
+
+        Returns
+        -------
+        df_tr : pandas.DataFrame
+            Rearranged data.
+        """
         return df.loc[:, self.column_alignment]
 ```
 
@@ -265,26 +285,35 @@ def test_column_aligner():
         "feature B": [3],
         "feature C": [5],
     })
-    '''
+    """
     >>> df
        feature A  feature B  feature C
     0          1          3          5
-    '''
+    """
+
+    # Change columns to reverse order.
     test_df = df.copy()
-    test_df = test_df.iloc[:, ::-1] 
-    '''
+    test_df = test_df.iloc[:, ::-1]  
+    """
     >>> test_df
        feature C  feature B  feature A
     0          5          3          1
-    '''
+    """
+
+    # Store order of `df` columns.
     column_aligner.fit(df)
+
+    # Rearrange `test_df` columns by `column_aligner`.
     preprocessed_df = column_aligner.transform(test_df)
+
+    # Check that original data `df` and rearranged data `preprocessed_df` 
+    # have the same order of columns.
     assert df.columns.equals(preprocessed_df.columns)
 
 ```
 
 전처리 과정의 코드는 단순해서 Unit Test가 필요없어 보일 수 있습니다. 
-하지만 데이터가 전처리 함수를 지나면서 변해가는 과정에 생기는 문제는 쉽게 파악하기 어렵습니다.[[1]](#ref-1) 
+하지만 데이터가 전처리 함수를 지나면서 변해가는 과정에 생기는 문제는 쉽게 파악하기 어렵습니다 [[1]](#ref-1).
 전처리 과정이 제대로 동작하는지 계속 확인 하는 것이 매우 중요합니다.
 
 ## Input Dataset Test
@@ -307,7 +336,7 @@ Validation Dataset은 학습에 사용되지 않은 데이터로서 주로 모�
 그런데 Validation Dataset이 모델을 평가하는데 적절하지 않은 데이터 셋이었다면 어떻게 될까요?
 모델에 대한 평가도 왜곡되고, 이상탐지 시스템에서 중요한 Threshold 값 또한 잘못 계산될 수 있습니다. 
 
-시계얼 데이터에서는 데이터 중 가장 오래된 데이터부터 Train Set으로, 나머지 뒷 부분을 Validation Dataset으로 사용합니다.[그림1]
+시계열 데이터는 [그림1]과 같이 데이터 중 가장 오래된 데이터부터 Train Set으로, 나머지 뒷 부분을 Validation Dataset으로 사용합니다.
 월요일 부터 일요일까지 일주일 데이터를 이용해 모델을 학습하는 상황을 예를 들어보겠습니다.
 Train Set : Validation Dataset 비율을 5 : 2로 할 경우, 월요일부터 금요일까지 데이터를 Train Set으로, 토요일과 일요일 데이터를 Validation Dataset으로 사용하게 됩니다.[그림2]
 
@@ -334,9 +363,19 @@ Train Set : Validation Dataset 비율을 5 : 2로 할 경우, 월요일부터 �
 ### Example of Validation Dataset Verification
 
 유효한 데이터로 이루어진 Validation Dataset은 Train Set에 근접한 부분의 Anomaly Score와 먼 부분의 Anomaly Score가 비슷한 분포를 가집니다.
-이 경우 확인 방법으로 AUROC를 적용할 수 있습니다. ([AUROC-위키피디아](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) 참고) 
-데이터 분포가 변화하지 않는 경우라면 0.4 ~ 0.6 사이의 AUROC가 나올 것입니다. 
-계산한 AUROC를 바탕으로 Validation Dataset의 유효성을 검증 할 수 있습니다.
+
+두 분포의 유사도를 측정하기 위해 AUROC를 적용할 수 있습니다.
+원래 AUROC는 Binary Classification에서 모델의 성능을 평가하는 metric입니다. 
+실제 Positive와 Negative Label에 대해서 예측 Score가 얼만큼 분리되어 있는지 나타냅니다.
+Label에 맞게 Score가 완벽히 분리됐을 때 AUROC는 1입니다.
+Label에 상관 없이 Score가 비슷하게 분포하고 있을 때 AUROC는 0.5입니다.
+
+이러한 특성을 두 데이터 분포의 유사도를 측정하는 데 적용할 수 있습니다.
+분포가 유사한 경우라면 근접한 부분을 Negative, 먼 부분을 Positive Label로 두고
+AUROC를 계산했을 때 0.5 근처 값을 가질 것입니다.
+이렇게 계산한 AUROC를 바탕으로 Validation Dataset의 유효성을 검증 할 수 있습니다.
+
+아래 유효성 검증 코드는 근처의 범위를 0.1로 임의로 설정한 경우입니다.
 
 ```python
 from sklearn.metrics import roc_auc_score
@@ -380,4 +419,5 @@ def check_validation_set(scores):
 
 <a name="ref-2">[2]</a> [https://json-schema.org](https://json-schema.org/)
 
-<a name="ref-3">[3]</a> [https://winderresearch.com/unit-testing-data-what-is-it-and-how-do-you-do-it](https://winderresearch.com/unit-testing-data-what-is-it-and-how-do-you-do-it/)
+<a name="ref-3">[3]</a> [H. Khizou. "Unit Testing Data: What Is It and How Do You Do It?" winderresearch.com <br>
+https://winderresearch.com/unit-testing-data-what-is-it-and-how-do-you-do-it](https://winderresearch.com/unit-testing-data-what-is-it-and-how-do-you-do-it/)
