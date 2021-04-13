@@ -135,6 +135,7 @@ GitHub에서 테스트요청을 보내면 Regression Test를 진행하게 됩니
 
 이런 구조는 한 Repository에 의존성을 가지게 된다는 문제를 가지고 있습니다.
 특정 Repository를 위한 MRX-Hosted Runner가 다른 Repository를 운영할 수 없습니다.
+한 Repository는 A 라이브러리를 사용하고 이에 맞는 MRX-Hosted Runner가 있다면, B 라이브러리가 필요한 Repository에서는 작동할 수 없습니다.
 
 ### Pipeline #2: Independent on Repository, But Inefficient
 
