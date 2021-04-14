@@ -415,6 +415,7 @@ Python scipy 패키지를 이용해 임의로 생성한 두 집단을 비교해 
 
 위 과정을 확장해서 온라인 환경의 상황을 모를 때 Validation Dataset의 Dataset Shift 여부를 확인하는 과정에 대해 소개드리겠습니다.
 시간이 지남에 따라 Dataset Shift 여부를 확인하기 위함으로 한 시점을 기준으로 이전 시점 데이터를 Group-pre, 이후 시점 데이터르 Group-post로 구분하여 T-test를 진행합니다.
+단 Train Dataset과 Validation Dataset 사이에는 Dataset Shift가 없어 Group-pre는 Train Dataset과 같은 분포일 것을 가정하는 것이 필요합니다.
 
 이때 집단을 구분하는 시점을 하나로 고정할 경우 여러 상황에 대응하기 어렵습니다.
 예를 들어, 데이터의 50%를 기준으로 한다면 [그림11] 상황에서는 Dataset Shift를 확인할 수 있지만, [그림12] 상황에서는 불가능합니다.
@@ -514,6 +515,7 @@ ValueError: Check dataset shift around 2/6
 ```
 
 P-value가 가장 작은 한 지점을 출력하므로, 여러 지점에서의 변화를 확인하는데는 한계가 있습니다.
+그리고 Group-pre는 Train Dataset과 같은 분포라는 가정이 틀릴 수 있습니다.
 하지만 최소한의 검증으로 사용될 수 있음을 기대할 수 있습니다.
 ## Conclusion
 
