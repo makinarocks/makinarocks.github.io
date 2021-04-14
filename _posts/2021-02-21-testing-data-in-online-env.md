@@ -351,13 +351,12 @@ def test_column_aligner_transform():
     </p>
 </figure>
 
-Validation Dataset을 중심으로 마키나락스 이상탐지 시스템(이하 M-AD: MakinaRocks-Anomaly Detection) 적용 사례를 통해 소개해 드리겠습니다.
-
+Validation Dataset을 중심으로 소개해 드리겠습니다.
 Validation Dataset은 학습에 사용되지 않은 데이터로서 주로 학습된 모델을 평가하는 데 사용됩니다. 
-**M-AD**에서는 Validation Dataset의 Anomaly Score를 이용해 알람의 Threshold를 결정합니다. 
+마키나락스 이상탐지 시스템에서는 Validation Dataset의 Anomaly Score를 이용해 알람의 Threshold를 결정합니다. 
 
 Validation Dataset이 모델을 평가하는데 적절하지 않은 데이터 셋이었다면 어떻게 될까요?
-모델에 대한 평가도 왜곡되고, **M-AD**에서 중요한 Threshold가 잘 못 계산될 수 있습니다.
+모델에 대한 평가도 왜곡되고, 마키나락스 이상탐지 시스템에서 중요한 Threshold가 잘 못 계산될 수 있습니다.
 Validation Dataset은 시스템의 전체적인 성능 안정성을 위해 검증되어야 합니다.
 
 ### Example of Invalid Validation Dataset
@@ -383,7 +382,7 @@ Train Dataset : Validation Dataset 비율을 5 : 2로 할 경우, [그림10]과 
 
 **하지만 이때 일요일이 휴일이라면 적합한 분할일까요?** 
 일요일 데이터는 작업이 이뤄지는 월요일부터 토요일까지의 데이터와 다른 분포를 갖게되고, 토요일까지의 데이터만 사용하는 것이 적합합니다.
-모델을 학습하기 전 이런 상황을 몰랐다면, **M-AD**에서는 의도와 다른 Threshold 결과를 출력하고 비정상적인 작동을 하게 됩니다.
+모델을 학습하기 전 이런 상황을 몰랐다면, 마키나락스 이상탐지 시스템에서는 의도와 다른 Threshold 결과를 출력하고 비정상적인 작동을 하게 됩니다.
 
 주중에 주말로 변화하는 것과 같이 데이터의 성격이 중간에 달라지는 상황을 Dataset Shift라고 합니다 [[4]](#ref-1).
 온라인 환경의 상황을 모를 때 Validation Dataset의 Dataset Shift 여부를 확인하는 과정에 대해 소개드리겠습니다.
@@ -394,7 +393,7 @@ Input Dataset이 변경은 모델의 Output 분포를 변화시킵니다.
 역으로 Output 분포의 변화를 이용해 Dataset Shift 여부를 확인할 수 있습니다 [[4]](#ref-1).
 
 Output의 분포 변화를 확인하기 위해 두 집단 간의 평균을 비교하는 통계적 검정방법인 T-test를 이용합니다.
-scipy 패키지를 이용해 임의로 생성한 두 집단을 비교해 보겠습니다.
+Python scipy 패키지를 이용해 임의로 생성한 두 집단을 비교해 보겠습니다.
 
 ```python
 >>> import numpy as np
@@ -443,7 +442,7 @@ scipy 패키지를 이용해 임의로 생성한 두 집단을 비교해 보겠�
 시점을 정하는 방법으로 [그림13]과 같이 균등하게 구간을 나누는 방법을 사용할 수 있습니다.
 [그림13]은 5개의 구간으로 구분한 상황입니다. 
 더 많은 구간을 구분할 경우 정확도가 올라갈 수 있지만, 확인 과정이 오래걸릴 수 있다는 Trade-off가 있습니다.
-각 시점에 대해 T-test 검증 후 P-value가 가장 낮은 시점을 중심으로 Dataset Shift가 일어났음을 예상할 수 있습니다.
+추가로 각 시점에 대해 T-test 검증 후 P-value가 가장 낮은 시점을 중심으로 Dataset Shift가 일어났음을 예상할 수 있습니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
