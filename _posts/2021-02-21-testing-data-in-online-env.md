@@ -58,10 +58,12 @@ Input Sample Test 란 입력으로 받은 데이터의 각 Sample(Row)의 유효
     </p>
 </figure>
 
-예를 들어, `Feature A`와 `Feature B`를 이용해 새로운 `Feature C`를 만들어 내는 Feature Engineering 코드가 있습니다. 
+예를 들어, data의 `Feature A`와 `Feature B` 속성을 이용해 새로운 `Feature C`를 만들어 내는 Feature Engineering 코드가 있습니다. 
 
 ```python
-def make_feature_c(feature_a, feature_b):
+def make_feature_c(data):
+    feature_a = data["feature_a"]
+    feature_b = data["feature_b"]
     return feature_a * feature_b
 ```
 <figure class="image" style="align: center;">
@@ -75,28 +77,34 @@ Unit Test는 `Feature A`와 `Feature B`의 예상된 입력을 가정하고, `Fe
 
 ```python 
 def test_make_feature_c():
-    feature_a = 3
-    feature_b = 4
-    feature_c = make_feature_c(feature_a, feature_b)
+    data = {
+        "feature_a": 3,
+        "feature_b": 4,
+    }
+    feature_c = make_feature_c(data)
     assert feature_c == 12
 ```
 
 그런데 만약 온라인 환경에서 `Feature A` 또는 `Feature B`가 정상적으로 들어오지 않는 상황을 생각해 보겠습니다.
 
 ```python
->>> feature_a = False
->>> feature_b = 4
->>> feature_c = make_feature_c(feature_a, feature_b)
+>>> data = {
+    "feature_a": False,
+    "feature_b": 4,
+}
+>>> feature_c = make_feature_c(data)
 
 >>> feature_c
 0
 ```
 
 이때는 Engineering 할 Feature에 Boolean 값이 들어오면서 예상치 못한 `Feature C`가 만들어지게 됩니다. 
-`Feature A`가 잘못 들어온 것으로 Error가 나는 것이 기대되지만, 이 경우 0이 나와 의도하지 않은 결과로 다음 프로세스까지 영향을 미치게 됩니다.
+`Feature A`가 잘 못 들어온 것으로 Error가 나는 것이 기대되지만, 이 경우 0이 나와 의도하지 않은 결과로 다음 프로세스까지 영향을 미치게 됩니다.
 
 `make_feature_c` 함수 내에 입력된 값이 Numeric 아닌 경우 Error를 Raise하도록 구현할 수 있습니다.
-하지만 앞의 예시 외에도 데이터가 입력되었을 때, 기본적으로 데이터에 의도한 Feature가 모두 있는지, Type이 올바르게 들어왔는지 등 미리 정해놓은 구조대로 구성되어 있는지 최소한의 검증을 미리하는 것이 모델의 안정성에 많은 도움이 됩니다.
+하지만 앞의 예시처럼 데이터가 입력되었을 때, `"feature_a"`와  `"feature_b"` 속상 값이 모두 있는지 확인하는 과정도 추가로 필요합니다.
+기본적으로 데이터에 의도한 Feature가 모두 있는지, Type이 올바르게 들어왔는지 등 미리 정해놓은 구조대로 구성되어 있는지 최소한의 검증을 미리하는 것이 모델의 안정성에 많은 도움이 됩니다. 
+
 
 <div class="row">
     <div style="width:45%; float:left; margin-right:10px;">
@@ -118,7 +126,7 @@ def test_make_feature_c():
 </div>
 
 
-**Json Schema**를 활용해 약속한 대로 데이터가 들어오는지 확인할 수 있습니다. Json Schema란 `JSON`형식으로 작성된 다른 데이터의 구조를 설명하는 하나의 데이터 자체입니다 [[2]](#ref-2). 의도하는 데이터의 형식을 표현하고, 새로 들어오는 데이터가 Schema에 맞는지 검증합니다.
+**Json Schema**를 활용해 위 예시 경우를 포함해 약속한 대로 데이터가 들어오는지 확인할 수 있습니다. Json Schema란 `JSON`형식으로 작성된 다른 데이터의 구조를 설명하는 하나의 데이터 자체입니다 [[2]](#ref-2). 의도하는 데이터의 형식을 표현하고, 새로 들어오는 데이터가 Schema에 맞는지 검증합니다.
 
 ### Json Schema
 
@@ -126,7 +134,7 @@ Json Schema를 주요 요소를 소개해 드리겠습니다.
 
 - "type"
   - Schema에서 데이터 형식을 지정합니다.
-  - `string`, `number`, `object`, `array`, `boolean`, `numm`
+  - `string`, `number`, `object`, `array`, `boolean`, `null`
   - [공식 페이지 - type](https://json-schema.org/understanding-json-schema/reference/type.html#type) 참고
   
 - "properties" 
@@ -140,15 +148,15 @@ Json Schema를 주요 요소를 소개해 드리겠습니다.
 
 앞의 예시에 적용할 수 있는 Json Schema를 보여드리겠습니다.
 
-현재 마키나락스에서 구현한 모델의 입력 데이터는 Feature 이름과 값이 맵핑되어 있는 Python `dict` 자료형 입니다. 여기서 `dict`는 JSON 형식 중 "object"와 유사하므로 type Field의 값은 object로 했습니다. 데이터는 `Feature A`와 `Feature B`를 필수로 가져야하므로 required Field에 추가했습니다. 마지막으로 두 Feature 모두 Numeric 데이터를 가져 아래와 같이 properties Field를 작성했습니다. (추가 사용법은 Json Schema[[2]](#ref-2) 참고)
+현재 마키나락스에서 구현한 모델의 입력 데이터는 Feature 이름과 값이 맵핑되어 있는 Python `dict` 자료형 입니다. 여기서 `dict`는 JSON 형식 중 "object"에 포함되므로 type Field의 값은 object로 합니다. 데이터는 `Feature A`와 `Feature B`를 필수로 가져야하므로 required Field에 추가합니다. 마지막으로 두 Feature 모두 Numeric 데이터를 가져 아래와 같이 properties Field를 작성합니다. (추가 사용법은 Json Schema[[2]](#ref-2) 참고)
 
 ```json
 {
     "type": "object",
-    "required": ["feature A", "feature B"],
+    "required": ["feature_a", "feature_b"],
     "properties": {
-        "feature A": {"type": "number"},
-        "feature B": {"type": "number"},
+        "feature_a": {"type": "number"},
+        "feature_b": {"type": "number"},
     }
 }
 ```
@@ -162,44 +170,44 @@ Json Schema를 주요 요소를 소개해 드리겠습니다.
 
 >>> schema = {
     "type": "object",
-    "required": ["feature A", "feature B"],
+    "required": ["feature_a", "feature_b"],
     "properties": {
-        "feature A": {"type": "number"},
-        "feature B": {"type": "number"},
+        "feature_a": {"type": "number"},
+        "feature_b": {"type": "number"},
     }
 }
 
->>> data = {"feature A" : 3., "feature B" : 4.}
+>>> data = {
+    "feature_a" : 3,
+    "feature_b" : 4,
+}
 >>> validate(instance=data, schema=schema)
 
->>> data = {"feature A" : False, "feature B" : 4.}
+>>> data = {
+    "feature_a" : False,
+    "feature_b" : 4,
+}
 >>> validate(instance=data, schema=schema)
 ValidationError: False is not of type 'number'
 
-Failed validating 'type' in schema['properties']['feature A']:
+Failed validating 'type' in schema['properties']['feature_a']:
     {'type': 'number'}
 
-On instance['feature A']:
+On instance['feature_a']:
     False
 ```
 
 ### Applications
 
-추론 시점마다 데이터가 100개 들어오는 환경에서 사용하는 경우를 소개해 드리겠습니다. 
-이때, 추론 주기가 짧다면 들어오는 100개의 데이터에 대해 모두 확인하는 경우 결과를 출력하는데
-시간이 오래걸릴 수 있습니다. 이럴 경우 random으로 10% 데이터만 추출해 검증하고 넘어갈 수 있습니다.
+추론 시점마다 데이터가 1개 이상의 들어오는 환경에서 사용하는 경우를 소개해 드리겠습니다.
+아래와 같이 For Loop을 이용해 확일할 수 있습니다.
 
 ```python
 import jsonschema
 from jsonschema import validate
-import random
 
-def json_schema_validator(datapoints, sample_ratio=0.1):
-    n_total = len(datapoints)
-    n_samples = max(int(n_total * sample_ratio), 1)
-    sample_indices = random.sample(range(n_total), n_samples)
-    for sample_index in sample_indices:
-        sample = datapoints[sample_index]
+def json_schema_validator(samples):
+    for sample in samples:
         validate(instance=sample, schema=schema)
 ```
 
@@ -216,7 +224,7 @@ def json_schema_validator(datapoints, sample_ratio=0.1):
 
 ### Preprocessing for Validity
 
-예를 들어서 딥러닝 모델은 Input의 Shape만 동일하다면 추론을 통해 결과를 얻을 수 있습니다.
+딥러닝 모델은 Input의 Shape만 동일하다면 추론을 통해 결과를 얻을 수 있습니다.
 `Feature A`, `Feature B`, `Feature C` 순서로 들어오던 데이터가 `Feature B`, `Feature C`, `Feature A` 순서로 입력될 때도 모델은 문제없이 추론합니다.
 이런 경우 결과의 오류를 확인하는 것은 거의 불가능하다고 볼 수 있습니다. 
 이러한 오류를 방지하기 위해서는 Input Feature의 순서에 대한 테스트를 해야합니다.
@@ -228,36 +236,35 @@ def json_schema_validator(datapoints, sample_ratio=0.1):
 import pandas as pd
 
 class ColumnAligner():
-    """
-    Arrange columns of DataFrame in the same order.
+    """동일한 DataFrame의 column 순서를 보장합니다.
     """
     def __init__(self):
         self.column_alignment = None
 
     def fit(self, df: pd.DataFrame):
-        """
-        Store order of columns.
+        """fit하는 DataFrame의 컬럼 순서를 저장합니다.
 
         Parameters
         ----------
         df : pandas.DataFrame
-            The standard data for columns order.
+            표준 컬럼 순서를 갖는 데이터.
         """
         self.column_alignment = df.columns.tolist()
 
-    def transform(self, df: pd.DataFrame):
-        """
-        Rearrange columns by stored order.
+    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
+        """저장된 컬럼 순서로 순서를 변경합니다.
+
+        모든 컬럼을 포함하고 있을 때를 가정합니다.
 
         Parameters
         ----------
         df : pandas.DataFrame
-            The data that should be arranged. 
+            컬럼 재배치 대상이 되는 데이터.
 
         Returns
         -------
-        df_tr : pandas.DataFrame
-            Rearranged data.
+        pandas.DataFrame
+            컬럼 재배치된 데이터.
         """
         return df.loc[:, self.column_alignment]
 ```
@@ -273,48 +280,65 @@ class ColumnAligner():
 
 ### Unit Test Preprocessing
 
-하지만 전처리 코드에 오류가 있다면 유효성이 보장되지 않을 것입니다.
+전처리 코드에 오류가 있다면 유효성이 보장되지 않을 것입니다.
 해당 클래스에 대한 Unit Test를 추가해준다면 데이터의 안정성을 보장할 수 있습니다.
 
 ```python
-def test_column_aligner():
+def test_column_aligner_fit():
+    # `ColumnAligner`의 fit 함수를 테스트 합니다.
     column_aligner = ColumnAligner()
 
     df = pd.DataFrame({
-        "feature A": [1],
-        "feature B": [3],
-        "feature C": [5],
+        "feature_a": [1],
+        "feature_b": [3],
+        "feature_c": [5],
     })
     """
     >>> df
-       feature A  feature B  feature C
+       feature_a  feature_b  feature_c
     0          1          3          5
     """
 
-    # Change columns to reverse order.
-    test_df = df.copy()
-    test_df = test_df.iloc[:, ::-1]  
+    # `df` 컬럼 순서를 저장합니다.
+    column_aligner.fit(df)
+
+    # `column_aligner`에 저장된 컬럼 순서를 확인합니다.
+    assert column_aligner.column_alignment \
+        == ["feature_a", "feature_b", "feature_c"]
+
+
+def test_column_aligner_transform():
+    # `ColumnAligner`의 transform 함수를 테스트 합니다.
+    column_aligner = ColumnAligner()
+
+    # transform 함수만 확인하기 위해 fit 함수의 결과를 직접 저장합니다.
+    stored_column_alignment = ["feature_a", "feature_b", "feature_c"]
+    column_aligner.column_alignment = stored_column_alignment
+
+    # 컬럼이 역순으로 존재하는 `test_df`를 생성합니다.
+    test_df = pd.DataFrame({
+        "feature_c": [1],
+        "feature_b": [3],
+        "feature_a": [5],
+    })
     """
     >>> test_df
-       feature C  feature B  feature A
+       feature_c  feature_b  feature_a
     0          5          3          1
     """
 
-    # Store order of `df` columns.
-    column_aligner.fit(df)
-
-    # Rearrange `test_df` columns by `column_aligner`.
+    # `column_aligner`를 이용해 `test_df` 컬럼 순서를 재배치한 
+    # `preprocessed_df`를 생성합니다.
     preprocessed_df = column_aligner.transform(test_df)
 
-    # Check that original data `df` and rearranged data `preprocessed_df` 
-    # have the same order of columns.
-    assert df.columns.equals(preprocessed_df.columns)
+    # 재배치된 데이터`preprocessed_df`가 동일한 순서의 컬럼을 갖는지 확인합니다.
+    assert preprocessed_df.columns.tolist() == stored_column_alignment
 
 ```
 
 전처리 과정의 코드는 단순해서 Unit Test가 필요없어 보일 수 있습니다. 
 하지만 데이터가 전처리 함수를 지나면서 변해가는 과정에 생기는 문제는 쉽게 파악하기 어렵습니다 [[1]](#ref-1).
-전처리 과정이 제대로 동작하는지 계속 확인 하는 것이 매우 중요합니다.
+전처리 과정이 제대로 동작하는지 계속 확인 하는 것은 매우 중요합니다.
 
 ## Input Dataset Test
 
@@ -327,88 +351,171 @@ def test_column_aligner():
     </p>
 </figure>
 
+Validation Dataset을 중심으로 마키나락스 이상탐지 시스템(이하 M-AD: MakinaRocks-Anomaly Detection) 적용 사례를 통해 소개해 드리겠습니다.
+
+Validation Dataset은 학습에 사용되지 않은 데이터로서 주로 학습된 모델을 평가하는 데 사용됩니다. 
+**M-AD**에서는 Validation Dataset의 Anomaly Score를 이용해 알람의 Threshold를 결정합니다. 
+
+Validation Dataset이 모델을 평가하는데 적절하지 않은 데이터 셋이었다면 어떻게 될까요?
+모델에 대한 평가도 왜곡되고, **M-AD**에서 중요한 Threshold가 잘 못 계산될 수 있습니다.
+Validation Dataset은 시스템의 전체적인 성능 안정성을 위해 검증되어야 합니다.
+
 ### Example of Invalid Validation Dataset
 
-Validation Dataset 검증이 필요한 경우에 대해 예를 들어보겠습니다.
-
-Validation Dataset은 학습에 사용되지 않은 데이터로서 주로 모델을 평가하는 데 사용됩니다. 
-마키나락스에서는 Validation Dataset의 Anomaly Score를 이용해 알람의 Threshold를 결정하는데 사용합니다. 
-그런데 Validation Dataset이 모델을 평가하는데 적절하지 않은 데이터 셋이었다면 어떻게 될까요?
-모델에 대한 평가도 왜곡되고, 이상탐지 시스템에서 중요한 Threshold 값 또한 잘못 계산될 수 있습니다. 
-
-시계열 데이터는 [그림9]과 같이 데이터 중 가장 오래된 데이터부터 Train Set으로, 나머지 뒷 부분을 Validation Dataset으로 사용합니다.
-월요일 부터 일요일까지 일주일 데이터를 이용해 모델을 학습하는 상황을 예를 들어보겠습니다.
-Train Set : Validation Dataset 비율을 5 : 2로 할 경우, [그림10]과 같이 월요일부터 금요일까지 데이터를 Train Set으로, 토요일과 일요일 데이터를 Validation Dataset으로 사용하게 됩니다.
-
-그런데 일요일이 현장 휴일이라면 월요일 ~ 토요일과 다른 분포의 데이터를 갖게 될 것 입니다. 
-이런 경우 토요일과 일요일로 구성된 Validation Dataset은 적절하지 않다고 할 수 있습니다.
+시계열 데이터는 [그림9]과 같이 데이터 중 가장 오래된 부분부터 Train Dataset으로, 나머지 뒷 부분을 Validation Dataset으로 분할해 사용합니다.
+월요일부터 일요일까지 일주일 데이터를 이용해 모델을 학습하는 상황을 가정하겠습니다.
+Train Dataset : Validation Dataset 비율을 5 : 2로 할 경우, [그림10]과 같이 월요일부터 금요일까지 데이터를 Train Dataset으로, 
+토요일과 일요일 데이터를 Validation Dataset으로 사용하게 됩니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-21-data_is_tested/train_valid.png" alt="train-valid" width="120%">
-  <figcaption style="text-align: center;">[그림9] - Train / Validation split</figcaption>
+  <figcaption style="text-align: center;">[그림9] Train / Validation split</figcaption>
 </p>
 </figure>
 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-21-data_is_tested/week_train_valid.png" alt="train-valid-a-week" width="120%">
-  <figcaption style="text-align: center;">[그림10] - Train / Validation split - A week</figcaption>
+  <figcaption style="text-align: center;">[그림10] Train / Validation split - A week</figcaption>
 </p>
 </figure>
 
-모델을 학습하기 전 이런 현장의 상황을 몰랐다면, 모델은 예상하지 못한 방향으로 작동하게 됩니다. (예시에서는 의도와 다른 Threshold 결과를 출력합니다.)
-이처럼 현장에서는 실험 환경과 다른 경우를 예상해 전체적인 데이터셋의 결과에 대해 테스트 코드를 작성하는 것이 필요합니다. 
+**하지만 이때 일요일이 휴일이라면 적합한 분할일까요?** 
+일요일 데이터는 작업이 이뤄지는 월요일부터 토요일까지의 데이터와 다른 분포를 갖게되고, 토요일까지의 데이터만 사용하는 것이 적합합니다.
+모델을 학습하기 전 이런 상황을 몰랐다면, **M-AD**에서는 의도와 다른 Threshold 결과를 출력하고 비정상적인 작동을 하게 됩니다.
 
-### Example of Validation Dataset Verification
+주중에 주말로 변화하는 것과 같이 데이터의 성격이 중간에 달라지는 상황을 Dataset Shift라고 합니다 [[4]](#ref-1).
+온라인 환경의 상황을 모를 때 Validation Dataset의 Dataset Shift 여부를 확인하는 과정에 대해 소개드리겠습니다.
 
-유효한 데이터로 이루어진 Validation Dataset은 Train Set에 근접한 부분의 Anomaly Score와 먼 부분의 Anomaly Score가 비슷한 분포를 가집니다.
+### Test Dataset Shift in Validation Dataset
 
-두 분포의 유사도를 측정하기 위해 AUROC를 적용할 수 있습니다.
-원래 AUROC는 Binary Classification에서 모델의 성능을 평가하는 metric입니다. 
-실제 Positive와 Negative Label에 대해서 예측 Score가 얼만큼 분리되어 있는지 나타냅니다.
-Label에 맞게 Score가 완벽히 분리됐을 때 AUROC는 1입니다.
-Label에 상관 없이 Score가 비슷하게 분포하고 있을 때 AUROC는 0.5입니다.
+Input Dataset이 변경은 모델의 Output 분포를 변화시킵니다.
+역으로 Output 분포의 변화를 이용해 Dataset Shift 여부를 확인할 수 있습니다 [[4]](#ref-1).
 
-이러한 특성을 두 데이터 분포의 유사도를 측정하는 데 적용할 수 있습니다.
-분포가 유사한 경우라면 근접한 부분을 Negative, 먼 부분을 Positive Label로 두고
-AUROC를 계산했을 때 0.5 근처 값을 가질 것입니다.
-이렇게 계산한 AUROC를 바탕으로 Validation Dataset의 유효성을 검증 할 수 있습니다.
-
-아래 유효성 검증 코드는 근처의 범위를 0.1로 임의로 설정한 경우입니다.
+Output의 분포 변화를 확인하기 위해 두 집단 간의 평균을 비교하는 통계적 검정방법인 T-test를 이용합니다.
+scipy 패키지를 이용해 임의로 생성한 두 집단을 비교해 보겠습니다.
 
 ```python
-from sklearn.metrics import roc_auc_score
+>>> import numpy as np
+>>> from scipy import stats
 
-def check_validation_set(scores):
-    near_label = len(scores) // 2
-    far_label = len(scores) - near_label
-    labels = [0] * near_label + [1] * far_label
-    auroc = roc_auc_score(scores, labels)
-    if abs(auroc - 0.5) > 0.1 :
-        return False 
-    return True
+>>> # 평균 0, 분산 1인 Normal Distribution에서 샘플이 100개인 집단을 생성합니다.
+>>> group_a = np.random.randn(100)  
+
+>>> # 평균 3, 분산 4인 Normal Distribution에서 샘플이 100개인 집단을 생성합니다.
+>>> group_b = 3 + 2 * np.random.randn(100)  
+
+>>> # 두 집단을 비교합니다.
+>>> t_statistic, p_value = stats.ttest_ind(group_a, group_b, equal_var=False)
+
+>>> # p_value가 0.05보다 작은 경우 평균이 다른 집단으로 판단합니다.
+>>> if p_value < 0.05:
+        print("Difference between the means of two groups")
 ```
+
+위 과정을 확장해서 온라인 환경의 상황을 모를 때 Validation Dataset의 Dataset Shift 여부를 확인하는 과정에 대해 소개드리겠습니다.
+시간이 지남에 따라 Dataset Shift 여부를 확인하기 위함으로 한 시점을 기준으로 이전 시점 데이터를 Group-pre, 이후 시점 데이터르 Group-post로 구분하여 T-test를 진행합니다.
+
+이때 집단을 구분하는 시점을 하나로 고정할 경우 여러 상황에 대응하기 어렵습니다.
+예를 들어, 데이터의 50%를 기준으로 한다면 [그림11] 상황에서는 Dataset Shift를 확인할 수 있지만, [그림12] 상황에서는 불가능합니다.
 
 <div class="row">
     <div style="width:45%; float:left; margin-right:10px;">
         <figure class="image" style="align: center;">
             <p align="center">
-                <img src="/assets/images/2021-02-21-data_is_tested/valid_auroc.png" alt="" width="120%">
-                <figcaption style="text-align: center;">[그림11] Valid Case</figcaption>
+                <img src="/assets/images/2021-02-21-data_is_tested/group-around-5-1.png" alt="" width="120%">
+                <figcaption style="text-align: center;">[그림11] 1/2를 기준으로 변경된 경우</figcaption>
             </p>
         </figure>
     </div>
     <div style="width:45%; float:right;">
         <figure class="image" style="align: center;">
             <p align="center">
-                <img src="/assets/images/2021-02-21-data_is_tested/invalid_auroc.png" alt="" width="120%">
-                <figcaption style="text-align: center;">[그림12] Invalid Case</figcaption>
+                <img src="/assets/images/2021-02-21-data_is_tested/group-around-5-2.png" alt="" width="120%">
+                <figcaption style="text-align: center;">[그림12] 1/3와 2/3를 기준으로 변경된 경우</figcaption>
             </p>
         </figure>
     </div>
 </div>
 
+여러 시점에 대해 Dataset Shift를 판단하는 것이 필요합니다.
+시점을 정하는 방법으로 [그림13]과 같이 균등하게 구간을 나누는 방법을 사용할 수 있습니다.
+[그림13]은 5개의 구간으로 구분한 상황입니다. 
+더 많은 구간을 구분할 경우 정확도가 올라갈 수 있지만, 확인 과정이 오래걸릴 수 있다는 Trade-off가 있습니다.
+각 시점에 대해 T-test 검증 후 P-value가 가장 낮은 시점을 중심으로 Dataset Shift가 일어났음을 예상할 수 있습니다.
+
+<figure class="image" style="align: center;">
+<p align="center">
+  <img src="/assets/images/2021-02-21-data_is_tested/group-split-5.png" alt="train-valid-a-week" width="120%">
+  <figcaption style="text-align: center;">[그림13] 1/5, 2/5, 3/5 ,4/5를 기준으로 그룹화</figcaption>
+</p>
+</figure>
+
+
+```python
+# Dataset Shift가 예상된 경우 ValueError를 raise합니다.
+def check_dataset_shift(
+    data: np.ndarray,          # 평가 대상이 되는 Output
+    n_test_points: int = 5,      # 구간 분할 횟수
+):
+    # 구간 하나의 크기를 정합니다.
+    split_size = len(data) // n_test_points
+
+    min_p_value = float("inf")
+    shift_point = None
+    for test_point in range(1, n_test_points):
+
+        # Group-pre는 판단 시점 이전 데이터를 할당합니다.
+        # Group-post는 판단 시점 이후 데이터를 할당합니다.
+        group_pre = data[: split_size * test_point]
+        group_post = data[split_size * test_point :]
+
+        t_statistic, p_value = stats.ttest_ind(
+            group_pre,
+            group_post,
+            equal_var=False,
+        )
+
+        # 가장 작은 P-value와 해당 시점을 저장합니다.
+        if min_p_value > p_value:
+            min_p_value = p_value
+            shift_point = test_point
+
+    # 최소 P-value가 0.05보다 작을 때 Dataset Shift를 판단하고 ValueError를 raise합니다.
+    if min_p_value < 0.05:
+        raise ValueError(f"Check dataset shift around {shift_point}/{n_test_points}")
+
+```
+
+[그림11]과 [그림12]에 사용된 데이터를 적용하면 아래와 같은 결과를 얻을 수 있습니다.
+
+```python
+>>> # 평균 0, 분산 1인 Normal Distribution에서 샘플이 100개인 집단을 생성합니다.
+>>> group_a = np.random.randn(100)  
+
+>>> # 평균 30, 분산 4인 Normal Distribution에서 샘플이 100개인 집단을 생성합니다.
+>>> group_b = 30 + 2 * np.random.randn(100)  
+
+>>> # [그림11] 데이터는 group_a와 group_b를 연결한 데이터 입니다.
+>>> graph_11 = np.append(group_a, group_b)
+
+>>> # [그림12] 데이터는 [그림11] 데이터에 group_a를 추가로 연결한 데이터 입니다.
+>>> graph_12 = np.append(graph_11, group_a)
+
+>>> # [그림11] 데이터를 6개 구간으로 나눠 Dataset Shift를 확인합니다.
+>>> # 3/6 지점에서 Dataset Shift가 일어났음을 예상할 수 있습니다.
+>>> check_dataset_shift(graph_11, n_test_points=6)
+ValueError: Check dataset shift around 3/6
+
+>>> # [그림12] 데이터를 6개 구간으로 나눠 Dataset Shift를 확인합니다.
+>>> # 2/6 지점에서 Dataset Shift가 일어났음을 예상할 수 있습니다.
+>>> check_dataset_shift(graph_12 n_test_points=6)
+ValueError: Check dataset shift around 2/6
+```
+
+P-value가 가장 작은 한 지점을 출력하므로, 여러 지점에서의 변화를 확인하는데는 한계가 있습니다.
+하지만 최소한의 검증으로 사용될 수 있음을 기대할 수 있습니다.
 ## Conclusion
 
 이번 포스트에서 데이터 유효성 검증이 필요한 이유와 검증 방법을 다뤄보았습니다.
@@ -419,5 +526,7 @@ def check_validation_set(scores):
 
 <a name="ref-2">[2]</a> [https://json-schema.org](https://json-schema.org/)
 
-<a name="ref-3">[3]</a> [H. Khizou. "Unit Testing Data: What Is It and How Do You Do It?" winderresearch.com <br>
-https://winderresearch.com/unit-testing-data-what-is-it-and-how-do-you-do-it](https://winderresearch.com/unit-testing-data-what-is-it-and-how-do-you-do-it/)
+<a name="ref-3">[3]</a> [H. Khizou. "Unit Testing Data: What Is It and How Do You Do It?" winderresearch.com (accessed Apr. 13, 2021)](https://winderresearch.com/unit-testing-data-what-is-it-and-how-do-you-do-it/)
+
+
+<a name="ref-4">[4]</a> [J. Quiñonero Candela, M. Sugiyama, A. Schwaighofer, and N. D. Lawrence. Dataset Shift in Machine Learning Shift in Machine Learning. The MIT Press 2009 The MIT Press, 2009.](http://www.acad.bg/ebook/ml/The.MIT.Press.Dataset.Shift.in.Machine.Learning.Feb.2009.eBook-DDU.pdf)
