@@ -65,7 +65,7 @@ image: assets/images/2020-02-10-Regression-Test/thumbnail.gif
 아마도 그렇기 때문에 뒤늦게 발견이 되었을 것이라고 생각합니다. 
 더욱이 이런 커밋들이 모두 유닛테스트를 통과했기 때문에 개발자 입장에서 무엇이 원인인지 파악하기 힘들었습니다.
 
-이런 경험을 한 후에 **Are you Sure?** (이 코드 문제가 없을까요?)라는 질문에 답하기 위해서는 사실상 작은 변화더라도 **Regression Test**를 진행해야 하는 것을 깨달았습니다. 
+이런 경험을 한 후에 **Are you Sure?** (이 코드 문제가 없을까요?)라는 질문에 답하기 위해서는 사실상 작은 변화라고 하더라도 **Regression Test**를 진행해야 하는 것을 깨달았습니다. 
 
 여기서 Regression Test라고 정의한 것은 Machine Learning Software의 전체적인 학습 및 테스트를 진행하고 성능을 확인하는 작업을 의미합니다.
 
