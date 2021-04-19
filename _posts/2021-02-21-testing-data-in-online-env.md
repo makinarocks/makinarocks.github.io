@@ -1,91 +1,77 @@
 ---
 layout: post
-title: 온라인 환경에서 Data 검증하기
+title: 실시간 데이터 검증하기
 author: minjoo lee
 categories: [deeplearning]
 image: assets/images/2021-02-21-data_is_tested/total.gif
 ---
 
-마키나락스가 이상탐지 시스템을 적용하고자 하는 제조 생산 현장은 제품 및 공정의 변화가 잦은 곳이 많습니다.
+마키나락스는 제조업에서 실시간으로 생산 장비와 공정의 고장 및 이상을 사전에 예측하는 이상탐지 시스템을 제공하고 있습니다.
+이상탐지 시스템을 적용하고자 하는 제조 생산 현장은 제품 및 공정의 변화가 잦은 곳이 많습니다.
 공정이 변화하면 데이터 분포가 달라지기 때문에, 사전에 학습된 모델이 적용하려는 시점에는 정상 작동하기 어렵습니다.
-이런 문제를 해결하기 위해 온라인 환경에서 학습과 추론이 동시에 가능한 코드 형태로 모델을 배포합니다.
-온라인 환경에서 사용되는 모델은 배포된 코드와 함께 현장에서 수집한 학습 데이터로 완성됩니다 [[1]](#ref-1).
+이런 문제를 해결하기 위해 학습과 추론이 동시에 가능한 코드 형태로 모델을 배포하고, 배포된 동안 새롭게 수집한 데이터를 이용해 모델을 학습합니다. 
+학습된 모델이 등록되면 실시간으로 새롭게 입력되는 데이터에 대해 추론합니다.
 
-온라인 환경에서 모델이 안정적으로 학습되고 추론하기 위해서는 코드뿐만 아니라 데이터에 대해서 유효성 테스트가 필요합니다.
-앞선 포스트에서 코드의 안정성을 보장하기 위한 Software Test와 Regression Test에 대해서 소개해 드렸습니다.
-이번 포스트에서는 온라인 환경에서 데이터의 유효성을 확인할 수 있는 방법에 대해 소개드리겠습니다. 
+실시간 추론 서비스를 제공하는 모델은 배포된 코드와 함께 현장에서 수집한 학습 데이터로 완성됩니다 [[1]](#ref-1).
+모델이 안정적으로 학습되고 추론하기 위해서는 코드뿐만 아니라 데이터에 대해서 유효성 테스트가 필요합니다.
+이번 포스트에서는 실시간으로 입력돼 학습과 추론에 사용되는 데이터의 유효성을 확인할 수 있는 방법에 대해 소개드리겠습니다. 
 
 ## Why data need test?
 
-온라인 환경에서 예상과 다르게 입력된 데이터로 모델을 학습, 추론한 경우 의도와 다른 결과를 출력할 수 있습니다.
+예상과 다르게 입력된 데이터로 모델을 학습, 추론한 경우 의도와 다른 결과를 출력할 수 있습니다.
 예를 들어, Numeric 데이터 입력을 받는 연산 코드에서 Boolean 데이터 `False`가 입력됐을 경우를 생각해보겠습니다.
-입력된 데이터의 Type이 다르지만 `False`를 0으로 변환해 연산한 결과가 출력될 수 있습니다.
-이 경우 코드가 작동하는데 문제 없기 때문에, 나중에 출력 결과를 디버깅하는 것은 불가능하다고 볼 수 있습니다.
+입력된 데이터의 Type이 다르지만 Python은 `False`를 0으로 변환해 연산한 결과가 출력합니다.
+이 경우 코드가 작동하는데 문제 없기 때문에, 나중에 출력 결과를 통해 디버깅하는 것은 어렵습니다.
 이와 같은 문제는 데이터 유효성 테스트를 통해 미리 방지할 수 있습니다.
 
-데이터의 유효성을 확인하는 방법 3가지를 소개하겠습니다.
-- Input Sample Test
-- Input Feature Test
-- Dataset Test
+이번 포스트에서는 Dataset과 함께 구성하는 Sample과 Feature에 적용할 수 있는 유효성 검증 방법을 소개하겠습니다.
+
+{% assign i = 1 %}
 
 <div class="row">
     <div style="width:45%; float:left; margin-right:10px;">
         <figure class="image" style="align: center;">
             <p align="center">
                 <img src="/assets/images/2021-02-21-data_is_tested/valid.gif" alt="valid-data" width="120%">
-                <figcaption style="text-align: center;">[그림1] Input Valid Data</figcaption>
+                <figcaption style="text-align: center;">[그림{{ i }}] Input Valid Data</figcaption>
             </p>
         </figure>
     </div>
+    {% assign i = i | plus: 1 %}
     <div style="width:45%; float:right;">
         <figure class="image" style="align: center;">
             <p align="center">
                 <img src="/assets/images/2021-02-21-data_is_tested/invalid.gif" alt="invalid-data" width="120%">
-                <figcaption style="text-align: center;">[그림2] Input Invalid Data</figcaption>
+                <figcaption style="text-align: center;">[그림{{ i }}] Input Invalid Data</figcaption>
             </p>
         </figure>
     </div>
+    {% assign i = i | plus: 1 %}
 </div>
 
-## Input Sample Test
+## Input Sample
 
-Input Sample Test 란 입력으로 받은 데이터의 각 Sample(Row)의 유효성에 대해서 판단하는 Test입니다.
+실시간으로 입력되는 데이터 1개를 Sample(Row)이라 하고, Dataset은 Sample로 구성되어 있습니다.
+약속한 형태의 Sample이 입력되는지 지속적으로 확인하는 과정이 필요합니다.
 
 <figure class="image" style="align: center;">
     <p align="center">
         <img src="/assets/images/2021-02-21-data_is_tested/sample.png" alt="" width="50%">
-        <figcaption style="text-align: center;">[그림3] Sample</figcaption>
+        <figcaption style="text-align: center;">[그림{{ i }}] Sample</figcaption>
     </p>
 </figure>
+{% assign i = i | plus: 1 %}
 
-예를 들어, data의 `Feature A`와 `Feature B` 속성을 이용해 새로운 `Feature C`를 만들어 내는 Feature Engineering 코드가 있습니다. 
+Sample의 `Feature A`와 `Feature B` 속성을 이용해 새로운 `Feature C`를 만들어 내는 Feature Engineering 코드가 있습니다. 
 
 ```python
-def make_feature_c(data):
-    feature_a = data["feature_a"]
-    feature_b = data["feature_b"]
+def make_feature_c(sample):
+    feature_a = sample["feature_a"]
+    feature_b = sample["feature_b"]
     return feature_a * feature_b
 ```
-<figure class="image" style="align: center;">
-    <p align="center">
-        <img src="/assets/images/2021-02-21-data_is_tested/make-feature-c.png" alt="" width="50%">
-        <figcaption style="text-align: center;">[그림4] make_feature_c</figcaption>
-    </p>
-</figure>
 
-Unit Test는 `Feature A`와 `Feature B`의 예상된 입력을 가정하고, `Feature C`가 생성되는 로직을 확인합니다. 
-
-```python 
-def test_make_feature_c():
-    data = {
-        "feature_a": 3,
-        "feature_b": 4,
-    }
-    feature_c = make_feature_c(data)
-    assert feature_c == 12
-```
-
-그런데 만약 온라인 환경에서 `Feature A` 또는 `Feature B`가 정상적으로 들어오지 않는 상황을 생각해 보겠습니다.
+실시간으로 데이터가 입력되는 상황에서 `Feature A` 또는 `Feature B`가 정상적으로 들어오지 않는 경우를 생각해 보겠습니다.
 
 ```python
 >>> data = {
@@ -93,40 +79,38 @@ def test_make_feature_c():
     "feature_b": 4,
 }
 >>> feature_c = make_feature_c(data)
-
 >>> feature_c
 0
 ```
 
-이때는 Engineering 할 Feature에 Boolean 값이 들어오면서 예상치 못한 `Feature C`가 만들어지게 됩니다. 
-`Feature A`가 잘 못 들어온 것으로 Error가 나는 것이 기대되지만, 이 경우 0이 나와 의도하지 않은 결과로 다음 프로세스까지 영향을 미치게 됩니다.
-
-`make_feature_c` 함수 내에 입력된 값이 Numeric 아닌 경우 Error를 Raise하도록 구현할 수 있습니다.
-하지만 앞의 예시처럼 데이터가 입력되었을 때, `"feature_a"`와  `"feature_b"` 속상 값이 모두 있는지 확인하는 과정도 추가로 필요합니다.
-기본적으로 데이터에 의도한 Feature가 모두 있는지, Type이 올바르게 들어왔는지 등 미리 정해놓은 구조대로 구성되어 있는지 최소한의 검증을 미리하는 것이 모델의 안정성에 많은 도움이 됩니다. 
-
+위의 예시에서는 Engineering 할 Feature에 Boolean 값이 들어오면서 예상치 못한 `Feature C`가 만들어지게 됩니다.
+잘 못 입력된 `Feature A`가 0이라는 의도하지 않은 결과를 만들고 다음 프로세스까지 영향을 미치게 됩니다.
+기본적으로 데이터에 의도한 Type이 올바르게 들어왔는지, Feature가 모두 있는지 등 미리 정해놓은 구조대로 구성되어 있는지 최소한의 검증을 미리하는 것이 모델의 안정성에 많은 도움이 됩니다. 
 
 <div class="row">
     <div style="width:45%; float:left; margin-right:10px;">
         <figure class="image" style="align: center;">
             <p align="center">
                 <img src="/assets/images/2021-02-21-data_is_tested/test-normal-case.png" alt="" width="120%">
-                <figcaption style="text-align: center;">[그림5] Test Normal Case</figcaption>
+                <figcaption style="text-align: center;">[그림{{ i }}] Test Normal Case</figcaption>
             </p>
         </figure>
     </div>
+    {% assign i = i | plus: 1 %}
     <div style="width:45%; float:right;">
         <figure class="image" style="align: center;">
             <p align="center">
                 <img src="/assets/images/2021-02-21-data_is_tested/test-input-sample.png" alt="" width="120%">
-                <figcaption style="text-align: center;">[그림6] Test Input Sample</figcaption>
+                <figcaption style="text-align: center;">[그림{{ i }}] Test Input Sample</figcaption>
             </p>
         </figure>
     </div>
+    {% assign i = i | plus: 1 %}
 </div>
 
-
-**Json Schema**를 활용해 위 예시 경우를 포함해 약속한 대로 데이터가 들어오는지 확인할 수 있습니다. Json Schema란 `JSON`형식으로 작성된 다른 데이터의 구조를 설명하는 하나의 데이터 자체입니다 [[2]](#ref-2). 의도하는 데이터의 형식을 표현하고, 새로 들어오는 데이터가 Schema에 맞는지 검증합니다.
+Python **Json Schema** 패키지를 활용해 위 예시를 포함해 약속한 대로 데이터가 들어오는지 확인할 수 있습니다. 
+Json Schema란 `JSON`형식으로 작성된 다른 데이터의 구조를 설명하는 하나의 데이터 자체입니다 [[2]](#ref-2). 
+의도하는 데이터의 형식을 표현하고, 새로 들어오는 데이터가 Schema에 맞는지 검증합니다.
 
 ### Json Schema
 
@@ -148,7 +132,10 @@ Json Schema를 주요 요소를 소개해 드리겠습니다.
 
 앞의 예시에 적용할 수 있는 Json Schema를 보여드리겠습니다.
 
-현재 마키나락스에서 구현한 모델의 입력 데이터는 Feature 이름과 값이 맵핑되어 있는 Python `dict` 자료형 입니다. 여기서 `dict`는 JSON 형식 중 "object"에 포함되므로 type Field의 값은 object로 합니다. 데이터는 `Feature A`와 `Feature B`를 필수로 가져야하므로 required Field에 추가합니다. 마지막으로 두 Feature 모두 Numeric 데이터를 가져 아래와 같이 properties Field를 작성합니다. (추가 사용법은 Json Schema[[2]](#ref-2) 참고)
+서비스에 입력되는 데이터는 Feature 이름과 값이 맵핑되어 있는 Python `dict` 자료형 입니다. 
+여기서 `dict`는 JSON 형식 중 "object"와 호환되는 자료 구조로 `type` Field의 값은 object로 합니다. 
+데이터는 `Feature A`와 `Feature B`를 필수로 가져야하므로 `required` Field에 추가합니다. 
+마지막으로 두 Feature 모두 Numeric 데이터를 가짐을 아래와 같이 `properties` Field를 작성합니다.
 
 ```json
 {
@@ -161,13 +148,16 @@ Json Schema를 주요 요소를 소개해 드리겠습니다.
 }
 ```
 
+위에 설정한 검증 조건 외에 Feature마다 값의 범위, null 검증 조건을 표현할 수 있고,
+`if-then-else` 구조를 사용해 복잡한 조건부 구조까지 표현할 수 있습니다.
+
 ### Json schema validator
 
 입력된 `dict` 데이터가 구조와 맞는지 검증하는 예시를 보여드리겠습니다. Python [jsonschema](https://pypi.org/project/jsonschema/) 라이브러리를 활용해 데이터가 선언한 Json schema에 맞는지 검증할 수 있습니다.
 
 ```python
 >>> from jsonschema import validate
-
+>>> # Schema를 선언합니다.
 >>> schema = {
     "type": "object",
     "required": ["feature_a", "feature_b"],
@@ -177,17 +167,21 @@ Json Schema를 주요 요소를 소개해 드리겠습니다.
     }
 }
 
->>> data = {
+>>> # 유효한 Sample을 생성합니다.
+>>> sample = {
     "feature_a" : 3,
     "feature_b" : 4,
 }
->>> validate(instance=data, schema=schema)
+>>> # 유효성 확인을 통과한 경우, 오류없이 통화합니다.
+>>> validate(instance=sample, schema=schema)
 
->>> data = {
+>>> # 유효하지 않은 Sample을 생성합니다.
+>>> sample = {
     "feature_a" : False,
     "feature_b" : 4,
 }
->>> validate(instance=data, schema=schema)
+>>> # 유효성 확인을 통과하지 못 한 경우, 오류와 함께 이유를 반환합니다.
+>>> validate(instance=sample, schema=schema)
 ValidationError: False is not of type 'number'
 
 Failed validating 'type' in schema['properties']['feature_a']:
@@ -197,10 +191,7 @@ On instance['feature_a']:
     False
 ```
 
-### Applications
-
-추론 시점마다 데이터가 1개 이상의 들어오는 환경에서 사용하는 경우를 소개해 드리겠습니다.
-아래와 같이 For Loop을 이용해 확일할 수 있습니다.
+추론 시점마다 1개 이상의 데이터가 들어오는 환경에서 사용하는 경우 아래와 같이 For Loop을 이용해 확인할 수 있습니다.
 
 ```python
 import jsonschema
@@ -211,16 +202,17 @@ def json_schema_validator(samples):
         validate(instance=sample, schema=schema)
 ```
 
-## Input Feature Test
+## Input Feature
 
 다음으로 Input Feature Test 란 입력으로 받은 데이터의 각 Feature(Column)의 유효성에 대해서 판단하는 Test입니다.
 
 <figure class="image" style="align: center;">
     <p align="center">
         <img src="/assets/images/2021-02-21-data_is_tested/feature.png" alt="" width="50%">
-        <figcaption style="text-align: center;">[그림7] Feature</figcaption>
+        <figcaption style="text-align: center;">[그림{{ i }}] Feature</figcaption>
     </p>
 </figure>
+{% assign i = i | plus: 1 %}
 
 ### Preprocessing for Validity
 
@@ -340,16 +332,17 @@ def test_column_aligner_transform():
 하지만 데이터가 전처리 함수를 지나면서 변해가는 과정에 생기는 문제는 쉽게 파악하기 어렵습니다 [[1]](#ref-1).
 전처리 과정이 제대로 동작하는지 계속 확인 하는 것은 매우 중요합니다.
 
-## Input Dataset Test
+## Input Dataset
 
 다음으로 입력 Dataset에 대해 유효성 Test입니다.
 
 <figure class="image" style="align: center;">
     <p align="center">
         <img src="/assets/images/2021-02-21-data_is_tested/dataset.png" alt="" width="50%">
-        <figcaption style="text-align: center;">[그림8] Dataset</figcaption>
+        <figcaption style="text-align: center;">[그림{{ i }}] Dataset</figcaption>
     </p>
 </figure>
+{% assign i = i | plus: 1 %}
 
 Validation Dataset을 중심으로 소개해 드리겠습니다.
 Validation Dataset은 학습에 사용되지 않은 데이터로서 주로 학습된 모델을 평가하는 데 사용됩니다. 
@@ -369,16 +362,18 @@ Train Dataset : Validation Dataset 비율을 5 : 2로 할 경우, [그림10]과 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-21-data_is_tested/train_valid.png" alt="train-valid" width="120%">
-  <figcaption style="text-align: center;">[그림9] Train / Validation split</figcaption>
+  <figcaption style="text-align: center;">[그림{{ i }}] Train / Validation split</figcaption>
 </p>
 </figure>
+{% assign i = i | plus: 1 %}
 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-21-data_is_tested/week_train_valid.png" alt="train-valid-a-week" width="120%">
-  <figcaption style="text-align: center;">[그림10] Train / Validation split - A week</figcaption>
+  <figcaption style="text-align: center;">[그림{{ i }}0] Train / Validation split - A week</figcaption>
 </p>
 </figure>
+{% assign i = i | plus: 1 %}
 
 **하지만 이때 일요일이 휴일이라면 적합한 분할일까요?** 
 일요일 데이터는 작업이 이뤄지는 월요일부터 토요일까지의 데이터와 다른 분포를 갖게되고, 토요일까지의 데이터만 사용하는 것이 적합합니다.
@@ -425,18 +420,20 @@ Python scipy 패키지를 이용해 임의로 생성한 두 집단을 비교해 
         <figure class="image" style="align: center;">
             <p align="center">
                 <img src="/assets/images/2021-02-21-data_is_tested/group-around-5-1.png" alt="" width="120%">
-                <figcaption style="text-align: center;">[그림11] 1/2를 기준으로 변경된 경우</figcaption>
+                <figcaption style="text-align: center;">[그림{{ i }}1] 1/2를 기준으로 변경된 경우</figcaption>
             </p>
         </figure>
     </div>
+    {% assign i = i | plus: 1 %}
     <div style="width:45%; float:right;">
         <figure class="image" style="align: center;">
             <p align="center">
                 <img src="/assets/images/2021-02-21-data_is_tested/group-around-5-2.png" alt="" width="120%">
-                <figcaption style="text-align: center;">[그림12] 1/3와 2/3를 기준으로 변경된 경우</figcaption>
+                <figcaption style="text-align: center;">[그림{{ i }}2] 1/3와 2/3를 기준으로 변경된 경우</figcaption>
             </p>
         </figure>
     </div>
+    {% assign i = i | plus: 1 %}
 </div>
 
 여러 시점에 대해 Dataset Shift를 판단하는 것이 필요합니다.
@@ -448,10 +445,10 @@ Python scipy 패키지를 이용해 임의로 생성한 두 집단을 비교해 
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-02-21-data_is_tested/group-split-5.png" alt="train-valid-a-week" width="120%">
-  <figcaption style="text-align: center;">[그림13] 1/5, 2/5, 3/5 ,4/5를 기준으로 그룹화</figcaption>
+  <figcaption style="text-align: center;">[그림{{ i }}3] 1/5, 2/5, 3/5 ,4/5를 기준으로 그룹화</figcaption>
 </p>
 </figure>
-
+{% assign i = i | plus: 1 %}
 
 ```python
 # Dataset Shift가 예상된 경우 ValueError를 raise합니다.
