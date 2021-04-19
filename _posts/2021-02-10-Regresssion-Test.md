@@ -171,7 +171,7 @@ Pipeline #2의 경우 테스트 요청마다 Docker Image를 빌드해야합니�
 반면에, Pipeline #3는 테스트 요청마다 미리 만들어둔 Docker Image를 Pull하여 사용합니다.
 
 
-### Device Dependency
+### Imbalance Resource
 
 하지만 Pipeline #1 ~ #3은 모두 공통적으로 한 컴퓨팅 자원에 의존적이라는 문제가 있습니다.
 예를 들어 Regression Test에 사용하는 컴퓨터에서 어떤 작업을 수행하고 있다면 Regression Test의 요청이 수락되지 않거나 수행중이던 작업에 영향을 줄 수 있습니다.
@@ -182,22 +182,22 @@ Pipeline #2의 경우 테스트 요청마다 Docker Image를 빌드해야합니�
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2020-02-10-Regression-Test/8.png"  width="60%">
-  <figcaption style="text-align: center;">[그림8] - Problem of Device Dependency</figcaption>
+  <figcaption style="text-align: center;">[그림8] - Problem of Imbalance Resource</figcaption>
 </p>
 </figure>
 
-또한 다른 MRX-Decktop2, 3를 보면 컴퓨팅 자원이 여유있다는 것을 알 수 있습니다. 
+또한 다른 MRX-Desktop2, 3를 보면 컴퓨팅 자원이 여유있다는 것을 알 수 있습니다. 
 자원을 효율적으로 사용하기 위해서 남은 자원에 효율적으로 접근하는 것이 필요했습니다. 
 이를 위해서는 Regression Test Pipeline이 특정 자원에 종속되지 않고 필요한 자원에 동적으로 접근하여야 합니다. 
 즉, 위의 [그림8] 예시처럼 Regression Test Pipeline이 특정 자원의 영향을 받는 것을 개선해야합니다.
 
-### Pipeline #4: InDependent on Device
+### Pipeline #4: InDependent on Machine
 
-Device Dendency를 해결하기 위해서 Kubernetes를 사용하였습니다 [[2]](#ref-2).
+Imbalance Resource를 해결하기 위해서 Kubernetes를 사용하였습니다 [[2]](#ref-2).
 Kubernetes에 대해서 알고 싶으신 분들은 Kubernetes의 공식문서[[6]](#ref-2)를 참고하시는 것을 추천드립니다.
 
 Kubernetes를 사용한 목적은 내부의 컴퓨팅 자원을 추상화하기 위함입니다. 
-쉽게 풀어쓰면, **Kubernetes에 특정 Device를 요청하는 것이 아니라, 필요한 컴퓨팅 자원에 대해서 요청만 하면, 그에 맞는 자원할당을 받기 위해서입니다.** 
+쉽게 풀어쓰면, **Kubernetes에 특정 Machine를 요청하는 것이 아니라, 필요한 컴퓨팅 자원에 대해서 요청만 하면, 그에 맞는 자원할당을 받기 위해서입니다.** 
 [그림9]을 보면 여러가지 컴퓨팅 자원이 하나의 클러스터로 묶여있습니다. 
 이제 원하는 자원의 스펙을 적으면, 그에 맞는 자원이 할당될 것입니다.
 
@@ -249,7 +249,7 @@ Ray Cluster는 작업들을 병렬적으로 처리하여 Regression Test를 빠�
 Ray Autoscaler는 Cluster의 자원상황을 고려하여 워커 노드의 개수를 동적으로 조절할 수 있습니다 [[3]](#ref-3).
 
 
-MRX-Hosted Runner의 역할은 특정 Device내에서 Container로 Regression Test를 진행하는 것이 아닙니다. 
+MRX-Hosted Runner의 역할은 특정 Machine내에서 Container로 Regression Test를 진행하는 것이 아닙니다. 
 미리 정의된 컴퓨팅 자원 스펙에 해당하는 Ray Cluster를 만드는 것입니다 [[3]](#ref-2). 
 여기서 Ray Cluster의 역할은 Regression Test를 병렬적으로 진행하기 위한 목적으로 사용되고 작업이 끝나게 되면 Ray Cluster는 사라지게 됩니다. 
 참고로 [그림9]에서 구성한 Cluster와 Ray Cluster는 다른 역할을 합니다. 
@@ -265,7 +265,7 @@ MRX-Hosted Runner의 역할은 특정 Device내에서 Container로 Regression Te
 
 이제 Kubernetes 그리고 Ray Cluster를 활용하여 [그림12]과 같은 Pipeline을 구축하였습니다. 
 Repository에 의존성을 제거하였으며 Docker Image도 미리 만들어둔 Image를 활용하였습니다. 
-또한 Device에 대한 의존성을 제거하여 내부의 컴퓨팅 자원을 더욱 효율적으로 사용할 수 있었습니다.
+또한 Machine에 대한 의존성을 제거하여 내부의 컴퓨팅 자원을 더욱 효율적으로 사용할 수 있었습니다.
 
 
 
