@@ -8,13 +8,13 @@ image: assets/images/2021-02-21-data_is_tested/total.gif
 
 마키나락스는 제조업에서 실시간으로 생산 장비와 공정의 고장 및 이상을 사전에 예측하는 이상탐지 시스템을 제공하고 있습니다.
 이상탐지 시스템을 적용하고자 하는 제조 생산 현장은 제품 및 공정의 변화가 잦은 곳이 많습니다.
-공정이 변화하면 데이터 분포가 달라지기 때문에, 사전에 학습된 모델이 적용하려는 시점에는 정상 작동하기 어렵습니다.
-이런 문제를 해결하기 위해 학습과 추론이 동시에 가능한 코드 형태로 모델을 배포하고, 배포된 동안 새롭게 수집한 데이터를 이용해 모델을 학습합니다. 
+공정이 변하면 데이터 분포가 달라지기 때문에, 사전에 학습된 모델이 적용하려는 시점에는 정상 작동하기 어렵습니다.
+이런 문제를 해결하기 위해 학습과 추론이 동시에 가능한 코드 형태로 모델을 배포하고, 배포된 동안 새롭게 수집한 데이터를 이용해 모델을 학습합니다.
 학습된 모델이 등록되면 실시간으로 새롭게 입력되는 데이터에 대해 추론합니다.
 
 실시간 추론 서비스를 제공하는 모델은 배포된 코드와 함께 현장에서 수집한 학습 데이터로 완성됩니다 [[1]](#ref-1).
 모델이 안정적으로 학습되고 추론하기 위해서는 코드뿐만 아니라 데이터에 대해서 유효성 테스트가 필요합니다.
-이번 포스트에서는 실시간으로 입력돼 학습과 추론에 사용되는 데이터의 유효성을 확인할 수 있는 방법에 대해 소개드리겠습니다. 
+이번 포스트에서는 실시간으로 입력돼 학습과 추론에 사용되는 데이터의 유효성을 확인할 수 있는 방법에 대해 소개드리겠습니다.
 
 ## Why data need test?
 
@@ -62,7 +62,7 @@ image: assets/images/2021-02-21-data_is_tested/total.gif
 </figure>
 {% assign i = i | plus: 1 %}
 
-Sample의 `Feature A`와 `Feature B` 속성을 이용해 새로운 `Feature C`를 만들어 내는 Feature Engineering 코드가 있습니다. 
+Sample의 `Feature A`와 `Feature B` 속성을 이용해 새로운 `Feature C`를 만들어 내는 Feature Engineering 코드가 있습니다.
 
 ```python
 def make_feature_c(sample):
@@ -85,7 +85,7 @@ def make_feature_c(sample):
 
 위의 예시에서는 Engineering 할 Feature에 Boolean 값이 들어오면서 예상치 못한 `Feature C`가 만들어지게 됩니다.
 잘 못 입력된 `Feature A`가 0이라는 의도하지 않은 결과를 만들고 다음 프로세스까지 영향을 미치게 됩니다.
-기본적으로 데이터에 의도한 Type이 올바르게 들어왔는지, Feature가 모두 있는지 등 미리 정해놓은 구조대로 구성되어 있는지 최소한의 검증을 미리하는 것이 모델의 안정성에 많은 도움이 됩니다. 
+기본적으로 데이터에 의도한 Type이 올바르게 들어왔는지, Feature가 모두 있는지 등 미리 정해놓은 구조대로 구성되어 있는지 최소한의 검증을 미리하는 것이 모델의 안정성에 많은 도움이 됩니다.
 
 <div class="row">
     <div style="width:45%; float:left; margin-right:10px;">
@@ -108,8 +108,8 @@ def make_feature_c(sample):
     {% assign i = i | plus: 1 %}
 </div>
 
-Python **Json Schema** 패키지를 활용해 위 예시를 포함해 약속한 대로 데이터가 들어오는지 확인할 수 있습니다. 
-Json Schema란 `JSON`형식으로 작성된 다른 데이터의 구조를 설명하는 하나의 데이터 자체입니다 [[2]](#ref-2). 
+Python **Json Schema** 패키지를 활용해 위 예시를 포함해 약속한 대로 데이터가 들어오는지 확인할 수 있습니다.
+Json Schema란 `JSON`형식으로 작성된 다른 데이터의 구조를 설명하는 하나의 데이터 자체입니다 [[2]](#ref-2).
 의도하는 데이터의 형식을 표현하고, 새로 들어오는 데이터가 Schema에 맞는지 검증합니다.
 
 ### Json Schema
@@ -120,21 +120,21 @@ Json Schema를 주요 요소를 소개해 드리겠습니다.
   - Schema에서 데이터 형식을 지정합니다.
   - `string`, `number`, `object`, `array`, `boolean`, `null`
   - [공식 페이지 - type](https://json-schema.org/understanding-json-schema/reference/type.html#type) 참고
-  
-- "properties" 
-  - `object` 데이터 내 속성을 구체적으로 정의힙니다. 
+ 
+- "properties"
+  - `object` 데이터 내 속성을 구체적으로 정의힙니다.
   - [공식 페이지 - properties](https://json-schema.org/understanding-json-schema/reference/object.html?highlight=required#properties) 참고
-  
+ 
 - "required"
   - `object` 데이터 내에 필수로 가져야하는 속성을 지정합니다.
   - [공식 페이지 - required properties](https://json-schema.org/understanding-json-schema/reference/object.html?highlight=required#required-properties) 참고
-  
+ 
 
 앞의 예시에 적용할 수 있는 Json Schema를 보여드리겠습니다.
 
-서비스에 입력되는 데이터는 Feature 이름과 값이 맵핑되어 있는 Python `dict` 자료형 입니다. 
-여기서 `dict`는 JSON 형식 중 "object"와 호환되는 자료 구조로 `type` Field의 값은 object로 합니다. 
-데이터는 `Feature A`와 `Feature B`를 필수로 가져야하므로 `required` Field에 추가합니다. 
+서비스에 입력되는 데이터는 Feature 이름과 값이 맵핑되어 있는 Python `dict` 자료형 입니다.
+여기서 `dict`는 JSON 형식 중 "object"와 호환되는 자료 구조로 `type` Field의 값은 object로 합니다.
+데이터는 `Feature A`와 `Feature B`를 필수로 가져야하므로 `required` Field에 추가합니다.
 마지막으로 두 Feature 모두 Numeric 데이터를 가짐을 아래와 같이 `properties` Field를 작성합니다.
 
 ```json
@@ -218,10 +218,10 @@ def json_schema_validator(samples):
 
 딥러닝 모델은 Input의 Shape만 동일하다면 추론을 통해 결과를 얻을 수 있습니다.
 `Feature A`, `Feature B`, `Feature C` 순서로 들어오던 데이터가 `Feature B`, `Feature C`, `Feature A` 순서로 입력될 때도 모델은 문제없이 추론합니다.
-이런 경우 결과의 오류를 확인하는 것은 거의 불가능하다고 볼 수 있습니다. 
+이런 경우 결과의 오류를 확인하는 것은 거의 불가능하다고 볼 수 있습니다.
 이러한 오류를 방지하기 위해서는 Input Feature의 순서에 대한 테스트를 해야합니다.
 
-데이터가 `pandas.DataFrame` 형태라면 Feature의 순서를 고정하는 것으로 해결 할 수 있습니다. 
+데이터가 `pandas.DataFrame` 형태라면 Feature의 순서를 고정하는 것으로 해결 할 수 있습니다.
 전처리 과정 중 아래와 같은 클래스를 이용해 Feature의 순서를 고정할 수 있습니다.
 
 ```python
@@ -319,7 +319,7 @@ def test_column_aligner_transform():
     0          5          3          1
     """
 
-    # `column_aligner`를 이용해 `test_df` 컬럼 순서를 재배치한 
+    # `column_aligner`를 이용해 `test_df` 컬럼 순서를 재배치한
     # `preprocessed_df`를 생성합니다.
     preprocessed_df = column_aligner.transform(test_df)
 
@@ -328,7 +328,7 @@ def test_column_aligner_transform():
 
 ```
 
-전처리 과정의 코드는 단순해서 Unit Test가 필요없어 보일 수 있습니다. 
+전처리 과정의 코드는 단순해서 Unit Test가 필요없어 보일 수 있습니다.
 하지만 데이터가 전처리 함수를 지나면서 변해가는 과정에 생기는 문제는 쉽게 파악하기 어렵습니다 [[1]](#ref-1).
 전처리 과정이 제대로 동작하는지 계속 확인 하는 것은 매우 중요합니다.
 
@@ -345,8 +345,8 @@ def test_column_aligner_transform():
 {% assign i = i | plus: 1 %}
 
 Validation Dataset을 중심으로 소개해 드리겠습니다.
-Validation Dataset은 학습에 사용되지 않은 데이터로서 주로 학습된 모델을 평가하는 데 사용됩니다. 
-마키나락스 이상탐지 시스템에서는 Validation Dataset의 Anomaly Score를 이용해 알람의 Threshold를 결정합니다. 
+Validation Dataset은 학습에 사용되지 않은 데이터로서 주로 학습된 모델을 평가하는 데 사용됩니다.
+마키나락스 이상탐지 시스템에서는 Validation Dataset의 Anomaly Score를 이용해 알람의 Threshold를 결정합니다.
 
 Validation Dataset이 모델을 평가하는데 적절하지 않은 데이터 셋이었다면 어떻게 될까요?
 모델에 대한 평가도 왜곡되고, 마키나락스 이상탐지 시스템에서 중요한 Threshold가 잘 못 계산될 수 있습니다.
@@ -356,7 +356,7 @@ Validation Dataset은 시스템의 전체적인 성능 안정성을 위해 검�
 
 시계열 데이터는 [그림9]과 같이 데이터 중 가장 오래된 부분부터 Train Dataset으로, 나머지 뒷 부분을 Validation Dataset으로 분할해 사용합니다.
 월요일부터 일요일까지 일주일 데이터를 이용해 모델을 학습하는 상황을 가정하겠습니다.
-Train Dataset : Validation Dataset 비율을 5 : 2로 할 경우, [그림10]과 같이 월요일부터 금요일까지 데이터를 Train Dataset으로, 
+Train Dataset : Validation Dataset 비율을 5 : 2로 할 경우, [그림10]과 같이 월요일부터 금요일까지 데이터를 Train Dataset으로,
 토요일과 일요일 데이터를 Validation Dataset으로 사용하게 됩니다.
 
 <figure class="image" style="align: center;">
@@ -375,7 +375,7 @@ Train Dataset : Validation Dataset 비율을 5 : 2로 할 경우, [그림10]과 
 </figure>
 {% assign i = i | plus: 1 %}
 
-**하지만 이때 일요일이 휴일이라면 적합한 분할일까요?** 
+**하지만 이때 일요일이 휴일이라면 적합한 분할일까요?**
 일요일 데이터는 작업이 이뤄지는 월요일부터 토요일까지의 데이터와 다른 분포를 갖게되고, 토요일까지의 데이터만 사용하는 것이 적합합니다.
 모델을 학습하기 전 이런 상황을 몰랐다면, 마키나락스 이상탐지 시스템에서는 의도와 다른 Threshold 결과를 출력하고 비정상적인 작동을 하게 됩니다.
 
@@ -395,10 +395,10 @@ Python scipy 패키지를 이용해 임의로 생성한 두 집단을 비교해 
 >>> from scipy import stats
 
 >>> # 평균 0, 분산 1인 Normal Distribution에서 샘플이 100개인 집단을 생성합니다.
->>> group_a = np.random.randn(100)  
+>>> group_a = np.random.randn(100) 
 
 >>> # 평균 3, 분산 4인 Normal Distribution에서 샘플이 100개인 집단을 생성합니다.
->>> group_b = 3 + 2 * np.random.randn(100)  
+>>> group_b = 3 + 2 * np.random.randn(100) 
 
 >>> # 두 집단을 비교합니다.
 >>> t_statistic, p_value = stats.ttest_ind(group_a, group_b, equal_var=False)
@@ -438,7 +438,7 @@ Python scipy 패키지를 이용해 임의로 생성한 두 집단을 비교해 
 
 여러 시점에 대해 Dataset Shift를 판단하는 것이 필요합니다.
 시점을 정하는 방법으로 [그림13]과 같이 균등하게 구간을 나누는 방법을 사용할 수 있습니다.
-[그림13]은 5개의 구간으로 구분한 상황입니다. 
+[그림13]은 5개의 구간으로 구분한 상황입니다.
 더 많은 구간을 구분할 경우 정확도가 올라갈 수 있지만, 확인 과정이 오래걸릴 수 있다는 Trade-off가 있습니다.
 추가로 각 시점에 대해 T-test 검증 후 P-value가 가장 낮은 시점을 중심으로 Dataset Shift가 일어났음을 예상할 수 있습니다.
 
@@ -489,10 +489,10 @@ def check_dataset_shift(
 
 ```python
 >>> # 평균 0, 분산 1인 Normal Distribution에서 샘플이 100개인 집단을 생성합니다.
->>> group_a = np.random.randn(100)  
+>>> group_a = np.random.randn(100) 
 
 >>> # 평균 30, 분산 4인 Normal Distribution에서 샘플이 100개인 집단을 생성합니다.
->>> group_b = 30 + 2 * np.random.randn(100)  
+>>> group_b = 30 + 2 * np.random.randn(100) 
 
 >>> # [그림11] 데이터는 group_a와 group_b를 연결한 데이터 입니다.
 >>> graph_11 = np.append(group_a, group_b)
