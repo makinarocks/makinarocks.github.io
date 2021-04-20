@@ -65,7 +65,7 @@ image: assets/images/2020-02-10-Regression-Test/thumbnail.gif
 아마도 그렇기 때문에 뒤늦게 발견이 되었을 것이라고 생각합니다. 
 더욱이 이런 커밋들이 모두 유닛테스트를 통과했기 때문에 개발자 입장에서 무엇이 원인인지 파악하기 힘들었습니다.
 
-이런 경험을 한 후에 **Are you Sure?** (이 코드 문제가 없을까요?)라는 질문에 답하기 위해서는 사실상 작은 변화더라도 **Regression Test**를 진행해야 하는 것을 깨달았습니다. 
+이런 경험을 한 후에 **Are you Sure?** (이 코드 문제가 없을까요?)라는 질문에 답하기 위해서는 사실상 작은 변화라고 하더라도 **Regression Test**를 진행해야 하는 것을 깨달았습니다. 
 
 여기서 Regression Test라고 정의한 것은 Machine Learning Software의 전체적인 학습 및 테스트를 진행하고 성능을 확인하는 작업을 의미합니다.
 
@@ -137,7 +137,7 @@ GitHub에서 테스트요청을 보내면 Regression Test를 진행하게 됩니
 특정 Repository를 위한 MRX-Hosted Runner가 다른 Repository를 운영할 수 없습니다.
 한 Repository는 A 라이브러리를 사용하고 이에 맞는 MRX-Hosted Runner가 있다면, B 라이브러리가 필요한 Repository에서는 작동할 수 없습니다.
 
-### Pipeline #2: Independent on Repository, But Inefficient
+### Pipeline #2: Independent from the Repository, But Inefficient
 
 <figure class="image" style="align: center;">
 <p align="center">
@@ -153,7 +153,7 @@ Pipeline #1과 다르게 MRX-Hosted Runner가 Repository에 정의된 Dockerfile
 Machine Learning Software의 경우 사용하는 라이브러리의 용량이 큰 것을 고려해보면 이는 상당히 비효율적입니다.
 
 
-### Pipeline #3: InDependent on Repository, But!
+### Pipeline #3: Independent from the Repository, Efficient, But!
 
 
 <figure class="image" style="align: center;">
@@ -171,7 +171,7 @@ Pipeline #2의 경우 테스트 요청마다 Docker Image를 빌드해야합니�
 반면에, Pipeline #3는 테스트 요청마다 미리 만들어둔 Docker Image를 Pull하여 사용합니다.
 
 
-### Device Dependency
+### Resource Imbalance
 
 하지만 Pipeline #1 ~ #3은 모두 공통적으로 한 컴퓨팅 자원에 의존적이라는 문제가 있습니다.
 예를 들어 Regression Test에 사용하는 컴퓨터에서 어떤 작업을 수행하고 있다면 Regression Test의 요청이 수락되지 않거나 수행중이던 작업에 영향을 줄 수 있습니다.
@@ -182,22 +182,22 @@ Pipeline #2의 경우 테스트 요청마다 Docker Image를 빌드해야합니�
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2020-02-10-Regression-Test/8.png"  width="60%">
-  <figcaption style="text-align: center;">[그림8] - Problem of Device Dependency</figcaption>
+  <figcaption style="text-align: center;">[그림8] - Problem of Resource Imbalance</figcaption>
 </p>
 </figure>
 
-또한 다른 MRX-Decktop2, 3를 보면 컴퓨팅 자원이 여유있다는 것을 알 수 있습니다. 
+또한 다른 MRX-Desktop2, 3를 보면 컴퓨팅 자원이 여유있다는 것을 알 수 있습니다. 
 자원을 효율적으로 사용하기 위해서 남은 자원에 효율적으로 접근하는 것이 필요했습니다. 
 이를 위해서는 Regression Test Pipeline이 특정 자원에 종속되지 않고 필요한 자원에 동적으로 접근하여야 합니다. 
 즉, 위의 [그림8] 예시처럼 Regression Test Pipeline이 특정 자원의 영향을 받는 것을 개선해야합니다.
 
-### Pipeline #4: InDependent on Device
+### Pipeline #4: Independent from the Machine
 
-Device Dendency를 해결하기 위해서 Kubernetes를 사용하였습니다 [[2]](#ref-2).
+Imbalance Resource를 해결하기 위해서 Kubernetes를 사용하였습니다 [[2]](#ref-2).
 Kubernetes에 대해서 알고 싶으신 분들은 Kubernetes의 공식문서[[6]](#ref-2)를 참고하시는 것을 추천드립니다.
 
 Kubernetes를 사용한 목적은 내부의 컴퓨팅 자원을 추상화하기 위함입니다. 
-쉽게 풀어쓰면, **Kubernetes에 특정 Device를 요청하는 것이 아니라, 필요한 컴퓨팅 자원에 대해서 요청만 하면, 그에 맞는 자원할당을 받기 위해서입니다.** 
+쉽게 풀어쓰면, **Kubernetes에 특정 Machine를 요청하는 것이 아니라, 필요한 컴퓨팅 자원에 대해서 요청만 하면, 그에 맞는 자원할당을 받기 위해서입니다.** 
 [그림9]을 보면 여러가지 컴퓨팅 자원이 하나의 클러스터로 묶여있습니다. 
 이제 원하는 자원의 스펙을 적으면, 그에 맞는 자원이 할당될 것입니다.
 
@@ -249,7 +249,7 @@ Ray Cluster는 작업들을 병렬적으로 처리하여 Regression Test를 빠�
 Ray Autoscaler는 Cluster의 자원상황을 고려하여 워커 노드의 개수를 동적으로 조절할 수 있습니다 [[3]](#ref-3).
 
 
-MRX-Hosted Runner의 역할은 특정 Device내에서 Container로 Regression Test를 진행하는 것이 아닙니다. 
+MRX-Hosted Runner의 역할은 특정 Machine내에서 Container로 Regression Test를 진행하는 것이 아닙니다. 
 미리 정의된 컴퓨팅 자원 스펙에 해당하는 Ray Cluster를 만드는 것입니다 [[3]](#ref-2). 
 여기서 Ray Cluster의 역할은 Regression Test를 병렬적으로 진행하기 위한 목적으로 사용되고 작업이 끝나게 되면 Ray Cluster는 사라지게 됩니다. 
 참고로 [그림9]에서 구성한 Cluster와 Ray Cluster는 다른 역할을 합니다. 
@@ -265,7 +265,7 @@ MRX-Hosted Runner의 역할은 특정 Device내에서 Container로 Regression Te
 
 이제 Kubernetes 그리고 Ray Cluster를 활용하여 [그림12]과 같은 Pipeline을 구축하였습니다. 
 Repository에 의존성을 제거하였으며 Docker Image도 미리 만들어둔 Image를 활용하였습니다. 
-또한 Device에 대한 의존성을 제거하여 내부의 컴퓨팅 자원을 더욱 효율적으로 사용할 수 있었습니다.
+또한 Machine에 대한 의존성을 제거하여 내부의 컴퓨팅 자원을 더욱 효율적으로 사용할 수 있었습니다.
 
 
 
@@ -381,7 +381,7 @@ Regression Test Pipeline의 도입을 통해 코드변경에서 발생하는 문
 이번 포스트를 통해서 비슷한 문제를 고민하는 분들께 작은 도움이 되었으면 좋겠습니다.
 
 
-## Reference
+## References
 
 <a name="ref-1">[1]</a>  [Gitflow Workflow[websites], (2021, Mar, 22)](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)
 
