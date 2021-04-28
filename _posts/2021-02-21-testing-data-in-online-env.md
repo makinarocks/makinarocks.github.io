@@ -20,7 +20,7 @@ image: assets/images/2021-02-21-data_is_tested/total.gif
 
 예상과 다르게 입력된 데이터로 모델을 학습, 추론한 경우 의도와 다른 결과를 출력할 수 있습니다.
 예를 들어, Numeric 데이터 입력을 받는 연산 코드에서 Boolean 데이터 `False`가 입력됐을 경우를 생각해보겠습니다.
-입력된 데이터의 Type이 다르지만 Python은 `False`를 0으로 변환해 연산한 결과가 출력합니다.
+입력된 데이터의 Type이 다르지만 Python은 `False`를 0으로 변환해 연산한 결과를 출력합니다.
 이 경우 코드가 작동하는데 문제 없기 때문에, 나중에 출력 결과를 통해 디버깅하는 것은 어렵습니다.
 이와 같은 문제는 데이터 유효성 테스트를 통해 미리 방지할 수 있습니다.
 
@@ -53,8 +53,10 @@ image: assets/images/2021-02-21-data_is_tested/total.gif
 
 ## 1. Input Sample
 
+현실적인 예시를 추가, 더 재밋을 것 같은 예를 들어 사람이 개입되어 어떻게 되는
+
 실시간으로 입력되는 데이터 1개를 Sample(Row)이라 하고, Sample이 모여 Dataset이 됩니다.
-약속한 형태의 Sample이 입력되는지 지속적으로 확인하는 과정이 필요합니다.
+약속한 구조와 자료형의 데이터 Sample이 입력되는지 지속적으로 확인하는 과정이 필요합니다.
 
 <figure class="image" style="align: center;">
     <p align="center">
@@ -64,7 +66,7 @@ image: assets/images/2021-02-21-data_is_tested/total.gif
 </figure>
 {% assign i = i | plus: 1 %}
 
-Sample의 `Feature A`와 `Feature B` 속성을 이용해 새로운 `Feature C`를 만들어 내는 Feature Engineering 코드가 있습니다. Numeric 데이터 `Feature A`와 `Feature B`에 대해 곱하기 연산을 합니다.
+Sample의 `Feature A`와 `Feature B` 속성을 이용해 새로운 `Feature C`를 만들어 내는 Feature Engineering 코드가 있습니다. Numeric 데이터 `Feature A`와 `Feature B`에 대해 곱하기 연산을 하여 `Feature C`를 만든다고 가정해봅시다.
 
 ```python
 def make_feature_c(sample):
@@ -117,7 +119,7 @@ def make_feature_c(sample):
 Json Schema란 `JSON`형식으로 작성된 다른 데이터의 구조를 설명하는 하나의 데이터입니다 [[2]](#ref-2).
 의도하는 데이터의 형식을 표현하고, 새로 들어오는 데이터가 Schema에 맞는지 검증합니다.
 
-Json Schema를 주요 요소를 소개해 드리겠습니다.
+Json Schema의 주요 요소를 소개해 드리겠습니다.
 
 - "type"
   - Schema에서 데이터 형식을 지정합니다.
@@ -133,9 +135,9 @@ Json Schema를 주요 요소를 소개해 드리겠습니다.
   - [공식 페이지 - required properties](https://json-schema.org/understanding-json-schema/reference/object.html?highlight=required#required-properties) 참고
  
 
-앞의 예시에 적용할 수 있는 Json Schema를 보여드리겠습니다.
+`make_feature_c` 입력 상황에 적용할 수 있는 Json Schema를 보여드리겠습니다.
 
-서비스에 입력되는 데이터는 Feature 이름과 값이 맵핑되어 있는 Python `dict` 자료형 입니다.
+서비스에 입력되는 데이터가 Feature 이름과 값이 맵핑되어 있는 Python `dict` 자료형이라고 가정해봅시다.
 여기서 `dict`는 JSON 형식 중 "object"와 호환되는 자료 구조로 `type` Field의 값은 object로 합니다.
 데이터는 `Feature A`와 `Feature B`를 필수로 가져야하므로 `required` Field에 추가합니다.
 마지막으로 두 Feature 모두 Numeric 데이터를 가짐을 아래와 같이 `properties` Field를 작성합니다.
@@ -156,8 +158,7 @@ Json Schema를 주요 요소를 소개해 드리겠습니다.
 
 ### 1.2 Json schema validator
 
-입력된 `dict` 데이터가 구조와 맞는지 검증하는 예시를 보여드리겠습니다. 
-Python [jsonschema](https://pypi.org/project/jsonschema/) 패키지를 활용해 데이터가 선언한 Json schema에 맞는지 검증할 수 있습니다.
+Python [jsonschema](https://pypi.org/project/jsonschema/) 패키지를 활용해 입력된 `dict` 데이터가 유효한 구조로 정의되어 있는지 검증하는 예시를 보여드리겠습니다.
 
 ```python
 >>> from jsonschema import validate
@@ -196,6 +197,7 @@ On instance['feature_a']:
 ```
 
 추론 시점마다 1개 이상의 데이터가 들어오는 환경에서 사용하는 경우 아래와 같이 For Loop을 이용해 확인할 수 있습니다.
+>>>> 권장되는 방식 
 
 ```python
 import jsonschema
@@ -209,7 +211,7 @@ def json_schema_validator(samples):
 ## 2. Input Feature
 
 실시간으로 입력되는 데이터 Sample은 Feature(Column)로 구성되어 있습니다.
-지속적으로 동알한 Feature 형태가 입력되는지 확인하는 과정이 필요합니다.
+지속적으로 동알한 형태의 Feature가 입력되는지 확인하는 과정이 필요합니다.
 
 <figure class="image" style="align: center;">
     <p align="center">
@@ -233,8 +235,8 @@ def json_schema_validator(samples):
 import pandas as pd
 
 class ColumnAligner():
-    """동일한 DataFrame의 column 순서를 보장합니다.
-    """
+    """동일한 DataFrame의 column 순서를 보장합니다."""
+
     def __init__(self):
         self.column_alignment = None
 
@@ -270,6 +272,7 @@ class ColumnAligner():
 
 
 ```python
+>>> # train_data를 기준으로 test_data의 col 순서를 맞춥니다.
 >>> column_aligner = ColumnAligner()
 >>> column_aligner.fit(train_data)
 >>> test_data = column_aligner.transform(test_data)
@@ -277,7 +280,7 @@ class ColumnAligner():
 
 ### 2.2 Unit Test Preprocessing
 
-해당 클래스에 대한 Unit Test를 추가해 안정성을 높일 수 있습니다.
+`ColumnAligner`  클래스에 대한 Unit Test를 추가해 안정성을 높일 수 있습니다.
 
 ```python
 def test_column_aligner_fit():
@@ -357,8 +360,8 @@ Validation Dataset이 모델을 평가하는데 적절하지 않은 데이터 �
 Validation Dataset은 시스템의 전체적인 성능 안정성을 위해 검증되어야 합니다.
 
 ### 3.1 Example of Invalid Validation Dataset
-
-시계열 데이터는 [그림{{ i }}]과 같이 데이터 중 가장 오래된 부분부터 Train Dataset으로, 나머지 뒷 부분을 Validation Dataset으로 분할해 사용합니다.
+>>>>> 흐름 다시
+시계열 데이터는 [그림{{ i }}]과 같이 데이터 중 가장 오래된 부분을 Train Dataset으로, 나머지 뒷 부분을 Validation Dataset으로 분할해 사용합니다.
 월요일부터 일요일까지 일주일 데이터를 이용해 모델을 학습하는 상황을 가정하겠습니다.
 Train Dataset : Validation Dataset 비율을 5 : 2로 할 경우, [그림{{ i | plus: 1}}]과 같이 월요일부터 금요일까지 데이터를 Train Dataset으로,
 토요일과 일요일 데이터를 Validation Dataset으로 사용하게 됩니다.
@@ -380,16 +383,17 @@ Train Dataset : Validation Dataset 비율을 5 : 2로 할 경우, [그림{{ i | 
 {% assign i = i | plus: 1 %}
 
 **하지만 이때 일요일이 휴일이라면 적합한 분할일까요?**
-일요일 데이터는 작업이 이뤄지는 월요일부터 토요일까지의 데이터와 다른 분포를 갖게되고, 토요일까지의 데이터만 사용하는 것이 적합합니다.
-모델을 학습하기 전 이런 상황을 몰랐다면, 마키나락스 이상탐지 시스템에서는 의도와 다른 Threshold 결과를 출력하고 비정상적인 작동을 하게 됩니다.
+일요일 데이터는 작업이 이뤄지는 월요일부터 토요일까지의 데이터와 다른 분포를 갖게되므로 토요일까지의 데이터만 사용하는 것이 적합합니다.
+모델을 학습하기 전 이런 상황을 몰랐다면, 마키나락스 이상탐지 시스템에서는 의도와 다른 Threshold 결과를 출력하고 비정상적인 작동을 하게 될 것입니다.
 
 주중에 주말로 변화하는 것과 같이 데이터의 성격이 중간에 달라지는 상황을 Dataset Shift라고 합니다 [[4]](#ref-1).
 온라인 환경의 상황을 모를 때 Validation Dataset의 Dataset Shift 여부를 확인하는 과정에 대해 소개드리겠습니다.
 
 ### 3.2 Test Dataset Shift in Validation Dataset
-
+>>>>> 조금 더 쉽게
 Output은 k차원의 Input Dataset의 Joint Distribution으로 만들어진 1차원의 데이터로 
 Input Dataset이 변경은 모델의 Output 분포를 변화시킵니다.
+$$P(y | x_0, x_1, ..., x_{k-1})$$
 역으로 Output 분포의 변화를 이용해 Dataset Shift 여부를 확인할 수 있습니다 [[4]](#ref-1).
 
 Output의 분포 변화를 확인하기 위해 두 집단 간의 평균을 비교하는 통계적 검정방법인 T-test를 이용합니다.
@@ -414,7 +418,7 @@ Python scipy 패키지를 이용해 임의로 생성한 두 집단을 비교해 
 ```
 
 위 과정을 확장해서 온라인 환경의 상황을 모를 때 Validation Dataset의 Dataset Shift 여부를 확인하는 과정에 대해 소개드리겠습니다.
-시간이 지남에 따라 Dataset Shift 여부를 확인하기 위함으로 한 시점을 기준으로 이전 시점 데이터를 Group-pre, 이후 시점 데이터르 Group-post로 구분하여 T-test를 진행합니다.
+시간이 지남에 따라 Dataset Shift 여부를 확인하기 위함으로 한 시점을 기준으로 이전 시점 데이터를 Group-pre, 이후 시점 데이터를 Group-post로 구분하여 T-test를 진행합니다.
 단 Train Dataset과 Validation Dataset 사이에는 Dataset Shift가 없어 Group-pre는 Train Dataset과 같은 분포일 것을 가정하는 것이 필요합니다.
 
 이때 집단을 구분하는 시점을 하나로 고정할 경우 여러 상황에 대응하기 어렵습니다.
@@ -457,7 +461,7 @@ Python scipy 패키지를 이용해 임의로 생성한 두 집단을 비교해 
 
 여러 시점에 대해 Dataset Shift를 판단하는 것이 필요합니다.
 시점을 정하는 방법으로 [그림{{ i }}]과 같이 균등하게 구간을 나누는 방법을 사용할 수 있습니다.
-[그림{{ i }}]은 5개의 구간으로 구분한 상황입니다.
+[그림{{ i }}]은 Dataset Shift 후보로 균등하게 분포한 4개 구간을 정의한 상황입니다.
 더 많은 구간을 구분할 경우 정확도가 올라갈 수 있지만, 확인 과정이 오래걸릴 수 있다는 Trade-off가 있습니다.
 추가로 각 시점에 대해 T-test 검증 후 P-value가 가장 낮은 시점을 중심으로 Dataset Shift가 일어났음을 예상할 수 있습니다.
 
@@ -525,7 +529,7 @@ P-value가 가장 작은 한 지점을 출력하므로, 여러 지점에서의 �
 
 이번 포스트에서 데이터 유효성 검증이 필요한 이유와 검증 방법을 다뤄보았습니다.
 데이터를 이용해 모델을 학습하는 머신러닝 특성상 코드뿐만 아니라 데이터에 대해 유효성을 판단하는 과정이 필요합니다.
-이번 포스트를 통해서 비슷한 문제를 고민하는 분들께 작은 도움이 되었으면 좋겠습니다.
+이번 포스트를 통해서 비슷한 문제를 고민하는 분들께 도움이 되었으면 좋겠습니다.
 
 <a name="ref-1">[1]</a> [Eric Breck Shanqing Cai Eric Nielsen Michael Salib D. Sculley, 2017, The ML Test Score: A Rubric for ML Production Readiness and Technical Debt Reduction.](https://static.googleusercontent.com/media/research.google.com/ko//pubs/archive/aad9f93b86b7addfea4c419b9100c6cdd26cacea.pdf)
 
