@@ -53,9 +53,13 @@ image: assets/images/2021-02-21-data_is_tested/total.gif
 
 ## 1. Input Sample
 
-현실적인 예시를 추가, 더 재밋을 것 같은 예를 들어 사람이 개입되어 어떻게 되는
+배포한 모델을 학습하거나 추론할 때, 모델의 Configuration 설정 값을 사람이 직접 설정하는 경우가 있습니다.
+이때 학습의 마지막 단계에서 사용되는 설정값을 실수로 잘 못 설정했다고 가정해 봅시다.
+중간에 설정 값을 바꿀 수 없는 경우 모델을 학습하는데 들인 시간과 비용을 모두 잃게됩니다.
+데이터의 구조와 자료형이 정해져 있을 떄, 입력 시점에 데이터를 검증하는 것은 비용과 시간을 줄이는데 도움이 됩니다 [[3]](#ref-3).
 
-실시간으로 입력되는 데이터 1개를 Sample(Row)이라 하고, Sample이 모여 Dataset이 됩니다.
+실시간으로 입력되는 데이터 1개를 Sample(Row)이라 합니다.
+Configuration은 한 번만 입력되는 Sample 이지만, 학습과 추론에 사용되는 Dataset은 계속해서 입력되는 Sample 모여 만들어집니다.
 약속한 구조와 자료형의 데이터 Sample이 입력되는지 지속적으로 확인하는 과정이 필요합니다.
 
 <figure class="image" style="align: center;">
@@ -66,7 +70,10 @@ image: assets/images/2021-02-21-data_is_tested/total.gif
 </figure>
 {% assign i = i | plus: 1 %}
 
-Sample의 `Feature A`와 `Feature B` 속성을 이용해 새로운 `Feature C`를 만들어 내는 Feature Engineering 코드가 있습니다. Numeric 데이터 `Feature A`와 `Feature B`에 대해 곱하기 연산을 하여 `Feature C`를 만든다고 가정해봅시다.
+단순한 Feature Engineering 예시를 통해 검증 과정을 소개해 드리겠습니다.
+
+Sample의 `Feature A`와 `Feature B` 속성을 이용해 새로운 `Feature C`를 만들어 내는 Feature Engineering 코드가 있습니다. 
+Numeric 데이터 `Feature A`와 `Feature B`에 대해 곱하기 연산을 하여 `Feature C`를 만든다고 가정해봅시다.
 
 ```python
 def make_feature_c(sample):
@@ -116,7 +123,7 @@ def make_feature_c(sample):
 ### 1.1 About Json Schema
 
 **Json Schema**를 활용해 위 예시를 포함해 데이터의 약속된 형태를 표현할 수 있습니다.
-Json Schema란 `JSON`형식으로 작성된 다른 데이터의 구조를 설명하는 하나의 데이터입니다 [[2]](#ref-2).
+Json Schema란 `JSON`형식으로 데이터의 구조를 설명합니다 [[2]](#ref-2).
 의도하는 데이터의 형식을 표현하고, 새로 들어오는 데이터가 Schema에 맞는지 검증합니다.
 
 Json Schema의 주요 요소를 소개해 드리겠습니다.
@@ -154,7 +161,8 @@ Json Schema의 주요 요소를 소개해 드리겠습니다.
 ```
 
 위에 설정한 검증 조건 외에 Feature마다 값의 범위, null 검증 조건을 표현할 수 있고,
-`if-then-else` 구조를 사용해 복잡한 조건부 구조까지 표현할 수 있습니다.
+`if-then-else` 구조를 사용해 복잡한 조건부 구조까지 표현할 수 있습니다. 
+[공식 페이지](https://json-schema.org/understanding-json-schema/reference/conditionals.html)에서 다양한 예시를 확인할 수 있습니다.
 
 ### 1.2 Json schema validator
 
@@ -196,18 +204,6 @@ On instance['feature_a']:
     False
 ```
 
-추론 시점마다 1개 이상의 데이터가 들어오는 환경에서 사용하는 경우 아래와 같이 For Loop을 이용해 확인할 수 있습니다.
->>>> 권장되는 방식 
-
-```python
-import jsonschema
-from jsonschema import validate
-
-def json_schema_validator(samples):
-    for sample in samples:
-        validate(instance=sample, schema=schema)
-```
-
 ## 2. Input Feature
 
 실시간으로 입력되는 데이터 Sample은 Feature(Column)로 구성되어 있습니다.
@@ -223,6 +219,8 @@ def json_schema_validator(samples):
 
 딥러닝 모델은 입력 데이터의 Feature Shape만 동일하다면 추론을 통해 결과를 얻을 수 있습니다.
 `Feature A`, `Feature B`, `Feature C` 순서로 들어오던 데이터가 `Feature B`, `Feature C`, `Feature A` 순서로 입력돼도 모델은 문제없이 추론합니다.
+예를 들어, 3차원의 RGB 이미지로 학습한 모델은 입력으로 BGR 순서로 불러온 이미지도 크기가 같다면 추론할 수 있습니다.
+
 이런 경우 모델의 추론 결과를 통해 입력 오류를 확인하는 것은 어렵습니다.
 오류를 방지하기 위해서는 Input Feature에 대한 검증이 필요합니다.
 
@@ -337,7 +335,7 @@ def test_column_aligner_transform():
 
 전처리 과정의 코드는 단순해서 Unit Test가 필요없어 보일 수 있습니다.
 하지만 데이터가 전처리 함수를 지나면서 변해가는 과정에 생기는 문제는 쉽게 파악하기 어렵습니다 [[1]](#ref-1).
-전처리 과정이 제대로 동작하는지 계속 확인 하는 것은 매우 중요합니다.
+전처리 과정이 제대로 동작하는지 계속 확인 하는 것은 중요합니다.
 
 ## 3. Input Dataset
 
@@ -351,16 +349,7 @@ def test_column_aligner_transform():
 </figure>
 {% assign i = i | plus: 1 %}
 
-Validation Dataset을 중심으로 소개해 드리겠습니다.
-Validation Dataset은 학습에 사용되지 않은 데이터로서 주로 학습된 모델을 평가하는 데 사용됩니다.
-마키나락스 이상탐지 시스템에서는 Validation Dataset의 Anomaly Score를 이용해 알람의 Threshold를 결정합니다.
-
-Validation Dataset이 모델을 평가하는데 적절하지 않은 데이터 셋이었다면 어떻게 될까요?
-모델에 대한 평가도 왜곡되고, 마키나락스 이상탐지 시스템에서 중요한 Threshold가 잘 못 계산될 수 있습니다.
-Validation Dataset은 시스템의 전체적인 성능 안정성을 위해 검증되어야 합니다.
-
-### 3.1 Example of Invalid Validation Dataset
->>>>> 흐름 다시
+### 3.1 Example of Invalid Dataset
 시계열 데이터는 [그림{{ i }}]과 같이 데이터 중 가장 오래된 부분을 Train Dataset으로, 나머지 뒷 부분을 Validation Dataset으로 분할해 사용합니다.
 월요일부터 일요일까지 일주일 데이터를 이용해 모델을 학습하는 상황을 가정하겠습니다.
 Train Dataset : Validation Dataset 비율을 5 : 2로 할 경우, [그림{{ i | plus: 1}}]과 같이 월요일부터 금요일까지 데이터를 Train Dataset으로,
@@ -384,19 +373,27 @@ Train Dataset : Validation Dataset 비율을 5 : 2로 할 경우, [그림{{ i | 
 
 **하지만 이때 일요일이 휴일이라면 적합한 분할일까요?**
 일요일 데이터는 작업이 이뤄지는 월요일부터 토요일까지의 데이터와 다른 분포를 갖게되므로 토요일까지의 데이터만 사용하는 것이 적합합니다.
-모델을 학습하기 전 이런 상황을 몰랐다면, 마키나락스 이상탐지 시스템에서는 의도와 다른 Threshold 결과를 출력하고 비정상적인 작동을 하게 될 것입니다.
-
 주중에 주말로 변화하는 것과 같이 데이터의 성격이 중간에 달라지는 상황을 Dataset Shift라고 합니다 [[4]](#ref-1).
-온라인 환경의 상황을 모를 때 Validation Dataset의 Dataset Shift 여부를 확인하는 과정에 대해 소개드리겠습니다.
+
+Validation Dataset은 학습에 사용되지 않은 데이터로서 주로 학습된 모델을 평가하는 데 사용됩니다.
+마키나락스 이상탐지 시스템에서는 Validation Dataset의 Anomaly Score를 이용해 알람의 Threshold를 결정합니다.
+Validation Dataset이 모델을 평가하는데 적절하지 않은 데이터 셋이었다면 어떻게 될까요?
+모델에 대한 평가도 왜곡되고, 마키나락스 이상탐지 시스템에서는 의도와 다른 Threshold 결과를 출력하고 비정상적인 작동을 하게 될 것입니다.
+
+Dataset은 시스템의 전체적인 성능 안정성을 위해 검증되어야 합니다.
+배포 환경의 상황을 모를 때 Dataset의 Dataset Shift 여부를 확인하는 과정에 대해 소개드리겠습니다.
 
 ### 3.2 Test Dataset Shift in Validation Dataset
->>>>> 조금 더 쉽게
-Output은 k차원의 Input Dataset의 Joint Distribution으로 만들어진 1차원의 데이터로 
-Input Dataset이 변경은 모델의 Output 분포를 변화시킵니다.
-$$P(y | x_0, x_1, ..., x_{k-1})$$
-역으로 Output 분포의 변화를 이용해 Dataset Shift 여부를 확인할 수 있습니다 [[4]](#ref-1).
 
-Output의 분포 변화를 확인하기 위해 두 집단 간의 평균을 비교하는 통계적 검정방법인 T-test를 이용합니다.
+Input Dataset에 대한 모델의 Output 변화를 이용해 Dataset Shift 여부를 확인할 수 있습니다 [[4]](#ref-1).
+
+Output $Y$은 k차원의 Input Dataset $X$의 Joint Distribution으로 만들어진 데이터로 $$Y = f(X_0, X_1, ..., X_{k-1})$$ 와 같이 표현할 수 있습니다. 
+Input Dataset이 변경은 모델의 Output 분포를 변화시키기 때문에, 역으로 Output 분포의 변화를 이용해 Dataset Shift 여부를 확인할 수 있습니다.
+
+Output의 분포 변화를 확인하기 위해 통계적 검정방법 T-test를 이용합니다.
+T-test은 두 집단 간의 평균을 비교하는 방법으로 '두 집단의 평균이 차이가 없다'라는 귀무가설과 '두 집단의 평균이 차이가 있다' 대립가설 중 하나를 선택합니다.
+T-test로 구한 P-value는 귀무가설이 참일 때 결과값의 유의미한 정도를 나타냅니다.
+보통 P-value가 0.05보다 작을 때 대립가설을 채택하며, P-value가 작을 수록 귀무가설이 유의미하지 않다고 할 수 있습니다.
 Python scipy 패키지를 이용해 임의로 생성한 두 집단을 비교해 보겠습니다.
 
 ```python
@@ -409,7 +406,7 @@ Python scipy 패키지를 이용해 임의로 생성한 두 집단을 비교해 
 >>> # 평균 3, 분산 4인 Normal Distribution에서 샘플이 100개인 집단을 생성합니다.
 >>> group_b = 3 + 2 * np.random.randn(100) 
 
->>> # 두 집단을 비교합니다.
+>>> # 두 집단을 비교합니다. 이때, 두 집단의 분산이 다를 것이라고 설정합니다.
 >>> t_statistic, p_value = stats.ttest_ind(group_a, group_b, equal_var=False)
 
 >>> # p_value가 0.05보다 작은 경우 평균이 다른 집단으로 판단합니다.
@@ -417,9 +414,9 @@ Python scipy 패키지를 이용해 임의로 생성한 두 집단을 비교해 
         print("Difference between the means of two groups")
 ```
 
-위 과정을 확장해서 온라인 환경의 상황을 모를 때 Validation Dataset의 Dataset Shift 여부를 확인하는 과정에 대해 소개드리겠습니다.
-시간이 지남에 따라 Dataset Shift 여부를 확인하기 위함으로 한 시점을 기준으로 이전 시점 데이터를 Group-pre, 이후 시점 데이터를 Group-post로 구분하여 T-test를 진행합니다.
-단 Train Dataset과 Validation Dataset 사이에는 Dataset Shift가 없어 Group-pre는 Train Dataset과 같은 분포일 것을 가정하는 것이 필요합니다.
+위 과정을 확장해서 Dataset Shift 여부를 확인하는 과정에 대해 소개드리겠습니다.
+Dataset에서 한 시점을 기준으로 이전 시점 데이터를 Group-pre, 이후 시점 데이터를 Group-post로 표현하겠습니다.
+시간이 지남에 따라 Dataset Shift 여부를 확인하기 Group-pre와 Group-post에 대해 T-test를 진행합니다.
 
 이때 집단을 구분하는 시점을 하나로 고정할 경우 여러 상황에 대응하기 어렵습니다.
 예를 들어, 데이터의 50%를 기준으로 한다면 [그림{{ i }}] 상황에서는 Dataset Shift를 확인할 수 있지만, [그림{{ i | plus: 1 }}] 상황에서는 불가능합니다.
@@ -434,8 +431,8 @@ Python scipy 패키지를 이용해 임의로 생성한 두 집단을 비교해 
 >>> # [그림{{ i }}] 데이터는 group_a와 group_b를 연결한 데이터 입니다.
 >>> graph_11 = np.append(group_a, group_b)
 
->>> # [그림{{ i | plus: 1 }}] 데이터는 [그림{{ i }}] 데이터에 group_a를 추가로 연결한 데이터 입니다.
->>> graph_12 = np.append(graph_11, group_a)
+>>> # [그림{{ i | plus: 1 }}] 데이터는 [그림{{ i }}] 데이터에 group_b를 추가로 연결한 데이터 입니다.
+>>> graph_12 = np.append(graph_11, group_b)
 ```
 
 <div class="row">
@@ -452,7 +449,7 @@ Python scipy 패키지를 이용해 임의로 생성한 두 집단을 비교해 
         <figure class="image" style="align: center;">
             <p align="center">
                 <img src="/assets/images/2021-02-21-data_is_tested/group-around-5-2.png" alt="" width="120%">
-                <figcaption style="text-align: center;">[그림{{ i }}] 1/3와 2/3를 기준으로 변경된 경우</figcaption>
+                <figcaption style="text-align: center;">[그림{{ i }}] 1/3를 기준으로 변경된 경우</figcaption>
             </p>
         </figure>
     </div>
@@ -522,9 +519,8 @@ ValueError: Check dataset shift around 3/6
 ValueError: Check dataset shift around 2/6
 ```
 
-P-value가 가장 작은 한 지점을 출력하므로, 여러 지점에서의 변화를 확인하는데는 한계가 있습니다.
-그리고 Group-pre는 Train Dataset과 같은 분포라는 가정이 틀릴 수 있습니다.
-하지만 최소한의 검증으로 사용될 수 있음을 기대할 수 있습니다.
+전체 데이터에서 한 시점에 Dataset Shift가 발생했으리라 예상되는 경우, P-value를 통해 Dataset Shift를 확인할 수 있습니다.
+
 ## 4. Conclusion
 
 이번 포스트에서 데이터 유효성 검증이 필요한 이유와 검증 방법을 다뤄보았습니다.
@@ -538,4 +534,4 @@ P-value가 가장 작은 한 지점을 출력하므로, 여러 지점에서의 �
 <a name="ref-3">[3]</a> [H. Khizou. "Unit Testing Data: What Is It and How Do You Do It?" winderresearch.com (accessed Apr. 13, 2021)](https://winderresearch.com/unit-testing-data-what-is-it-and-how-do-you-do-it/)
 
 
-<a name="ref-4">[4]</a> [J. Quiñonero Candela, M. Sugiyama, A. Schwaighofer, and N. D. Lawrence. Dataset Shift in Machine Learning Shift in Machine Learning. The MIT Press 2009 The MIT Press, 2009.](http://www.acad.bg/ebook/ml/The.MIT.Press.Dataset.Shift.in.Machine.Learning.Feb.2009.eBook-DDU.pdf)
+<a name="ref-4">[4]</a> [M. Stewart. "Understanding Dataset Shift" towardsdatascience.com (accessed Apr. 13, 2021)](https://towardsdatascience.com/understanding-dataset-shift-f2a5a262a766)
