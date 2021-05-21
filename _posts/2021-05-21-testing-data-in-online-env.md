@@ -3,7 +3,7 @@ layout: post
 title: 실시간 데이터 검증하기
 author: minjoo lee
 categories: [deeplearning]
-image: assets/images/2021-02-21-data_is_tested/total.gif
+image: assets/images/data_is_tested/total.gif
 ---
 
 마키나락스는 제조업에서 실시간으로 생산 장비와 공정의 고장 및 이상을 사전에 예측하는 이상탐지 시스템을 제공하고 있습니다.
@@ -37,7 +37,7 @@ image: assets/images/2021-02-21-data_is_tested/total.gif
     <div style="width:45%; float:left; margin-right:10px;">
         <figure class="image" style="align: center;">
             <p align="center">
-                <img src="/assets/images/2021-02-21-data_is_tested/valid.gif" alt="valid-data" width="120%">
+                <img src="/assets/images/data_is_tested/valid.gif" alt="valid-data" width="120%">
                 <figcaption style="text-align: center;">[그림{{ i }}] Valid Input Data</figcaption>
             </p>
         </figure>
@@ -46,7 +46,7 @@ image: assets/images/2021-02-21-data_is_tested/total.gif
     <div style="width:45%; float:right;">
         <figure class="image" style="align: center;">
             <p align="center">
-                <img src="/assets/images/2021-02-21-data_is_tested/invalid.gif" alt="invalid-data" width="120%">
+                <img src="/assets/images/data_is_tested/invalid.gif" alt="invalid-data" width="120%">
                 <figcaption style="text-align: center;">[그림{{ i }}] Invalid Input Data</figcaption>
             </p>
         </figure>
@@ -140,7 +140,7 @@ KeyError: 'feature_a'
     <div style="width:45%; float:left; margin-right:10px;">
         <figure class="image" style="align: center;">
             <p align="center">
-                <img src="/assets/images/2021-02-21-data_is_tested/test-normal-case.png" alt="" width="120%">
+                <img src="/assets/images/data_is_tested/test-normal-case.png" alt="" width="120%">
                 <figcaption style="text-align: center;">[그림{{ i }}] Test on Valid Cases</figcaption>
             </p>
         </figure>
@@ -149,7 +149,7 @@ KeyError: 'feature_a'
     <div style="width:45%; float:right;">
         <figure class="image" style="align: center;">
             <p align="center">
-                <img src="/assets/images/2021-02-21-data_is_tested/test-input-sample.png" alt="" width="120%">
+                <img src="/assets/images/data_is_tested/test-input-sample.png" alt="" width="120%">
                 <figcaption style="text-align: center;">[그림{{ i }}] Test on Invalid Cases</figcaption>
             </p>
         </figure>
@@ -357,7 +357,7 @@ class ColumnAligner:
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2021-02-21-data_is_tested/train_valid.png" alt="train-valid" width="120%">
+  <img src="/assets/images/data_is_tested/train_valid.png" alt="train-valid" width="120%">
   <figcaption style="text-align: center;">[그림{{ i }}] Train / Validation split</figcaption>
 </p>
 </figure>
@@ -368,7 +368,7 @@ class ColumnAligner:
 {% assign i = i | plus: 1 %}
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2021-02-21-data_is_tested/week_train_valid.png" alt="train-valid-a-week" width="120%">
+  <img src="/assets/images/data_is_tested/week_train_valid.png" alt="train-valid-a-week" width="120%">
   <figcaption style="text-align: center;">[그림{{ i }}] Train / Validation split - A week</figcaption>
 </p>
 </figure>
@@ -444,7 +444,7 @@ Means of the two groups are different.
 
 <figure class="image" style="align: center;">
     <p align="center">
-        <img src="/assets/images/2021-02-21-data_is_tested/group-around-1-2.png" alt="" width="80%">
+        <img src="/assets/images/data_is_tested/group-around-1-2.png" alt="" width="80%">
         <figcaption style="text-align: center;">[그림{{ i }}] 1/2를 기준으로 변경된 경우</figcaption>
     </p>
 </figure>
@@ -459,7 +459,7 @@ Dataset에서 한 시점을 기준으로 이전 시점 데이터를 Group-pre, �
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2021-02-21-data_is_tested/group-split-4.png" alt="train-valid-a-week" width="120%">
+  <img src="/assets/images/data_is_tested/group-split-4.png" alt="train-valid-a-week" width="120%">
   <figcaption style="text-align: center;">[그림{{ i }}] 1/5 (좌상), 2/5 (우상), 3/5 (좌하) ,4/5 (우하)를 기준으로 구분</figcaption>
 </p>
 </figure>
