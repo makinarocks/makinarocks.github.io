@@ -56,16 +56,9 @@ image: assets/images/2021-02-21-data_is_tested/total.gif
 
 ## 1. Data Schema
 
->> 아래 예시는 범위대신 단위 체크가 필요해보임
->> 모델의 범주를 학습하는 경우 
->> 학습한 사람의 범위가 100~200사이에 대해 해서
->> 추론도 이 범위 내에 하는 것이 적합
->> 이 범위를 벗어나는 사람을 추론하는 것을 막기 위해 범위 제한을 할 수 있다.
-
-모델의 데이터 중 사용자의 키를 수치로 입력받는 상황을 가정해보겠습니다.
-예상한 사용자의 키는 100cm부터 200cm 사이의 값이 입력될 것으로 예상했습니다.
-이때 단위를 cm로 인지하지 못 한 165cm의 사용자가 5.41feet의 5.41를 입력한다면 모델은 정확한 예측을 할 수 있을까요?
-cm 기반으로 학습한 모델은 의도하지 않은 결과를 출력할 것 입니다.
+모델의 입력으로 0 ~ 1 사이의 양수 값을 갖는 센서 데이터가 들어오는 상황을 생각해보겠습니다.
+하지만 가끔 노이즈로 인해 음수 값이 입력될 수 있는 상황입니다.
+음수 값을 그대로 입력 데이터로 사용할 경우 모델은 신뢰도가 낮을 결과를 출력합니다.
 
 이런 경우 값의 범위를 제한하는 것으로 문제를 해결할 수 있습니다.
 나아가 값의 범위뿐만 아니라, 올바르지 않은 타입의 데이터가 들어오거나 필요한 값이 들어오지 않는 상황을 확인하는 것도 필요합니다.
@@ -79,6 +72,7 @@ cm 기반으로 학습한 모델은 의도하지 않은 결과를 출력할 것 
 Sample의 `Feature A`와 `Feature B` 속성을 이용해 새로운 `Feature C`를 만들어 내는 Feature Engineering 코드가 있습니다. 
 Numeric 데이터 `Feature A`와 `Feature B`에 대해 곱하기 연산을 하여 `Feature C`를 만든다고 가정해봅시다.
 
+<a name="make_feature_c"></a> 
 ```python
 def make_feature_c(sample):
     feature_a = sample["feature_a"]
@@ -121,7 +115,7 @@ def make_feature_c(sample):
 ```
 
 `make_feature_c` 함수에서 값의 범위를 확인하지 않아 음수가 들어온 상황에도 함수가 동작합니다.
-이 경우도 `Invalid Data Type` 상황과 동일하게 작동하는데 문제 없기 때문에, 나중에 출력 결과를 통해 디버깅하는 것은 어렵습니다.
+이 경우도 `Type`이 잘 못 입력된 상황과 동일하게 작동하는데 문제 없기 때문에, 나중에 출력 결과를 통해 디버깅하는 것은 어렵습니다.
 
 ### 1.1.3 Example of Invalid Data Properties
 
@@ -137,7 +131,8 @@ KeyError                                  Traceback (most recent call last)
 KeyError: 'feature_a'
 ```
 
-기본적으로 데이터에 의도한 Feature가 모두 있는지, 있다면 올바른 Type으로 정의되어 있는지, 그리고 값이 예상 범위 내에 포함되는지 등 데이터에 대한 검증을 미리 수행하는 것이 결과의 신뢰성을 높이는 데 많은 도움이 됩니다.
+기본적으로 데이터에 의도한 Feature가 모두 있는지, 있다면 올바른 Type으로 정의되어 있는지, 
+그리고 값이 예상 범위 내에 포함되는지 등 데이터에 대한 검증을 미리 수행하는 것이 결과의 신뢰성을 높이는 데 많은 도움이 됩니다.
 
 앞서 언급한 데이터의 여러가지 속성들을 스키마로 사전 정의하여 입력 데이터에 대한 검증을 손쉽게 시행할 수 있습니다.
 
@@ -183,8 +178,8 @@ Json Schema의 주요 요소를 소개해 드리겠습니다.
   - `object` 데이터가 필수로 가져야하는 속성을 지정합니다.
   - [공식 페이지 - required properties](https://json-schema.org/understanding-json-schema/reference/object.html?highlight=required#required-properties) 참고
  
->> 하이퍼링크 함수
-`make_feature_c` 입력 상황에 적용할 수 있는 Json Schema를 보여드리겠습니다.
+
+앞에서 정의한 [make_feature_c](#make_feature_c) 함수의 입력 상황에 적용할 수 있는 Json Schema를 보여드리겠습니다.
 
 서비스에 입력되는 데이터가 Feature 이름과 값이 맵핑되어 있는 Python `dict` 자료형이라고 가정해봅시다.
 여기서 `dict`는 JSON 형식 중 "object"와 호환되는 자료 구조로 스키마의 `type` Field 값을 object로 선언합니다.
@@ -231,7 +226,8 @@ Json Schema의 주요 요소를 소개해 드리겠습니다.
 ```
 
 위에 설정한 검증 조건 외에 Feature마다 null 검증 조건을 표현할 수 있고,
-`if-then-else` 구조를 사용해 복잡한 조건부 구조 등을 표현할 수도 있습니다. ([기타 예시](https://json-schema.org/understanding-json-schema/reference/conditionals.html))
+if-then-else 구조를 사용해 복잡한 조건부 구조 등을 표현할 수도 있습니다. 
+([기타 예시](https://json-schema.org/understanding-json-schema/reference/conditionals.html))
 
 ### 1.3 Json schema validator
 
@@ -279,6 +275,8 @@ On instance['feature_a']:
     False
 ```
 
+패키지를 이용해 데이터의 타입, 범위와 필수 속성 포함 여부를 검증할 수 있는 방법을 확인했습니다.
+
 ## 2. Feature Ordering
 
 실시간으로 입력되는 데이터가 여러 Feature들로 구성되어 있다고 가정해보겠습니다.
@@ -287,7 +285,7 @@ On instance['feature_a']:
 실제 데이터를 전송하는 과정에서 지연으로 인해 Feature의 순서가 보장되지 않을 수 있습니다.
 예를 들어, 각 Feature가 다른 경로를 통해 입력되는 경우를 생각해보겠습니다. 
 각각의 경로가 항상 동일한 순서로 데이터를 전송해 주어야 Feature의 순서가 유지됩니다.
-하지만 모든 경로에서 데이터의 전송순서를 제약하는 것은 까다로울 수 있습니다.
+하지만 모든 경로에서 데이터의 전송 순서를 제약하는 것은 까다로울 수 있습니다.
 
 딥러닝 모델은 입력 데이터의 Feature Shape만 동일하다면 추론을 통해 결과를 얻을 수 있습니다.
 만약 `Feature A`, `Feature B`, `Feature C`의 순서가 보장되어야 하는 데이터가 `Feature B`, `Feature C`, `Feature A` 순서로 입력된다고 하더라도 모델은 문제없이 추론할 것입니다.
@@ -314,7 +312,7 @@ class ColumnAligner():
 
         Parameters
         ----------
-        df : pandas.DataFrame
+        df : pd.DataFrame
             표준 컬럼 순서를 갖는 데이터.
         """
         self.column_alignment = df.columns.tolist()
@@ -326,18 +324,18 @@ class ColumnAligner():
 
         Parameters
         ----------
-        df : pandas.DataFrame
+        df : pd.DataFrame
             컬럼 재배치 대상이 되는 데이터.
 
         Returns
         -------
-        pandas.DataFrame
+        pd.DataFrame
             컬럼 재배치된 데이터.
         """
         return df.loc[:, self.column_alignment]
 ```
 
-전처리 클래스의  `fit` 함수를 통해 학습 데이터의 컬럼 순서를 저장하고, `transform`을 통해 데이터의 컬럼을 올바른 순서로 배치합니다.
+전처리 클래스의 `fit` 함수를 통해 학습 데이터의 컬럼 순서를 저장하고, `transform` 함수를 통해 데이터의 컬럼을 올바른 순서로 배치합니다.
 
 ```python
 >>> # train_data를 기준으로 test_data의 col 순서를 맞춥니다.
@@ -346,13 +344,13 @@ class ColumnAligner():
 >>> test_data = column_aligner.transform(test_data)
 ```
 
->> 마무리 멘트
-데이터가 전처리 함수를 지나면서 변해가는 과정에 생기는 문제는 쉽게 파악하기 어렵습니다.
-
+컬럼의 순서를 유지할 수 있는 전처리 클래스 하나를 추가하는 것으로 오류를 예방할 수 있습니다.
 
 ## 3. Dataset Shift
 
->> Dataset Shift란 뭐 입니다와 ref 
+제조 현장에서 발생한 월요일부터 일요일까지의 일주일 데이터를 생각해보겠습니다.
+일요일은 공장 휴일로 일요일 데이터는 작업이 이뤄지는 월요일부터 토요일까지의 데이터와 다른 분포를 갖게됩니다.
+주중에 주말로 변화하는 것과 같이 데이터의 성격이 중간에 달라지는 상황을 Dataset Shift라고 합니다 [[4]](#ref-1).
 
 ### 3.1 Example of Invalid Dataset
 시계열 데이터는 [그림{{ i }}]와 같이 데이터 중 가장 오래된 부분을 Train Dataset으로, 나머지 뒷 부분을 Validation Dataset으로 분할해 사용합니다.
@@ -376,31 +374,34 @@ Train Dataset : Validation Dataset 비율을 5 : 2로 할 경우, [그림{{ i | 
 </figure>
 {% assign i = i | plus: 1 %}
 
-**하지만 이때 일요일이 휴일이라면 적합한 분할일까요?**
-일요일 데이터는 작업이 이뤄지는 월요일부터 토요일까지의 데이터와 다른 분포를 갖게되므로 토요일까지의 데이터만 사용하는 것이 적합합니다.
-주중에 주말로 변화하는 것과 같이 데이터의 성격이 중간에 달라지는 상황을 Dataset Shift라고 합니다 [[4]](#ref-1).
+**하지만 이때 일요일이 Validation Dataset에 포함되는 것이 적합한 분할일까요?**
+이 경우 휴일인 일요일을 제외하고 토요일까지의 데이터만 사용하는 것이 적합합니다.
 
 Validation Dataset은 학습에 사용되지 않은 데이터로서 주로 학습된 모델을 평가하는 데 사용됩니다.
 마키나락스 이상탐지 시스템에서는 Validation Dataset의 Anomaly Score를 이용해 알람의 Threshold를 결정합니다.
 Validation Dataset이 모델을 평가하는데 적절하지 않은 데이터 셋이었다면 어떻게 될까요?
-모델에 대한 평가도 왜곡되고, 마키나락스 이상탐지 시스템에서는 의도와 다른 Threshold 결과를 출력하고 비정상적인 작동을 하게 될 것입니다.
+모델에 대한 평가도 왜곡되고, 의도와 다른 Threshold 결과를 출력해 비정상적인 작동을 하게 될 것입니다.
 
 Dataset은 시스템의 전체적인 성능 안정성을 위해 검증되어야 합니다.
 배포 환경의 상황을 모를 때 Dataset Shift 여부를 확인하는 과정에 대해 소개드리겠습니다.
 
-### 3.2 Test Dataset Shift
+### 3.2 T-test
 
 Input Dataset에 대한 모델의 Output 분포 변화를 이용해 Dataset Shift 여부를 확인할 수 있습니다 [[4]](#ref-1).
-
+<!-- 
 Output $Y$는 Input Dataset $X \in \mathbb{R}^k$의 Joint Distribution $$Y = f(X_0, X_1, ..., X_{k-1})$$으로 표현할 수 있습니다. 
-Input Dataset의 변경은 모델 Output의 분포를 변화시키기 때문에, 역으로 Output 분포의 변화를 이용해 입력(Dataset)의 Shift 여부를 확인할 수 있습니다.
-
-Output의 분포 변화를 확인하기 위해 통계적 검정방법 [T-test](https://en.wikipedia.org/wiki/Student%27s_t-test)를 이용합니다.
+Input Dataset의 변경은 모델 Output의 분포를 변화시키기 때문에, 역으로 Output 분포의 변화를 이용해 입력(Dataset)의 Shift 여부를 확인할 수 있습니다. -->
+분포 변화를 확인하기 위해 통계적 검정방법 [T-test](https://en.wikipedia.org/wiki/Student%27s_t-test)를 이용합니다.
 T-test은 두 집단 간의 평균을 비교하는 방법으로 '두 집단의 평균이 차이가 없다'라는 귀무가설과 '두 집단의 평균이 차이가 있다'라는 대립가설 중 하나를 선택합니다.
 T-test로 구한 P-value는 귀무가설이 참일 때 결과값의 유의미한 정도를 나타냅니다.
 보통 P-value가 0.05보다 작을 때 대립가설을 채택하며, P-value가 작을 수록 귀무가설이 유의미하지 않다고 할 수 있습니다.
 
-Python scipy 패키지를 이용해 임의로 생성한 서로 다른 두 데이터 분포를 비교해 보겠습니다.
+Python scipy 패키지의 `scipy.stats.ttest_ind`를 이용해 임의로 생성한 서로 다른 두 데이터 분포를 비교해 보겠습니다.
+
+T-test는 각 집단의 모분산이 같다고 가정합니다.
+하지만 모분산에 대한 정보를 모르는 상황이 대부분이므로
+Test 함수의 `equal_var` 속성 값을 False로 설정해 Welch's T-test 방법을 사용합니다.
+편의를 위해 본문에서 T-test로 표현하겠습니다.
 
 ```python
 >>> import numpy as np
@@ -420,11 +421,12 @@ Python scipy 패키지를 이용해 임의로 생성한 서로 다른 두 데이
         print("Difference between the means of two groups")
 ```
 
-이어서 T-test를 이용해 Dataset Shift 여부를 확인하는 과정을 소개해 드리겠습니다.
-Dataset에서 한 시점을 기준으로 이전 시점 데이터를 Group-pre, 이후 시점 데이터를 Group-post로 표현하겠습니다.
-시간이 지남에 따른 Dataset Shift 여부를 확인하기 위해 Group-pre와 Group-post에 대해 T-test를 진행합니다.
+### 3.3 Test Dataset Shift
 
-이때 집단을 구분하는 시점을 여러개로 두어 다양한 시점에서의 Dataset Shift를 확인할 수 있습니다.
+이어서 T-test를 이용해 Dataset Shift 여부를 확인하는 과정을 소개해 드리겠습니다.
+우선 Dataset Shift가 발생한 예시 데이터를 만들어 보겠습니다.
+[그림{{ i }}] 데이터는 전체의 1/2 시점을 기준으로 Shift가 발생한 상황이고,
+[그림{{ i | plus: 1 }}] 데이터는 전체의 1/3 시점을 기준으로 Shift가 발생한 상황입니다.
 
 ```python
 >>> # 평균 0, 분산 1인 Normal Distribution에서 샘플이 100개인 집단을 생성합니다.
@@ -434,17 +436,17 @@ Dataset에서 한 시점을 기준으로 이전 시점 데이터를 Group-pre, �
 >>> group_b = 30 + 2 * np.random.randn(100) 
 
 >>> # [그림{{ i }}] 데이터는 group_a와 group_b를 연결한 데이터 입니다.
->>> graph_11 = np.append(group_a, group_b)
+>>> graph_{{ i }} = np.append(group_a, group_b)
 
 >>> # [그림{{ i | plus: 1 }}] 데이터는 [그림{{ i }}] 데이터에 group_b를 추가로 연결한 데이터 입니다.
->>> graph_12 = np.append(graph_11, group_b)
+>>> graph_{{ i | plus: 1 }} = np.append(graph_{{ i }}, group_b)
 ```
 
 <div class="row">
     <div style="width:45%; float:left; margin-right:10px;">
         <figure class="image" style="align: center;">
             <p align="center">
-                <img src="/assets/images/2021-02-21-data_is_tested/group-around-5-1.png" alt="" width="120%">
+                <img src="/assets/images/2021-02-21-data_is_tested/group-around-1-2.png" alt="" width="120%">
                 <figcaption style="text-align: center;">[그림{{ i }}] 1/2를 기준으로 변경된 경우</figcaption>
             </p>
         </figure>
@@ -453,7 +455,7 @@ Dataset에서 한 시점을 기준으로 이전 시점 데이터를 Group-pre, �
     <div style="width:45%; float:right;">
         <figure class="image" style="align: center;">
             <p align="center">
-                <img src="/assets/images/2021-02-21-data_is_tested/group-around-5-2.png" alt="" width="120%">
+                <img src="/assets/images/2021-02-21-data_is_tested/group-around-1-3.png" alt="" width="120%">
                 <figcaption style="text-align: center;">[그림{{ i }}] 1/3를 기준으로 변경된 경우</figcaption>
             </p>
         </figure>
@@ -461,30 +463,36 @@ Dataset에서 한 시점을 기준으로 이전 시점 데이터를 Group-pre, �
     {% assign i = i | plus: 1 %}
 </div>
 
+Dataset에서 한 시점을 기준으로 이전 시점 데이터를 Group-pre, 이후 시점 데이터를 Group-post로 표현하겠습니다.
+시간이 지남에 따른 Dataset Shift 여부를 확인하기 위해 Group-pre와 Group-post에 대해 T-test를 진행합니다.
+
+이때 집단을 구분하는 시점을 여러개로 두어 다양한 시점에서의 Dataset Shift를 확인할 수 있습니다.
 시점을 정하는 방법으로 [그림{{ i }}]와 같이 균등하게 구간을 나누는 방법을 사용할 수 있습니다.
-[그림{{ i }}]는 Dataset Shift 후보로 균등하게 분포한 4개 구간을 정의한 상황입니다. 
-각 시점에 대해 T-test 검증 후 P-value가 가장 낮은 시점을 중심으로 Dataset Shift가 일어났음을 예상할 수 있습니다.
+[그림{{ i }}]는 [그림{{ i | minus:2 }}] 상황에 대해 Dataset Shift 후보로 균등하게 분포한 4개 구간을 정의한 상황입니다.
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img src="/assets/images/2021-02-21-data_is_tested/group-split-5.png" alt="train-valid-a-week" width="120%">
-  <figcaption style="text-align: center;">[그림{{ i }}] 1/5, 2/5, 3/5 ,4/5를 기준으로 그룹화</figcaption>
+  <img src="/assets/images/2021-02-21-data_is_tested/group-split-4.png" alt="train-valid-a-week" width="120%">
+  <figcaption style="text-align: center;">[그림{{ i }}] 1/5, 2/5, 3/5 ,4/5를 기준으로 구분</figcaption>
 </p>
 </figure>
 {% assign i = i | plus: 1 %}
+
+각 시점에 대해 T-test 검증 후 P-value가 가장 낮은 시점을 중심으로 Dataset Shift가 일어났음을 예상할 수 있습니다.
+이러한 과정을 통해 Dataset Shift를 검증할 수 있는 `check_dataset_shift` 함수를 정의하겠습니다.
 
 ```python
 # Dataset Shift가 예상된 경우 ValueError를 raise합니다.
 def check_dataset_shift(
     output: np.ndarray,          # 평가 대상이 되는 Output
-    n_test_points: int = 5,      # 구간 분할 횟수
+    n_test_points: int = 4,      # 구간 분할 횟수
 ):
     # 구간 하나의 크기를 정합니다.
-    split_size = len(output) // n_test_points
+    split_size = len(output) // (n_test_points + 1)
 
     min_p_value = float("inf")
     shift_point = None
-    for test_point in range(1, n_test_points):
+    for test_point in range(1, n_test_points + 1):
 
         # Group-pre는 판단 시점 이전 데이터를 할당합니다.
         # Group-post는 판단 시점 이후 데이터를 할당합니다.
@@ -513,18 +521,16 @@ def check_dataset_shift(
 ```python
 >>> # [그림{{ i | minus: 3 }}] 데이터를 6개 구간으로 나눠 Dataset Shift를 확인합니다.
 >>> # 3/6 지점에서 Dataset Shift가 일어났음을 예상할 수 있습니다.
->>> check_dataset_shift(graph_11, n_test_points=6)
+>>> check_dataset_shift(graph_{{ i | minus: 3 }}, n_test_points=6)
 ValueError: Check dataset shift around 3/6
 
 >>> # [그림{{ i | minus: 2 }}] 데이터를 6개 구간으로 나눠 Dataset Shift를 확인합니다.
 >>> # 2/6 지점에서 Dataset Shift가 일어났음을 예상할 수 있습니다.
->>> check_dataset_shift(graph_12 n_test_points=6)
+>>> check_dataset_shift(graph_{{ i | minus: 2 }}, n_test_points=6)
 ValueError: Check dataset shift around 2/6
 ```
 
->> 마무리 멘트
->> 새로운 정보같은데 뭔소리지?  느낌임 
-전체 데이터에서 한 시점에 Dataset Shift가 발생했으리라 예상되는 경우, P-value를 통해 Dataset Shift를 확인할 수 있습니다.
+T-test의 P-value를 통해 Dataset Shift를 검증하는 과정에 대해 소개드렸습니다.
 
 ## 4. Conclusion
 
