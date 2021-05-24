@@ -97,7 +97,7 @@ def make_feature_c(sample):
 ```
 
 위의 예시에서는 Engineering 할 Feature에 Boolean 값이 들어오면서 예상치 못한 `Feature C`가 만들어지게 됩니다.
-잘 못 입력된 `Feature A`가 0이라는 의도하지 않은 결과를 만들고 다음 프로세스까지 영향을 미치게 됩니다.
+잘못 입력된 `Feature A`가 0이라는 의도하지 않은 결과를 만들고 다음 프로세스까지 영향을 미치게 됩니다.
 이 경우 코드가 작동하는데 문제 없기 때문에, 나중에 출력 결과를 통해 디버깅하는 것은 어렵습니다.
 
 ### 1.1.2 Example of Invalid Data Range 
