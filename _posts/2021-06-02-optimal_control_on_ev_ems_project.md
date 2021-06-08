@@ -29,7 +29,7 @@ HOS 팀은 글로벌 자동차 열 에너지 관리 솔루션 기업인 **[한�
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-06-02-optimal_control_on_ev_ems_project/optimal_control_on_ev_ems_hvac.png" alt="normal gradient" width="80%">
-  <figcaption style="text-align: center;">[그림2] - 공기 조화 시스템 [1]</figcaption>
+  <figcaption style="text-align: center;">[그림2] - 공기 조화 시스템 [<a href="#ref-1">1</a>]</figcaption>
 </p>
 </figure>
 
@@ -191,7 +191,7 @@ HOS 팀에서는 이러한 문제들을 FMI format으로 추출된 시뮬레이�
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-06-02-optimal_control_on_ev_ems_project/optimal_control_on_ev_ems_fmi.png" alt="normal gradient" width="80%">
-  <figcaption style="text-align: center;">[그림10] - FMI [2]</figcaption>
+  <figcaption style="text-align: center;">[그림10] - FMI [<a href="#ref-2">2</a>]</figcaption>
 </p>
 </figure>
 
@@ -211,7 +211,7 @@ HOS 팀에서는 기존에 자체 제작된 MakinaRocks의 파이썬 강화학�
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-06-02-optimal_control_on_ev_ems_project/optimal_control_on_ev_ems_ray_rllib_stack.png" alt="normal gradient" width="90%">
-  <figcaption style="text-align: center;">[그림11] - Ray RLlib stack [4]</figcaption>
+  <figcaption style="text-align: center;">[그림11] - Ray RLlib stack [<a href="#ref-4">4</a>]</figcaption>
 </p>
 </figure>
 
@@ -263,7 +263,7 @@ HOS 프로젝트의 최종 목표는 실제 전기 자동차의 공기 조화 �
 <figure class="image" style="align: center;">
 <p align="center">
   <img src="/assets/images/2021-06-02-optimal_control_on_ev_ems_project/optimal_control_on_ev_ems_sim2real.png" alt="normal gradient" width="49%"> <img src="/assets/images/2021-06-02-optimal_control_on_ev_ems_project/optimal_control_on_ev_ems_offline_rl.gif" alt="normal gradient" width="49%">
-  <figcaption style="text-align: center;">[그림13] - Sim-to-Real & Offline Reinforcement Learning [6, 7]</figcaption>
+  <figcaption style="text-align: center;">[그림13] - Sim-to-Real & Offline Reinforcement Learning [<a href="#ref-6">6</a>, <a href="#ref-7">7</a>]</figcaption>
 </p>
 </figure>
   
