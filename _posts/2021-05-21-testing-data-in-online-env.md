@@ -2,7 +2,7 @@
 layout: post
 title: 실시간 데이터 검증하기
 author: minjoo lee
-categories: [deeplearning]
+categories: [test]
 image: assets/images/data_is_tested/total.gif
 ---
 
