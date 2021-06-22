@@ -216,7 +216,7 @@ Gradient Accumulation을 통해서 불안정적이던 학습을 안정적으로 
 
 <figure class="image" style="align: center;">
 <p align="center">
-  <img style="width: 70%" src="/assets/images/2020-12-29-Gradient-Accumulation/rae30-6000.png" alt="rae">
+  <img style="width: 70%" src="/assets/images/2020-12-29-Gradient-Accumulation/rae30-6000-weight.png" alt="rae">
   <figcaption style="text-align: center;">[그래프3] - RAE Gradient Histogram with batch size 6000</figcaption>
 </p>
 </figure>
